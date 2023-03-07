@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "648966170991",
+    "project_id": "blue-limo-pjt",
+    "storage_bucket": "blue-limo-pjt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:648966170991:android:73086c67c0cfbbf28e609a",
+        "android_client_info": {
+          "package_name": "com.ssafy.snapstory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "648966170991-329sgn3280svesc9g7gj1epukslgrl3q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAw6llAvCym9K9Y5wlAN0MAuLl_TxGlvEc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "648966170991-329sgn3280svesc9g7gj1epukslgrl3q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "648966170991-qf3qi3mauj529pst00k4r67pfkj4n8u4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ssafy.demo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

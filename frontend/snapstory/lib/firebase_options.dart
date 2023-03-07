@@ -48,7 +48,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAOLxF_sQgWB3aotXmy9EvQeT6za4j0iYY',
-    appId: '1:648966170991:web:70faf4dde70acf8a8e609a',
+    appId: '1:648966170991:web:0d306aeb78523d9c8e609a',
     messagingSenderId: '648966170991',
     projectId: 'blue-limo-pjt',
     authDomain: 'blue-limo-pjt.firebaseapp.com',
@@ -57,7 +57,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAw6llAvCym9K9Y5wlAN0MAuLl_TxGlvEc',
-    appId: '1:648966170991:android:7d47bf09c8f45d9d8e609a',
+    appId: '1:648966170991:android:73086c67c0cfbbf28e609a',
     messagingSenderId: '648966170991',
     projectId: 'blue-limo-pjt',
     storageBucket: 'blue-limo-pjt.appspot.com',
@@ -65,12 +65,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBdfFAAk3yIbvYEdnI8Y12hkLdk7hbDY4w',
-    appId: '1:648966170991:ios:b015d4a706d6e4958e609a',
+    appId: '1:648966170991:ios:2b630844fa1e2c198e609a',
     messagingSenderId: '648966170991',
     projectId: 'blue-limo-pjt',
     storageBucket: 'blue-limo-pjt.appspot.com',
-    iosClientId:
-        '648966170991-qf3qi3mauj529pst00k4r67pfkj4n8u4.apps.googleusercontent.com',
-    iosBundleId: 'com.ssafy.demo',
+    iosClientId: '648966170991-oofsoajesc2ifj4rf57h1khue8t64nv7.apps.googleusercontent.com',
+    iosBundleId: 'com.ssafy.snapstory',
   );
 }
