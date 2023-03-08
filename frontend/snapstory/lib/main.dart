@@ -7,6 +7,8 @@ import 'package:snapstory/views/register_view.dart';
 import 'package:snapstory/views/verify_email_view.dart';
 import 'package:flutter/material.dart';
 
+import 'views/onboarding.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
@@ -15,7 +17,7 @@ void main() {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: const OnBoardingPage(),
       routes: {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
