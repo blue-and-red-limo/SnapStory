@@ -7,5 +7,5 @@ import static com.ssafy.snapstory.exception.ErrorCode.BAD_CONSTANT;
 public class BadConstantException extends AbstractAppException {
     public BadConstantException() {
         super(BAD_CONSTANT);
-    }s
+    }
 }
