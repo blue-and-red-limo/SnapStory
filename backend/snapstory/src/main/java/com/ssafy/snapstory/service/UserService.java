@@ -3,6 +3,7 @@ package com.ssafy.snapstory.service;
 import com.ssafy.snapstory.domain.user.User;
 import com.ssafy.snapstory.domain.user.dto.CreateUserReq;
 import com.ssafy.snapstory.domain.user.dto.CreateUserRes;
+import com.ssafy.snapstory.domain.user.dto.DeleteUserRes;
 import com.ssafy.snapstory.exception.conflict.EmailDuplicateException;
 import com.ssafy.snapstory.exception.not_found.EmailNotFoundException;
 import com.ssafy.snapstory.exception.not_found.UserNotFoundException;
@@ -38,5 +39,12 @@ public class UserService {
         }
 
         return createUserRes;
+    }
+
+    public DeleteUserRes deleteUser(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        userRepository.deleteById(user.getUserId());
+        DeleteUserRes deleteUserRes = new DeleteUserRes(user.getUserId(),user.getEmail(),user.getName());
+        return deleteUserRes;
     }
 }

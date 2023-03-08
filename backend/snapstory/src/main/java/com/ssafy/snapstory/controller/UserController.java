@@ -4,6 +4,7 @@ import com.ssafy.snapstory.domain.ResultResponse;
 import com.ssafy.snapstory.domain.user.User;
 import com.ssafy.snapstory.domain.user.dto.CreateUserReq;
 import com.ssafy.snapstory.domain.user.dto.CreateUserRes;
+import com.ssafy.snapstory.domain.user.dto.DeleteUserRes;
 import com.ssafy.snapstory.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +30,15 @@ public class UserController {
         return ResultResponse.success(userService.getUserByEmail(email));
     }
 
+    @DeleteMapping("/{email}")
+    @ApiOperation(value = "유저 삭제", notes = "유저 삭제")
+    public ResultResponse<DeleteUserRes>deleteUser(@PathVariable String email){
+        return ResultResponse.success(userService.deleteUser(email));
+    }
+
     @PostMapping
     @ApiOperation(value = "유저 회원가입", notes = "유저 회원가입")
-    public ResultResponse<CreateUserRes>CreateUser(@RequestBody CreateUserReq createUserReq){
+    public ResultResponse<CreateUserRes>createUser(@RequestBody CreateUserReq createUserReq){
         return ResultResponse.success(userService.createUser(createUserReq));
     }
 }
