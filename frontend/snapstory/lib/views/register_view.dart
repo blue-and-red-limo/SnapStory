@@ -15,11 +15,13 @@ class RegisterView extends StatefulWidget {
 class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late final TextEditingController _userName;
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    _userName = TextEditingController();
     super.initState();
   }
 
@@ -27,6 +29,7 @@ class _RegisterViewState extends State<RegisterView> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _userName.dispose();
     super.dispose();
   }
 
@@ -46,6 +49,13 @@ class _RegisterViewState extends State<RegisterView> {
             decoration: const InputDecoration(hintText: "ENTER EMAIL"),
           ),
           TextField(
+            controller: _userName,
+            enableSuggestions: false,
+            autocorrect: false,
+            keyboardType: TextInputType.name,
+            decoration: const InputDecoration(hintText: "ENTER NAME"),
+          ),
+          TextField(
             controller: _password,
             obscureText: true,
             enableSuggestions: false,
@@ -55,10 +65,12 @@ class _RegisterViewState extends State<RegisterView> {
           TextButton(
             onPressed: () async {
               final email = _email.text;
+              final userName = _userName.text;
               final password = _password.text;
               try {
                 await AuthService.firebase().createUser(
                   email: email,
+                  userName: userName,
                   password: password,
                 );
                 await AuthService.firebase().sendEmailVerification();

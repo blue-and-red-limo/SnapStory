@@ -16,6 +16,7 @@ class _MainViewState extends State<MainView> {
   late final NotesService _notesService;
 
   String get userEmail => AuthService.firebase().currentUser!.email!;
+  String get userName => AuthService.firebase().currentUser!.userName!;
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _MainViewState extends State<MainView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('YOUR NOTES'),
+        title: userName != null ? Text('HI $userName') : const Text('NO NAME'),
         actions: [
           IconButton(
             onPressed: () {
