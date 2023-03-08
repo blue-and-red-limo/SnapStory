@@ -20,14 +20,18 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-security")
+//	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+<<<<<<< Updated upstream
+//	testImplementation("org.springframework.security:spring-security-test")
+=======
 	testImplementation("org.springframework.security:spring-security-test")
-	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+>>>>>>> Stashed changes
+//	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
 }
 
 tasks.withType<Test> {
