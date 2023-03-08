@@ -17,6 +17,7 @@ import javax.persistence.*;
 @Entity
 public class WordList extends Base {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int wordListId;
 
     @Column(columnDefinition = "varchar(255) not null")

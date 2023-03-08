@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Entity
 public class AiTale extends Base {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int aiTaleId;
 
     @Column(columnDefinition = "varchar(255) not null")

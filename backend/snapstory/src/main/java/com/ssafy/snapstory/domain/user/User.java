@@ -15,6 +15,7 @@ import javax.persistence.*;
 @Entity
 public class User extends Base {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int userId;
 
     @Column(columnDefinition = "varchar(255) not null")
