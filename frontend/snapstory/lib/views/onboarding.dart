@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:snapstory/main.dart';
 
+// 앱 처음 시작할 때 튜토리얼 페이지
 class OnBoardingPage extends StatelessWidget {
   const OnBoardingPage({Key? key}) : super(key: key);
 
@@ -11,18 +12,18 @@ class OnBoardingPage extends StatelessWidget {
       pages: [
         PageViewModel(
             title: 'Welcome to my app',
-            body: 'this is the first page',
-            image: Image.asset('images/mainImage.png'),
+            body: 'tutorial 1',
+            image: Image.asset('../../images/mainImage.png'),
             decoration: getPageDecoration()
         ),
         PageViewModel(
             title: 'Welcome to my app',
-            body: 'this is the first page',
-            image: Image.asset('images/mainImage.png'),
+            body: 'tutorial 2',
+            image: Image.asset('/images/mainImage.png'),
             decoration: getPageDecoration()
         ), PageViewModel(
             title: 'Welcome to my app',
-            body: 'this is the first page',
+            body: 'tutorial 3',
             image: Image.asset('images/mainImage.png'),
             decoration: getPageDecoration()
         ),
