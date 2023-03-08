@@ -1,6 +1,7 @@
 package com.ssafy.snapstory.service;
 
 import com.ssafy.snapstory.domain.user.User;
+import com.ssafy.snapstory.exception.not_found.EmailNotFoundException;
 import com.ssafy.snapstory.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,5 +14,7 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
-
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(EmailNotFoundException::new);
+    }
 }

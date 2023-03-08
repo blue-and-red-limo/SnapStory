@@ -16,4 +16,9 @@ public class UserController {
     public ResultResponse<User> getUser(@PathVariable int userId) {
         return ResultResponse.success(userService.getUser(userId));
     }
+
+    @GetMapping("email/{email}")
+    public ResultResponse<User> getUserByEmail(@PathVariable String email) {
+        return ResultResponse.success(userService.getUserByEmail(email));
+    }
 }
