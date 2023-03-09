@@ -13,4 +13,5 @@ public class DeleteUserRes {
     private int userId;
     private String email;
     private String name;
+    private String uid;
 }

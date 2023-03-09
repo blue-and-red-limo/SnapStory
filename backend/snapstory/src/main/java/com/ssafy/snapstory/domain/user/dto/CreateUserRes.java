@@ -13,4 +13,6 @@ public class CreateUserRes {
     private int userId;
     private String email;
     private String name;
+
+    private String uid;
 }

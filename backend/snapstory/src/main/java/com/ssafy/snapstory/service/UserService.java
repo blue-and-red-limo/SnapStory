@@ -18,8 +18,9 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
 
-    public User getUser(int userId) {
-        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public CreateUserRes getUser(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        return CreateUserRes.builder().userId(user.getUserId()).email(user.getEmail()).name(user.getName()).uid(user.getUid()).build();
     }
 
     public User getUserByEmail(String email) {
@@ -30,9 +31,9 @@ public class UserService {
         Optional<User> user = userRepository.findByEmail(createUserReq.getEmail());
         CreateUserRes createUserRes;
         if (!user.isPresent()) {
-            User newUser = User.builder().email(createUserReq.getEmail()).name(createUserReq.getName()).build();
+            User newUser = User.builder().email(createUserReq.getEmail()).name(createUserReq.getName()).uid(createUserReq.getUid()).build();
             userRepository.save(newUser);
-            createUserRes = new CreateUserRes(newUser.getUserId(), newUser.getEmail(), newUser.getName());
+            createUserRes = new CreateUserRes(newUser.getUserId(), newUser.getEmail(), newUser.getName(), newUser.getUid());
 
         } else {
             throw new EmailDuplicateException();
@@ -41,8 +42,8 @@ public class UserService {
         return createUserRes;
     }
 
-    public DeleteUserRes deleteUser(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+    public DeleteUserRes deleteUser(String userId) {
+        User user = userRepository.findById(Integer.valueOf(userId)).orElseThrow(UserNotFoundException::new);
         userRepository.deleteById(user.getUserId());
         DeleteUserRes deleteUserRes = new DeleteUserRes(user.getUserId(),user.getEmail(),user.getName());
         return deleteUserRes;

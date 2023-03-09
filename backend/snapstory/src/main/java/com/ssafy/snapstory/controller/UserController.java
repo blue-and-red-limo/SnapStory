@@ -7,6 +7,7 @@ import com.ssafy.snapstory.domain.user.dto.CreateUserRes;
 import com.ssafy.snapstory.domain.user.dto.DeleteUserRes;
 import com.ssafy.snapstory.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +21,7 @@ public class UserController {
     private final UserService userService;
     @GetMapping("/{userId}")
     @ApiOperation(value = "유저 정보 조회", notes = "userId로 유저 정보 제공")
-    public ResultResponse<User> getUser(@PathVariable int userId) {
+    public ResultResponse<CreateUserRes> getUser(@PathVariable int userId) {
         return ResultResponse.success(userService.getUser(userId));
     }
 
@@ -30,10 +31,11 @@ public class UserController {
         return ResultResponse.success(userService.getUserByEmail(email));
     }
 
-    @DeleteMapping("/{email}")
+    @DeleteMapping
     @ApiOperation(value = "유저 삭제", notes = "유저 삭제")
-    public ResultResponse<DeleteUserRes>deleteUser(@PathVariable String email){
-        return ResultResponse.success(userService.deleteUser(email));
+    public ResultResponse<DeleteUserRes>deleteUser(Authentication authentication){
+//        System.out.println(authentication.getName());
+        return ResultResponse.success(userService.deleteUser(authentication.getName()));
     }
 
     @PostMapping
