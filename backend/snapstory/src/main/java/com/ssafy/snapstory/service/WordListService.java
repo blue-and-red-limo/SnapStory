@@ -6,6 +6,8 @@ import com.ssafy.snapstory.domain.wordList.WordList;
 import com.ssafy.snapstory.domain.wordList.dto.AddWordReq;
 import com.ssafy.snapstory.domain.wordList.dto.AddWordRes;
 import com.ssafy.snapstory.domain.wordList.dto.DeleteWordRes;
+import com.ssafy.snapstory.exception.not_found.UserNotFoundException;
+import com.ssafy.snapstory.exception.not_found.WordNotFoundException;
 import com.ssafy.snapstory.exception.not_found.WordListNotFoundException;
 import com.ssafy.snapstory.repository.WordListRepository;
 import com.ssafy.snapstory.repository.WordRepository;
@@ -32,15 +34,15 @@ public class WordListService {
     }
 
     public AddWordRes addWordList(AddWordReq addWordReq) {
-        Optional<Word> word = wordRepository.findById(addWordReq.getWordId());
-        Optional<User> user = userRepository.findById(addWordReq.getUserId());
+        Word word = wordRepository.findById(addWordReq.getWordId()).orElseThrow(WordNotFoundException::new);
+        User user = userRepository.findById(addWordReq.getUserId()).orElseThrow(UserNotFoundException::new);
         AddWordRes addWordRes;
         WordList newWordList = WordList.builder()
                 .wordExampleEng(addWordReq.getWordExampleEng())
                 .wordExampleKor(addWordReq.getWordExampleKor())
                 .wordExampleSound(addWordReq.getWordExampleSound())
-                .word(word.get())
-                .user(user.get())
+                .word(word)
+                .user(user)
                 .build();
         wordListRepository.save(newWordList);
         addWordRes = new AddWordRes(
