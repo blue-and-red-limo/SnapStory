@@ -13,6 +13,7 @@ public enum ErrorCode {
     WORD_NOT_FOUND(NOT_FOUND, "해당하는 단어를 찾을 수 없습니다."),
     WORD_LIST_NOT_FOUND(NOT_FOUND, "단어장을 찾을 수 없습니다."),
 
+    QUIZ_TALE_NOT_FOUND(NOT_FOUND, "해당하는 동화를 찾을 수 없습니다."),
     DATABASE_ERROR(INTERNAL_SERVER_ERROR, "데이터베이스 에러");
 
 
