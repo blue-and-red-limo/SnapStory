@@ -13,7 +13,8 @@ import javax.persistence.Column;
 public class GetAiTaleRes {
     private int aiTaleId;
 
-    private String word;
+    private String wordEng;
+    private String wordKor;
     private String contentEng;
 
     private String contentKor;
