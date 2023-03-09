@@ -25,10 +25,10 @@ public class AiTale extends Base {
     @Column(columnDefinition = "varchar(255) not null")
     private String contentKor;
 
-    @Column(columnDefinition = "varchar(255) not null")
+    @Column(columnDefinition = "varchar(255) default null")
     private String image;
 
-    @Column(columnDefinition = "varchar(255) not null")
+    @Column(columnDefinition = "varchar(255) default null")
     private String sound;
 
     @ManyToOne

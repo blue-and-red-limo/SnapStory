@@ -27,7 +27,7 @@ public class UserController {
 
     @GetMapping("email/{email}")
     @ApiOperation(value = "이메일로 유저 정보 조회", notes = "이메일로 유저 정보 제공")
-    public ResultResponse<User> getUserByEmail(@PathVariable String email) {
+    public ResultResponse<CreateUserRes> getUserByEmail(@PathVariable String email) {
         return ResultResponse.success(userService.getUserByEmail(email));
     }
 

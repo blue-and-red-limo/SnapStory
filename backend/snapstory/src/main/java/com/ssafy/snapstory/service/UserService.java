@@ -23,8 +23,9 @@ public class UserService {
         return CreateUserRes.builder().userId(user.getUserId()).email(user.getEmail()).name(user.getName()).uid(user.getUid()).build();
     }
 
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(EmailNotFoundException::new);
+    public CreateUserRes getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        return CreateUserRes.builder().userId(user.getUserId()).email(user.getEmail()).name(user.getName()).uid(user.getUid()).build();
     }
 
     public CreateUserRes createUser(CreateUserReq createUserReq) {
