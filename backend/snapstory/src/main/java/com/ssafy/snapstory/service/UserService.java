@@ -45,7 +45,7 @@ public class UserService {
     public DeleteUserRes deleteUser(String userId) {
         User user = userRepository.findById(Integer.valueOf(userId)).orElseThrow(UserNotFoundException::new);
         userRepository.deleteById(user.getUserId());
-        DeleteUserRes deleteUserRes = new DeleteUserRes(user.getUserId(),user.getEmail(),user.getName());
+        DeleteUserRes deleteUserRes = new DeleteUserRes(user.getUserId(),user.getEmail(),user.getName(),user.getUid());
         return deleteUserRes;
     }
 }
