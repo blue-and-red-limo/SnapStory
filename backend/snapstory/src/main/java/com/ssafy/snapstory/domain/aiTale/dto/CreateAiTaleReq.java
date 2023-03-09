@@ -5,15 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class GetAiTaleRes {
-    private int aiTaleId;
-
-    private String word;
+public class CreateAiTaleReq {
+    private int wordListId;
     private String contentEng;
 
     private String contentKor;
