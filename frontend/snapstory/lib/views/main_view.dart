@@ -3,10 +3,15 @@ import 'package:snapstory/services/crud/notes_service.dart';
 import 'package:flutter/material.dart';
 import 'package:snapstory/views/onboarding.dart';
 
-import '../../constants/routes.dart';
-import '../../enums/menu_action.dart';
+import '../constants/routes.dart';
+import '../enums/menu_action.dart';
 import 'package:circular_bottom_navigation/circular_bottom_navigation.dart';
 import 'package:circular_bottom_navigation/tab_item.dart';
+
+// 메인 탭 3개 페이지
+import 'package:snapstory/views/home/home_view.dart';
+import 'package:snapstory/views/my_library/my_library_view.dart';
+import 'package:snapstory/views/my_word/my_word_view.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key? key}) : super(key: key);
@@ -18,84 +23,62 @@ class MainView extends StatefulWidget {
 class _MainViewState extends State<MainView> {
   late final NotesService _notesService;
 
+  // user 정보 받아오기
   String get userEmail => AuthService.firebase().currentUser!.email!;
-
   String get userName => AuthService.firebase().currentUser!.userName!;
 
   // navigation bar
   int selectedPos = 0;
-
   double bottomNavBarHeight = 70;
 
+  final List<Widget> _children = [Home(), MyLibrary(), MyWord()];
+
+  // 메인 탭 3개 아이콘
   List<TabItem> tabItems = List.of([
     TabItem(
       Icons.home,
       "홈",
-      Colors.blue,
-      labelStyle: TextStyle(
-        fontWeight: FontWeight.normal,
+      const Color.fromRGBO(255, 182, 40, 1.0),
+      labelStyle: const TextStyle(
+        color: Colors.orange,
+        fontWeight: FontWeight.bold,
       ),
     ),
     TabItem(
       Icons.library_books,
       "나만의 도서관",
-      Colors.orange,
-      labelStyle: TextStyle(
-        color: Colors.red,
+      const Color.fromRGBO(255, 182, 40, 1.0),
+      labelStyle: const TextStyle(
+        color: Colors.orange,
         fontWeight: FontWeight.bold,
       ),
     ),
     TabItem(
       Icons.menu_book,
       "나만의 단어장",
-      Colors.red,
+      const Color.fromRGBO(255, 182, 40, 1.0),
+      labelStyle: const TextStyle(
+        color: Colors.orange,
+        fontWeight: FontWeight.bold,
+      ),
       // circleStrokeColor: Colors.black,
     ),
   ]);
 
   late CircularBottomNavigationController _navigationController;
 
+
   Widget bodyContainer() {
-    Color? selectedColor = tabItems[selectedPos].circleColor;
-    String slogan;
-    switch (selectedPos) {
-      case 0:
-        slogan = "주변 영단어 찾기, 손그림 퀴즈";
-        break;
-      case 1:
-        slogan = "나만의 도서관";
-        break;
-      case 2:
-        slogan = "나만의 단어장";
-        break;
-      default:
-        slogan = "";
-        break;
-    }
 
     return GestureDetector(
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: selectedColor,
-        child: Center(
-          child: Text(
-            slogan,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 20,
-            ),
-          ),
-        ),
-      ),
-      onTap: () {
-        if (_navigationController.value == tabItems.length - 1) {
-          _navigationController.value = 0;
-        } else {
-          _navigationController.value = _navigationController.value! + 1;
-        }
-      },
+      child: _children.elementAt(selectedPos),
+      // onTap: () {
+      //   if (_navigationController.value == tabItems.length - 1) {
+      //     _navigationController.value = 0;
+      //   } else {
+      //     _navigationController.value = _navigationController.value! + 1;
+      //   }
+      // },
     );
   }
 
@@ -144,6 +127,14 @@ class _MainViewState extends State<MainView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          )
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -183,12 +174,12 @@ class _MainViewState extends State<MainView> {
         padding: EdgeInsets.zero,
         children: <Widget>[
           UserAccountsDrawerHeader(
-            currentAccountPicture: CircleAvatar(
+            currentAccountPicture: const CircleAvatar(
               backgroundColor: Colors.white,
             ),
             accountName: Text('$userName 보호자님 안녕하세요.'),
-            accountEmail: Text('bbanto@bbanto'),
-            decoration: BoxDecoration(
+            accountEmail: Text(userEmail),
+            decoration: const BoxDecoration(
                 color: Color.fromARGB(255, 255, 182, 40),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(40.0),
@@ -200,7 +191,7 @@ class _MainViewState extends State<MainView> {
               Icons.headphones,
               color: Colors.grey[850],
             ),
-            title: Text('소리설정'),
+            title: const Text('소리설정'),
             onTap: () {
               print('소리설정 is clicked');
             },
@@ -210,7 +201,7 @@ class _MainViewState extends State<MainView> {
               Icons.logout_rounded,
               color: Colors.grey[850],
             ),
-            title: Text('로그아웃/탈퇴'),
+            title: const Text('로그아웃/탈퇴'),
             onTap: () {
               print('로그아웃/탈퇴 is clicked');
             },
@@ -220,8 +211,8 @@ class _MainViewState extends State<MainView> {
       body: Stack(
         children: <Widget>[
           Padding(
-            child: bodyContainer(),
             padding: EdgeInsets.only(bottom: bottomNavBarHeight),
+            child: bodyContainer(),
           ),
           Align(alignment: Alignment.bottomCenter, child: bottomNav())
         ],

@@ -1,8 +1,7 @@
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
 import 'package:snapstory/views/login_view.dart';
-import 'package:snapstory/views/notes/new_note_view.dart';
-import 'package:snapstory/views/notes/note_view.dart';
+import 'package:snapstory/views/main_view.dart';
 import 'package:snapstory/views/register_view.dart';
 import 'package:snapstory/views/verify_email_view.dart';
 import 'package:flutter/material.dart';
@@ -22,13 +21,14 @@ void main() {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
         mainRoute: (context) => const MainView(),
-        verifyEmailRoute: (context) => const VerifyEmailView(),
-        newNoteRoute: (context) => const NewNoteView(),
+        verifyEmailRoute: (context) => const VerifyEmailView()
+
       },
     ),
   );
 }
 
+// 커스텀 색상 만드는 클래스
 class ColorService{
   static MaterialColor createMaterialColor(Color color) {
     List strengths = <double>[.05];

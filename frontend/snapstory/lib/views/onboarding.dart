@@ -11,25 +11,25 @@ class OnBoardingPage extends StatelessWidget {
     return IntroductionScreen(
       pages: [
         PageViewModel(
-            title: 'Welcome to my app',
+            title: '',
             body: 'tutorial 1',
-            image: Image.asset('../../images/mainImage.png'),
+            image: Image.asset('images/mainImage.png'),
             decoration: getPageDecoration()
         ),
         PageViewModel(
-            title: 'Welcome to my app',
+            title: '',
             body: 'tutorial 2',
-            image: Image.asset('/images/mainImage.png'),
+            image: Image.asset('images/mainImage.png'),
             decoration: getPageDecoration()
         ), PageViewModel(
-            title: 'Welcome to my app',
+            title: '',
             body: 'tutorial 3',
             image: Image.asset('images/mainImage.png'),
             decoration: getPageDecoration()
         ),
         PageViewModel(
-            title: 'Welcome to my app',
-            body: 'this is the first page',
+            title: '',
+            body: 'tutorial 4',
             image: Image.asset('images/mainImage.png'),
             decoration: getPageDecoration()
         ),
@@ -47,13 +47,13 @@ class OnBoardingPage extends StatelessWidget {
       showSkipButton: true,
       skip: const Text('skip'),
       dotsDecorator: DotsDecorator(
-          color: Colors.cyan,
+          color: Colors.grey,
           size: const Size(10, 10),
           activeSize: const Size(22, 10),
           activeShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24)
           ),
-          activeColor: Colors.red
+          activeColor: Colors.orange
       ),
       curve: Curves.bounceOut
       ,
@@ -72,7 +72,7 @@ class OnBoardingPage extends StatelessWidget {
             color: Colors.blue
         ),
         imagePadding: EdgeInsets.only(top: 40),
-        pageColor: Colors.orange
+
     );
   }
 }
