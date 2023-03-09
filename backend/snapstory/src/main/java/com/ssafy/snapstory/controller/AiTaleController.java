@@ -27,6 +27,12 @@ public class AiTaleController {
         return ResultResponse.success(aiTaleService.getAiTaleAll(Integer.parseInt(authentication.getName())));
     }
 
+    @GetMapping("/{aiTaleId}")
+    @ApiOperation(value = "AI 동화 조회", notes = "AI 동화 조회")
+    public ResultResponse<GetAiTaleRes> getAiTale(@PathVariable int aiTaleId, Authentication authentication) {
+        return ResultResponse.success(aiTaleService.getAiTale(aiTaleId, Integer.parseInt(authentication.getName())));
+    }
+
     @PostMapping
     @ApiOperation(value = "AI 동화 생성", notes = "AI 동화 생성")
     public ResultResponse<CreateAiTaleRes> createAiTale(@RequestBody CreateAiTaleReq createAiTaleReq, Authentication authentication) {
