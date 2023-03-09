@@ -14,5 +14,4 @@ public class AddWordReq {
     private String wordExampleKor;
     private String wordExampleSound;
     private int wordId;
-    private int userId;
 }

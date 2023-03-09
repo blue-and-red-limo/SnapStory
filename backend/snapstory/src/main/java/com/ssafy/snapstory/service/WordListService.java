@@ -6,6 +6,7 @@ import com.ssafy.snapstory.domain.wordList.WordList;
 import com.ssafy.snapstory.domain.wordList.dto.AddWordReq;
 import com.ssafy.snapstory.domain.wordList.dto.AddWordRes;
 import com.ssafy.snapstory.domain.wordList.dto.DeleteWordRes;
+import com.ssafy.snapstory.exception.conflict.WordListDuplicateException;
 import com.ssafy.snapstory.exception.not_found.UserNotFoundException;
 import com.ssafy.snapstory.exception.not_found.WordNotFoundException;
 import com.ssafy.snapstory.exception.not_found.WordListNotFoundException;
@@ -25,40 +26,50 @@ public class WordListService {
     private final UserRepository userRepository;
     private final WordRepository wordRepository;
 
-    public List<WordList> getWordLists() {
-        return wordListRepository.findAll();
+    public List<WordList> getWordLists(String userId) {
+        List<WordList> wordLists = wordListRepository.findAllByUser_UserId(Integer.parseInt(userId));
+        if (wordLists != null) return wordLists;
+        else throw new WordListNotFoundException();
     }
 
-    public WordList getWordList(int wordListId) {
-        return wordListRepository.findById(wordListId).orElseThrow(WordListNotFoundException::new);
+    public WordList getWordList(int wordListId, String userId) {
+        WordList wordList = wordListRepository.findByUser_UserIdAndWordListId(Integer.parseInt(userId), wordListId);
+        if (wordList != null) return wordList;
+        else throw new WordNotFoundException();
     }
 
-    public AddWordRes addWordList(AddWordReq addWordReq) {
-        Word word = wordRepository.findById(addWordReq.getWordId()).orElseThrow(WordNotFoundException::new);
-        User user = userRepository.findById(addWordReq.getUserId()).orElseThrow(UserNotFoundException::new);
+    public AddWordRes addWordList(AddWordReq addWordReq, String userId) {
+        Optional<WordList> wordList = wordListRepository.findByWord_WordId(addWordReq.getWordId());
         AddWordRes addWordRes;
-        WordList newWordList = WordList.builder()
-                .wordExampleEng(addWordReq.getWordExampleEng())
-                .wordExampleKor(addWordReq.getWordExampleKor())
-                .wordExampleSound(addWordReq.getWordExampleSound())
-                .word(word)
-                .user(user)
-                .build();
-        wordListRepository.save(newWordList);
-        addWordRes = new AddWordRes(
-                newWordList.getWordListId(),
-                newWordList.getWordExampleEng(),
-                newWordList.getWordExampleKor(),
-                newWordList.getWordExampleSound(),
-                newWordList.getWord(),
-                newWordList.getUser()
-        );
+        if (!wordList.isPresent()) {
+            Word word = wordRepository.findById(addWordReq.getWordId()).orElseThrow(WordNotFoundException::new);
+            User user = userRepository.findById(Integer.parseInt(userId)).orElseThrow(UserNotFoundException::new);
+            WordList newWordList = WordList.builder()
+                    .wordExampleEng(addWordReq.getWordExampleEng())
+                    .wordExampleKor(addWordReq.getWordExampleKor())
+                    .wordExampleSound(addWordReq.getWordExampleSound())
+                    .word(word)
+                    .user(user)
+                    .build();
+            wordListRepository.save(newWordList);
+            addWordRes = new AddWordRes(
+                    newWordList.getWordListId(),
+                    newWordList.getWordExampleEng(),
+                    newWordList.getWordExampleKor(),
+                    newWordList.getWordExampleSound(),
+                    newWordList.getWord(),
+                    newWordList.getUser()
+            );
+        } else {
+            throw new WordListDuplicateException();
+        }
         return addWordRes;
     }
 
-    public DeleteWordRes deleteWordList(int wordListId) {
-        WordList wordList = wordListRepository.findById(wordListId).orElseThrow(WordListNotFoundException::new);
-        wordListRepository.deleteById(wordListId);
+    public DeleteWordRes deleteWordList(int wordListId, String userId) {
+        WordList wordList = wordListRepository.findByUser_UserIdAndWordListId(Integer.parseInt(userId), wordListId);
+        if (wordList != null) wordListRepository.deleteById(wordListId);
+        else throw new WordListNotFoundException();
         DeleteWordRes deleteWordRes = new DeleteWordRes(wordList.getWordListId());
         return deleteWordRes;
     }

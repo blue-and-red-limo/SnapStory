@@ -4,6 +4,7 @@ import com.ssafy.snapstory.domain.ResultResponse;
 import com.ssafy.snapstory.domain.quizTale.QuizTale;
 import com.ssafy.snapstory.service.QuizTaleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,12 +16,12 @@ import java.util.List;
 public class QuizTaleController {
     private final QuizTaleService quizTaleService;
 
-    @GetMapping("/incomplete/{userId}")
-    public ResultResponse<List<QuizTale>> getQuizTalesIncomplete(@PathVariable int userId) {
-        return ResultResponse.success(quizTaleService.getQuizTalesIncomplete(userId));
+    @GetMapping("/incomplete")
+    public ResultResponse<List<QuizTale>> getQuizTalesIncomplete(Authentication authentication) {
+        return ResultResponse.success(quizTaleService.getQuizTalesIncomplete(authentication.getName()));
     }
-    @GetMapping("/complete/{userId}")
-    public ResultResponse<List<QuizTale>> getQuizTalesComplete(@PathVariable int userId) {
-        return ResultResponse.success(quizTaleService.getQuizTalesComplete(userId));
+    @GetMapping("/complete")
+    public ResultResponse<List<QuizTale>> getQuizTalesComplete(Authentication authentication) {
+        return ResultResponse.success(quizTaleService.getQuizTalesComplete(authentication.getName()));
     }
 }
