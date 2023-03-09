@@ -11,11 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AddWordRes {
+public class DeleteWordRes {
     private int wordListId;
-    private String wordExampleEng;
-    private String wordExampleKor;
-    private String wordExampleSound;
-    private Word word;
-    private User user;
 }
