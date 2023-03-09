@@ -41,6 +41,8 @@ dependencies:
   sqflite: ^2.2.5
   introduction_screen: ^3.0.0
   circular_bottom_navigation: ^2.3.0
+  arkit_plugin: ^1.0.5
+  arcore_flutter_plugin: ^0.1.0
 
 dev_dependencies:
   flutter_test:
