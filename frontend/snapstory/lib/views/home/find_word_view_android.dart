@@ -87,16 +87,17 @@
 //   }
 // }
 
-
 import 'dart:io';
 
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:camera/camera.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class ARViewAndroid extends StatefulWidget {
   const ARViewAndroid({Key? key}) : super(key: key);
+
   @override
   _ARViewAndroidState createState() => _ARViewAndroidState();
 }
@@ -106,60 +107,79 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('FIND WORD ANDROID'),
-        ),
-        body: ArCoreView(
-          onArCoreViewCreated: _onArCoreViewCreated,
-        ),
-        floatingActionButton: FloatingActionButton(
-          // Provide an onPressed callback.
-          onPressed: () async {
-            // Take the Picture in a try / catch block. If anything goes wrong,
-            // catch the error.
-            try {
-              // Obtain a list of the available cameras on the device.
-              final cameras = await availableCameras();
-
-              // Get a specific camera from the list of available cameras.
-              final CameraDescription camera = cameras.first;
-
-              late CameraController _controller = CameraController(
-                // Get a specific camera from the list of available cameras.
-                camera,
-                // Define the resolution to use.
-                ResolutionPreset.high,
-              );
-              // Ensure that the camera is initialized.
-              await _controller.initialize();
-
-              // Attempt to take a picture and get the file `image`
-              // where it was saved.
-              final image = await _controller.takePicture();
-
-              if (!mounted) return;
-
-              // If the picture was taken, display it on a new screen.
-              await Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => DisplayPictureScreen(
-                    // Pass the automatically generated path to
-                    // the DisplayPictureScreen widget.
-                    imagePath: image.path,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('FIND WORD ANDROID'),
+      ),
+      body: Stack(
+        children: [
+          ArCoreView(onArCoreViewCreated: _onArCoreViewCreated),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.3,
+            left: MediaQuery.of(context).size.width * 0.1,
+            child: DottedBorder(
+              color: const Color.fromARGB(255, 0, 0, 0),
+              //color of dotted/dash line
+              strokeWidth: 3,
+              //thickness of dash/dots
+              dashPattern: [10, 6],
+              //dash patterns, 10 is dash width, 6 is space width
+              child: Container(
+                  //inner container
+                  height: MediaQuery.of(context).size.height *
+                      0.3, //height of inner container
+                  width: MediaQuery.of(context).size.width *
+                      0.8, //width to 100% match to parent container.
+                  color: const Color.fromRGBO(
+                      0, 0, 0, 0) //background color of inner container
                   ),
-                ),
-              );
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.camera_alt), // Provide an onPressed callback.
+        onPressed: () async {
+          // Take the Picture in a try / catch block. If anything goes wrong,
+          // catch the error.
+          try {
+            // Obtain a list of the available cameras on the device.
+            final cameras = await availableCameras();
 
-              _controller.dispose();
-            } catch (e) {
-              // If an error occurs, log the error to the console.
-              print(e.toString());
-            }
-          },
-          child: const Icon(Icons.camera_alt),
-        ),
+            // Get a specific camera from the list of available cameras.
+            final CameraDescription camera = cameras.first;
+
+            late CameraController _controller = CameraController(
+              // Get a specific camera from the list of available cameras.
+              camera, // Define the resolution to use.
+              ResolutionPreset.high,
+            );
+            // Ensure that the camera is initialized.
+            await _controller.initialize();
+
+            // Attempt to take a picture and get the file `image`
+            // where it was saved.
+            final image = await _controller.takePicture();
+
+            if (!mounted) return;
+
+            // If the picture was taken, display it on a new screen.
+            await Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => DisplayPictureScreen(
+                  // Pass the automatically generated path to
+                  // the DisplayPictureScreen widget.
+                  imagePath: image.path,
+                ),
+              ),
+            );
+
+            _controller.dispose();
+          } catch (e) {
+            // If an error occurs, log the error to the console.
+            print(e.toString());
+          }
+        },
       ),
     );
   }
@@ -173,8 +193,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   void _addSphere(ArCoreController controller) {
-    final material = ArCoreMaterial(
-        color: Color.fromARGB(120, 66, 134, 244));
+    final material = ArCoreMaterial(color: Color.fromARGB(120, 66, 134, 244));
     final sphere = ArCoreSphere(
       materials: [material],
       radius: 0.1,
@@ -241,5 +260,3 @@ class DisplayPictureScreen extends StatelessWidget {
     );
   }
 }
-
-

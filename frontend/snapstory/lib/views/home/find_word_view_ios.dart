@@ -1,4 +1,5 @@
 import 'package:arkit_plugin/arkit_plugin.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:snapstory/utilities/ar_helper.dart';
 
@@ -23,26 +24,52 @@ class _ARViewIOSState extends State<ARViewIOS> {
       appBar: AppBar(
         title: const Text('FIND WORD IOS'),
       ),
+      body: Stack(
+        children: [
+          ARKitSceneView(onARKitViewCreated: onARKitViewCreated),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.3,
+            left: MediaQuery.of(context).size.width * 0.1,
+            child: DottedBorder(
+              color: const Color.fromARGB(255, 0, 0, 0),
+              //color of dotted/dash line
+              strokeWidth: 3,
+              //thickness of dash/dots
+              dashPattern: [10, 6],
+              //dash patterns, 10 is dash width, 6 is space width
+              child: Container(
+                //inner container
+                  height: MediaQuery.of(context).size.height *
+                      0.3, //height of inner container
+                  width: MediaQuery.of(context).size.width *
+                      0.8, //width to 100% match to parent container.
+                  color: const Color.fromRGBO(
+                      0, 0, 0, 0) //background color of inner container
+              ),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
+        child: const Icon(Icons.camera_alt),
         onPressed: () async {
           try {
             final image = await arkitController.snapshot();
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SnapshotPreview(
-                  imageProvider: image,
-                ),
-              ),
+            // await Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //     builder: (context) => SnapshotPreview(
+            //       imageProvider: image,
+            //     ),
+            //   ),
+            // );
+            MaterialPageRoute(
+              builder: (context) => SnapshotPreview(imageProvider: image),
             );
           } catch (e) {
             print(e);
           }
         },
-      ),
-      body: Container(
-        child: ARKitSceneView(onARKitViewCreated: onARKitViewCreated),
       ),
     );
   }
