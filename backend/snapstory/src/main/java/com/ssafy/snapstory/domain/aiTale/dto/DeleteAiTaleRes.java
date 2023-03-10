@@ -1,4 +1,4 @@
-package com.ssafy.snapstory.domain.wordList.dto;
+package com.ssafy.snapstory.domain.aiTale.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DeleteWordRes {
-    private int wordListId;
+public class DeleteAiTaleRes {
+    private int aiTaleId;
 }
+

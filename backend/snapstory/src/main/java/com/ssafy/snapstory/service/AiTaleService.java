@@ -3,6 +3,7 @@ package com.ssafy.snapstory.service;
 import com.ssafy.snapstory.domain.aiTale.AiTale;
 import com.ssafy.snapstory.domain.aiTale.dto.CreateAiTaleReq;
 import com.ssafy.snapstory.domain.aiTale.dto.CreateAiTaleRes;
+import com.ssafy.snapstory.domain.aiTale.dto.DeleteAiTaleRes;
 import com.ssafy.snapstory.domain.aiTale.dto.GetAiTaleRes;
 import com.ssafy.snapstory.domain.user.User;
 import com.ssafy.snapstory.domain.user.dto.CreateUserReq;
@@ -92,7 +93,12 @@ public class AiTaleService {
                 .sound(aiTale.getSound())
                 .build();
         return getAiTaleRes;
+    }
 
-
+    public DeleteAiTaleRes deleteAiTale(int aiTaleId, String userId) {
+        AiTale aiTale = aiTaleRepository.findByUser_UserIdAndAiTaleId(Integer.parseInt(userId), aiTaleId).orElseThrow(AiTaleNotFoundException::new);
+        aiTaleRepository.deleteById((aiTale.getAiTaleId()));
+        DeleteAiTaleRes deleteAiTaleRes = new DeleteAiTaleRes(aiTale.getAiTaleId());
+        return deleteAiTaleRes;
     }
 }
