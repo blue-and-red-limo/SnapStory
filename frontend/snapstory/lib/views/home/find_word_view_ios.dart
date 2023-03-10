@@ -18,9 +18,10 @@ class _ARViewIOSState extends State<ARViewIOS> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
-        title: const Text('Snapshot'),
+        title: const Text('FIND WORD IOS'),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
@@ -42,7 +43,9 @@ class _ARViewIOSState extends State<ARViewIOS> {
       ),
       body: Container(
         child: ARKitSceneView(onARKitViewCreated: onARKitViewCreated),
-      ));
+      ),
+    );
+  }
 
   void onARKitViewCreated(ARKitController arkitController) {
     this.arkitController = arkitController;
