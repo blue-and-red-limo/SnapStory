@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:snapstory/views/home/find_word_view_android.dart';
-import 'package:snapstory/views/home/find_word_view_ios.dart';
+import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/views/home/fairytale_quiz_view.dart';
 
 class Home extends StatelessWidget {
@@ -18,14 +17,9 @@ class Home extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 if (defaultTargetPlatform == TargetPlatform.iOS) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const ARViewIOS()),
-                  );
+                  Navigator.of(context).pushNamed(iOSRoute);
                 } else if (defaultTargetPlatform == TargetPlatform.android) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                        builder: (context) => const ARViewAndroid()),
-                  );
+                  Navigator.of(context).pushNamed(androidRoute);
                 }
               },
               child: Container(

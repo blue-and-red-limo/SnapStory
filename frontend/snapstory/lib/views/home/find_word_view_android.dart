@@ -109,25 +109,33 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FIND WORD ANDROID'),
+        title: const Text('ANDROID'),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.arrow_back_ios_sharp),
+        ),
       ),
       body: Stack(
         children: [
           ArCoreView(onArCoreViewCreated: _onArCoreViewCreated),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.3,
+            top: MediaQuery.of(context).size.height * 0.15,
             left: MediaQuery.of(context).size.width * 0.1,
             child: DottedBorder(
               color: const Color.fromARGB(255, 0, 0, 0),
               //color of dotted/dash line
-              strokeWidth: 3,
+              borderType: BorderType.RRect,
+              radius: const Radius.circular(30),
+              strokeWidth: 2,
               //thickness of dash/dots
               dashPattern: [10, 6],
               //dash patterns, 10 is dash width, 6 is space width
               child: Container(
                   //inner container
                   height: MediaQuery.of(context).size.height *
-                      0.3, //height of inner container
+                      0.6, //height of inner container
                   width: MediaQuery.of(context).size.width *
                       0.8, //width to 100% match to parent container.
                   color: const Color.fromRGBO(
@@ -152,7 +160,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             late CameraController _controller = CameraController(
               // Get a specific camera from the list of available cameras.
               camera, // Define the resolution to use.
-              ResolutionPreset.high,
+              ResolutionPreset.max,
             );
             // Ensure that the camera is initialized.
             await _controller.initialize();

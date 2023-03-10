@@ -1,5 +1,8 @@
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
+import 'package:snapstory/views/home/find_word_view_android.dart';
+import 'package:snapstory/views/home/find_word_view_ios.dart';
+import 'package:snapstory/views/home/home_view.dart';
 import 'package:snapstory/views/login_view.dart';
 import 'package:snapstory/views/main_view.dart';
 import 'package:snapstory/views/register_view.dart';
@@ -21,8 +24,10 @@ void main() {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
         mainRoute: (context) => const MainView(),
-        verifyEmailRoute: (context) => const VerifyEmailView()
-
+        verifyEmailRoute: (context) => const VerifyEmailView(),
+        iOSRoute: (context) => const ARViewIOS(),
+        androidRoute: (context) => const ARViewAndroid(),
+        homeRoute: (context) => const Home(),
       },
     ),
   );
