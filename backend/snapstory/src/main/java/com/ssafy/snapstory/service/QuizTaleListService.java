@@ -23,12 +23,12 @@ public class QuizTaleListService {
     private final QuizTaleRepository quizTaleRepository;
     private final UserRepository userRepository;
 
-    public AddQuizTaleListRes addQuizTaleList(AddQuizTaleListReq addQuizTaleListReq) {
+    public AddQuizTaleListRes addQuizTaleList(AddQuizTaleListReq addQuizTaleListReq, String userId) {
         Optional<QuizTaleList> quizTaleList = quizTaleListRepository.findByQuizTale_QuizTaleId(addQuizTaleListReq.getQuizTaleId());
         AddQuizTaleListRes addQuizTaleListRes;
-        if (!quizTaleList.isPresent()) {
+        if (quizTaleList.isEmpty()) {
             QuizTale quizTale = quizTaleRepository.findById(addQuizTaleListReq.getQuizTaleId()).orElseThrow(QuizTaleNotFoundException::new);
-            User user = userRepository.findById(addQuizTaleListReq.getUserId()).orElseThrow(UserNotFoundException::new);
+            User user = userRepository.findById(Integer.parseInt(userId)).orElseThrow(UserNotFoundException::new);
             QuizTaleList newQuizTaleList = QuizTaleList.builder()
                     .quizTale(quizTale)
                     .user(user)

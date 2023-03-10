@@ -38,10 +38,10 @@ public class AiTaleService {
         List<GetAiTaleRes> getAiTaleResList = new ArrayList<>();
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         //1. 단어장에서 유저 아이디를 이용해서 검색을 한다.
-        Optional<List<WordList>> wordLists = wordListRepository.findAllByUser(user);
+        List<WordList> wordLists = wordListRepository.findAllByUser(user);
         //단어가 있으면, 동화가 있는지를 체크해서 동화가 있으면 리스트에 담아준다.
-        if(wordLists.get().size()>0){
-            for (WordList wordList:wordLists.get()) {
+        if(!wordLists.isEmpty()){
+            for (WordList wordList : wordLists) {
                 Optional<AiTale> aiTale = aiTaleRepository.findByWordList(wordList);
                 if(aiTale.isPresent()){
                     getAiTaleResList.add(GetAiTaleRes.builder().aiTaleId(aiTale.get().getAiTaleId())

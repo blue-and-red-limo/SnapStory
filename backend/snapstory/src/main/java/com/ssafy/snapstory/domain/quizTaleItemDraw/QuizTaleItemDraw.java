@@ -1,7 +1,7 @@
 package com.ssafy.snapstory.domain.quizTaleItemDraw;
 
 import com.ssafy.snapstory.domain.Base;
-import com.ssafy.snapstory.domain.quizTaleItem.QuizTaleItem;
+import com.ssafy.snapstory.domain.quizTaleItemList.QuizTaleItemList;
 import com.ssafy.snapstory.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +21,8 @@ public class QuizTaleItemDraw extends Base {
     private int quizTaleItemDrawId;
 
     @ManyToOne
-    @JoinColumn(name="quizTaleItemId")
-    private QuizTaleItem quizTaleItem;
+    @JoinColumn(name="quizTaleItemListId")
+    private QuizTaleItemList quizTaleItemList;
 
     @ManyToOne
     @JoinColumn(name="userId")

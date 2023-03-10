@@ -21,7 +21,7 @@ public class QuizTaleService {
     private final UserRepository userRepository;
 
     public List<QuizTale> getQuizTalesIncomplete(String userId) {
-            List quizTaleIncomplete = quizTaleRepository.findAll()
+            List<QuizTale> quizTaleIncomplete = quizTaleRepository.findAll()
                     .stream()
                     .filter(quizTale ->
                             quizTaleListRepository.findByUser_UserIdAndQuizTale_QuizTaleId(Integer.parseInt(userId), quizTale.getQuizTaleId()).isEmpty())
@@ -30,7 +30,7 @@ public class QuizTaleService {
     }
 
     public List<QuizTale> getQuizTalesComplete(String userId) {
-        List quizTaleComplete = quizTaleRepository.findAll()
+        List<QuizTale> quizTaleComplete = quizTaleRepository.findAll()
                 .stream()
                 .filter(quizTale ->
                         quizTaleListRepository.findByUser_UserIdAndQuizTale_QuizTaleId(Integer.parseInt(userId), quizTale.getQuizTaleId()).isPresent())

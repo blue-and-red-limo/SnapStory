@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface WordListRepository extends JpaRepository<WordList, Integer> {
-    Optional<List<WordList>> findAllByUser(User user);
+    List<WordList> findAllByUser(User user);
     List<WordList> findAllByUser_UserId(int userId);
-    WordList findByUser_UserIdAndWordListId(int userId, int wordListId);
+    Optional<WordList> findByUser_UserIdAndWordListId(int userId, int wordListId);
     Optional<WordList> findByWord_WordId(int wordId);
 }

@@ -1,7 +1,5 @@
 package com.ssafy.snapstory.domain.quizTaleItem;
 
-import com.ssafy.snapstory.domain.quizTale.QuizTale;
-import com.ssafy.snapstory.domain.quizTaleItemTotal.QuizTaleItemTotal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,11 +17,9 @@ public class QuizTaleItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int quizTaleItemId;
 
-    @ManyToOne
-    @JoinColumn(name="quizTaleId")
-    private QuizTale quizTale;
+    @Column(columnDefinition = "varchar(255) not null")
+    private String itemEng;
 
-    @ManyToOne
-    @JoinColumn(name="quizTaleItemTotalId")
-    private QuizTaleItemTotal quizTaleItemTotal;
+    @Column(columnDefinition = "varchar(255) not null")
+    private String itemKor;
 }

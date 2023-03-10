@@ -1,4 +1,4 @@
-package com.ssafy.snapstory.domain.quizTaleList.dto;
+package com.ssafy.snapstory.domain.quizTaleItemDraw.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AddQuizTaleListReq {
+public class DrawQuizTaleItemRes {
+    private int userId;
     private int quizTaleId;
+    private int quizTaleItemListId;
 }
