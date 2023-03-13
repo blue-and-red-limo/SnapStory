@@ -13,4 +13,5 @@ public class DrawQuizTaleItemRes {
     private int userId;
     private int quizTaleId;
     private int quizTaleItemListId;
+    private boolean complete;
 }
