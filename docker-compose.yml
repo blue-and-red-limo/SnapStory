@@ -18,9 +18,9 @@ services:
       dockerfile: Dockerfile
     restart: on-failure
     ports:
-      - 8080:8080
-    expose:
-      - 8080
+      - 8090:8080
+    # expose:
+    #   - 8080
     depends_on:
       - database
     container_name: springboot

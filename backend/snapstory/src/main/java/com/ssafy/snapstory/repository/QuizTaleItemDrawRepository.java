@@ -4,9 +4,12 @@ import com.ssafy.snapstory.domain.quizTaleItemDraw.QuizTaleItemDraw;
 import com.ssafy.snapstory.domain.quizTaleItemList.QuizTaleItemList;
 import com.ssafy.snapstory.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 public interface QuizTaleItemDrawRepository extends JpaRepository<QuizTaleItemDraw, Integer> {
     Optional<QuizTaleItemDraw> findByUserAndQuizTaleItemList(User user, QuizTaleItemList quizTaleItemList);
+    @Transactional
+    void deleteByQuizTaleItemList(QuizTaleItemList quizTaleItemList);
 }
