@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,7 +20,7 @@ public class FirebaseInitializer {
     public FirebaseApp firebaseApp() throws IOException {
         log.info("Initializing Firebase.");
         FileInputStream serviceAccount =
-                new FileInputStream("src/main/resources/firebase.json");
+                new FileInputStream(new ClassPathResource("firebase.json").getFile());
 
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
