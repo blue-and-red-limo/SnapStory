@@ -18,10 +18,10 @@ public class QuizTaleController {
 
     @GetMapping("/incomplete")
     public ResultResponse<List<QuizTale>> getQuizTalesIncomplete(Authentication authentication) {
-        return ResultResponse.success(quizTaleService.getQuizTalesIncomplete(authentication.getName()));
+        return ResultResponse.success(quizTaleService.getQuizTalesIncomplete(Integer.parseInt(authentication.getName())));
     }
     @GetMapping("/complete")
     public ResultResponse<List<QuizTale>> getQuizTalesComplete(Authentication authentication) {
-        return ResultResponse.success(quizTaleService.getQuizTalesComplete(authentication.getName()));
+        return ResultResponse.success(quizTaleService.getQuizTalesComplete(Integer.parseInt(authentication.getName())));
     }
 }

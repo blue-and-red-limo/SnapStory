@@ -20,21 +20,21 @@ public class WordListController {
     private final WordListService wordListService;
     @GetMapping
     public ResultResponse<List<WordList>> getWordLists(Authentication authentication) {
-        return ResultResponse.success(wordListService.getWordLists(authentication.getName()));
+        return ResultResponse.success(wordListService.getWordLists(Integer.parseInt(authentication.getName())));
     }
 
     @GetMapping("/{wordListId}")
     public ResultResponse<WordList> getWordList(@PathVariable int wordListId, Authentication authentication) {
-        return ResultResponse.success(wordListService.getWordList(wordListId, authentication.getName()));
+        return ResultResponse.success(wordListService.getWordList(wordListId, Integer.parseInt(authentication.getName())));
     }
 
     @PostMapping
     public ResultResponse<AddWordRes> addWordList(@RequestBody AddWordReq addWordReq, Authentication authentication) {
-        return ResultResponse.success(wordListService.addWordList(addWordReq, authentication.getName()));
+        return ResultResponse.success(wordListService.addWordList(addWordReq, Integer.parseInt(authentication.getName())));
     }
 
     @DeleteMapping("/{wordListId}")
     public ResultResponse<DeleteWordRes> deleteWordList(@PathVariable int wordListId, Authentication authentication) {
-        return ResultResponse.success(wordListService.deleteWordList(wordListId, authentication.getName()));
+        return ResultResponse.success(wordListService.deleteWordList(wordListId, Integer.parseInt(authentication.getName())));
     }
 }

@@ -25,8 +25,8 @@ public class QuizTaleItemDrawService {
     private final QuizTaleRepository quizTaleRepository;
     private final UserRepository userRepository;
 
-    public DrawQuizTaleItemRes drawQuizTaleItem(DrawQuizTaleItemReq drawQuizTaleItemReq, String userId) {
-        User user = userRepository.findById(Integer.parseInt(userId)).orElseThrow(UserNotFoundException::new);
+    public DrawQuizTaleItemRes drawQuizTaleItem(DrawQuizTaleItemReq drawQuizTaleItemReq, int userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         QuizTaleItemList quizTaleItemList = quizTaleItemListRepository.findById(drawQuizTaleItemReq.getQuizTaleItemListId()).orElseThrow(QuizTaleItemListNotFoundException::new);
         Optional<QuizTaleItemDraw> quizTaleItemDraw = quizTaleItemDrawRepository.findByUserAndQuizTaleItemList(user, quizTaleItemList);
         DrawQuizTaleItemRes drawQuizTaleItemRes;

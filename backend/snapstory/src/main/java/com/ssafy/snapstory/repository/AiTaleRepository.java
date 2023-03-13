@@ -10,5 +10,4 @@ import java.util.Optional;
 
 public interface AiTaleRepository extends JpaRepository<AiTale, Integer> {
     Optional<AiTale> findByWordList(WordList wordList);
-    Optional<AiTale> findByUser_UserIdAndAiTaleId(int userId, int aiTaleId);
 }
