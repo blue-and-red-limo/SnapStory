@@ -27,21 +27,31 @@ public class WordListService {
     private final WordRepository wordRepository;
 
     public List<WordList> getWordLists(int userId) {
-        List<WordList> wordLists = wordListRepository.findAllByUser_UserId(userId);
-        if (wordLists.isEmpty()) return wordLists;
+        // 유저 상태가 유효한지 확인
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        // 유저의 단어장에 저장된 단어 리스트 조회
+        List<WordList> wordLists = wordListRepository.findAllByUser_UserId(user.getUserId());
+        if (wordLists.size() > 0) return wordLists;
+        // 저장된 단어가 없을 경우
         else throw new WordListNotFoundException();
     }
 
     public WordList getWordList(int wordListId, int userId) {
-        return wordListRepository.findByUser_UserIdAndWordListId(userId, wordListId).orElseThrow(WordNotFoundException::new);
+        // 유저 상태가 유효한지 확인
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        // 유저의 단어장에 해당 단어가 있는지 조회
+        return wordListRepository.findByUser_UserIdAndWordListId(user.getUserId(), wordListId).orElseThrow(WordNotFoundException::new);
     }
 
     public AddWordRes addWordList(AddWordReq addWordReq, int userId) {
-        Optional<WordList> wordList = wordListRepository.findByWord_WordId(addWordReq.getWordId());
+        // 유저 상태가 유효한지 확인
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        // 유저의 단어장에 해당 단어가 있는지 조회
+        Optional<WordList> wordList = wordListRepository.findByUser_UserIdAndWord_WordId(user.getUserId(), addWordReq.getWordId());
         AddWordRes addWordRes;
+        // 해당 단어가 저장되어있지 않은 경우 단어를 단어장에 추가(생성)
         if (wordList.isEmpty()) {
             Word word = wordRepository.findById(addWordReq.getWordId()).orElseThrow(WordNotFoundException::new);
-            User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
             WordList newWordList = WordList.builder()
                     .wordExampleEng(addWordReq.getWordExampleEng())
                     .wordExampleKor(addWordReq.getWordExampleKor())
@@ -59,13 +69,16 @@ public class WordListService {
                     newWordList.getUser()
             );
         } else {
+            // 이미 해당 단어가 저장되어 있는 경우
             throw new WordListDuplicateException();
         }
         return addWordRes;
     }
 
     public DeleteWordRes deleteWordList(int wordListId, int userId) {
-        WordList wordList = wordListRepository.findByUser_UserIdAndWordListId(userId, wordListId).orElseThrow(WordNotFoundException::new);
+        // 유저 상태가 유효한지 확인
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        WordList wordList = wordListRepository.findByUser_UserIdAndWordListId(user.getUserId(), wordListId).orElseThrow(WordNotFoundException::new);
         wordListRepository.deleteById(wordList.getWordListId());
         DeleteWordRes deleteWordRes = new DeleteWordRes(wordList.getWordListId());
         return deleteWordRes;
