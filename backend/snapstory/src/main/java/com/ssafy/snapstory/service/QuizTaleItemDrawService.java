@@ -43,12 +43,14 @@ public class QuizTaleItemDrawService {
             drawQuizTaleItemRes = new DrawQuizTaleItemRes(
                     newQuizTaleItemDraw.getUser().getUserId(),
                     newQuizTaleItemDraw.getQuizTaleItemList().getQuizTale().getQuizTaleId(),
-                    newQuizTaleItemDraw.getQuizTaleItemDrawId()
+                    drawQuizTaleItemReq.getQuizTaleItemListId()
             );
         } else {
             // 완성된 퀴즈 동화 아이템 리스트에 있는 경우
             throw new QuizTaleItemListDuplicateException();
         }
+
+
         return drawQuizTaleItemRes;
     }
 }

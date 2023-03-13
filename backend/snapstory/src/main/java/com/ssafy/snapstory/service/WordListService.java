@@ -31,9 +31,7 @@ public class WordListService {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         // 유저의 단어장에 저장된 단어 리스트 조회
         List<WordList> wordLists = wordListRepository.findAllByUser_UserId(user.getUserId());
-        if (wordLists.size() > 0) return wordLists;
-        // 저장된 단어가 없을 경우
-        else throw new WordListNotFoundException();
+        return wordLists;
     }
 
     public WordList getWordList(int wordListId, int userId) {
