@@ -13,8 +13,12 @@ import 'package:snapstory/views/home/home_view.dart';
 import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:snapstory/views/my_word/my_word_view.dart';
 
+// 나중에 지울 것
+import 'package:snapstory/views/home/temp_button_view.dart';
+
 class MainView extends StatefulWidget {
-  const MainView({Key? key}) : super(key: key);
+  const MainView({Key? key, required this.selectedPage}) : super(key: key);
+  final int selectedPage;
 
   @override
   State<MainView> createState() => _MainViewState();
@@ -28,10 +32,10 @@ class _MainViewState extends State<MainView> {
   String get userName => AuthService.firebase().currentUser!.userName!;
 
   // navigation bar
-  int selectedPos = 0;
+  late int selectedPos;
   double bottomNavBarHeight = 70;
 
-  final List<Widget> _children = [Home(), MyLibrary(), MyWord()];
+  final List<Widget> _children = [Home(), MyLibrary(), TempButton()]; // (Fix) 나중에 TempButton을 MyWord로 바꾸기
 
   // 메인 탭 3개 아이콘
   List<TabItem> tabItems = List.of([
@@ -83,37 +87,45 @@ class _MainViewState extends State<MainView> {
   }
 
   Widget bottomNav() {
-    return CircularBottomNavigation(
-      tabItems,
-      controller: _navigationController,
-      selectedPos: selectedPos,
-      barHeight: bottomNavBarHeight,
-      // use either barBackgroundColor or barBackgroundGradient to have a gradient on bar background
-      barBackgroundColor: Colors.white,
-      // barBackgroundGradient: LinearGradient(
-      //   begin: Alignment.bottomCenter,
-      //   end: Alignment.topCenter,
-      //   colors: [
-      //     Colors.blue,
-      //     Colors.red,
-      //   ],
-      // ),
-      backgroundBoxShadow: <BoxShadow>[
-        BoxShadow(color: Colors.black45, blurRadius: 10.0),
-      ],
-      animationDuration: Duration(milliseconds: 300),
-      selectedCallback: (int? selectedPos) {
-        setState(() {
-          this.selectedPos = selectedPos ?? 0;
-          print(_navigationController.value);
-        });
-      },
+    return ClipRRect(
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(40),
+        topRight: Radius.circular(40),
+      ),
+      child: CircularBottomNavigation(
+        tabItems,
+        controller: _navigationController,
+        selectedPos: selectedPos,
+        barHeight: bottomNavBarHeight,
+        // use either barBackgroundColor or barBackgroundGradient to have a gradient on bar background
+        barBackgroundColor: Colors.white,
+
+        // barBackgroundGradient: LinearGradient(
+        //   begin: Alignment.bottomCenter,
+        //   end: Alignment.topCenter,
+        //   colors: [
+        //     Colors.blue,
+        //     Colors.red,
+        //   ],
+        // ),
+        backgroundBoxShadow: const <BoxShadow>[
+          BoxShadow(color: Colors.black45, blurRadius: 10.0),
+        ],
+        animationDuration: const Duration(milliseconds: 300),
+        selectedCallback: (int? selectedPos) {
+          setState(() {
+            this.selectedPos = selectedPos ?? 0;
+            print(_navigationController.value);
+          });
+        },
+      ),
     );
   }
   @override
   void initState() {
     _notesService = NotesService();
     super.initState();
+    selectedPos = widget.selectedPage;
     _navigationController = CircularBottomNavigationController(selectedPos);
   }
 
