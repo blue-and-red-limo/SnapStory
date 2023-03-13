@@ -25,7 +25,7 @@ services:
       - database
     container_name: springboot
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/antennadb?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/snapstorydb?useSSL=false&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: snapstory401
       TZ: "Asia/Seoul"
@@ -50,7 +50,7 @@ services:
     image: nginx:1.22.1
     restart: always
     volumes:
-      # - ./frontend/conf/:/etc/nginx/conf.d
+      - ./backend/:/etc/nginx/conf.d
       - /etc/letsencrypt:/etc/letsencrypt
     environment:
       TZ: "Asia/Seoul"
