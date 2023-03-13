@@ -20,7 +20,7 @@ public class QuizTaleListController {
 
     @PostMapping
     @ApiOperation(value = "퀴즈 동화 완성", notes = "성공한 퀴즈 동화를 저장")
-    public ResultResponse<AddQuizTaleListRes> addQuizTaleList(@RequestBody AddQuizTaleListReq addQuizTaleListReq, Authentication authentication) {
-        return ResultResponse.success(quizTaleListService.addQuizTaleList(addQuizTaleListReq, Integer.parseInt(authentication.getName())));
+    public ResultResponse<AddQuizTaleListRes> addQuizTaleList(@RequestBody int quizTaleId, Authentication authentication) {
+        return ResultResponse.success(quizTaleListService.addQuizTaleList(quizTaleId, Integer.parseInt(authentication.getName())));
     }
 }
