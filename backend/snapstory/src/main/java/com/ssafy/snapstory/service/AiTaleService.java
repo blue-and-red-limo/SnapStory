@@ -1,20 +1,12 @@
 package com.ssafy.snapstory.service;
 
 import com.ssafy.snapstory.domain.aiTale.AiTale;
-import com.ssafy.snapstory.domain.aiTale.dto.CreateAiTaleReq;
-import com.ssafy.snapstory.domain.aiTale.dto.CreateAiTaleRes;
-import com.ssafy.snapstory.domain.aiTale.dto.DeleteAiTaleRes;
-import com.ssafy.snapstory.domain.aiTale.dto.GetAiTaleRes;
+import com.ssafy.snapstory.domain.aiTale.dto.*;
 import com.ssafy.snapstory.domain.user.User;
-import com.ssafy.snapstory.domain.user.dto.CreateUserReq;
-import com.ssafy.snapstory.domain.user.dto.CreateUserRes;
-import com.ssafy.snapstory.domain.user.dto.DeleteUserRes;
 import com.ssafy.snapstory.domain.wordList.WordList;
 import com.ssafy.snapstory.exception.bad_request.BadAccessException;
 import com.ssafy.snapstory.exception.conflict.AiTaleDuplicateException;
-import com.ssafy.snapstory.exception.conflict.EmailDuplicateException;
 import com.ssafy.snapstory.exception.not_found.AiTaleNotFoundException;
-import com.ssafy.snapstory.exception.not_found.EmailNotFoundException;
 import com.ssafy.snapstory.exception.not_found.UserNotFoundException;
 import com.ssafy.snapstory.exception.not_found.WordListNotFoundException;
 import com.ssafy.snapstory.repository.AiTaleRepository;
@@ -95,8 +87,28 @@ public class AiTaleService {
         return getAiTaleRes;
     }
 
-    public DeleteAiTaleRes deleteAiTale(int aiTaleId, String userId) {
-        AiTale aiTale = aiTaleRepository.findByUser_UserIdAndAiTaleId(Integer.parseInt(userId), aiTaleId).orElseThrow(AiTaleNotFoundException::new);
+    public UpdateAiTaleRes updateAiTale(int aiTaleId, UpdateAiTaleReq updateAiTaleReq, int userId) {
+        //그 동화가 유저가 쓴게 맞는지 확인 -> 동화 조회해서 단어장 인덱스의 유저가 나인지 확인
+        AiTale aiTale = aiTaleRepository.findById(aiTaleId).orElseThrow(AiTaleNotFoundException::new);
+        if(aiTale.getWordList().getUser().getUserId() != userId)
+            throw new BadAccessException();
+        aiTale.setImage(updateAiTaleReq.getImage());
+        aiTaleRepository.save(aiTale);
+        UpdateAiTaleRes updateAiTaleRes = new UpdateAiTaleRes(
+            aiTale.getAiTaleId(),
+            aiTale.getWordList().getWordListId(),
+            aiTale.getContentEng(),
+            aiTale.getContentKor(),
+            updateAiTaleReq.getImage(),
+            aiTale.getSound()
+        );
+        return updateAiTaleRes;
+    }
+
+    public DeleteAiTaleRes deleteAiTale(int aiTaleId, int userId) {
+        AiTale aiTale = aiTaleRepository.findById(aiTaleId).orElseThrow(AiTaleNotFoundException::new);
+        if(aiTale.getWordList().getUser().getUserId() != userId)
+            throw new BadAccessException();
         aiTaleRepository.deleteById((aiTale.getAiTaleId()));
         DeleteAiTaleRes deleteAiTaleRes = new DeleteAiTaleRes(aiTale.getAiTaleId());
         return deleteAiTaleRes;

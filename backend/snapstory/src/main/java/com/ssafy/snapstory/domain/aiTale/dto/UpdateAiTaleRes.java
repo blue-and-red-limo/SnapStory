@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CreateAiTaleRes {
+public class UpdateAiTaleRes {
     private int aiTaleId;
     private int wordListId;
     private String contentEng;

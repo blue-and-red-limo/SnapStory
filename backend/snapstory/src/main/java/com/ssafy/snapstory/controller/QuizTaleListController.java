@@ -17,6 +17,6 @@ public class QuizTaleListController {
 
     @PostMapping
     public ResultResponse<AddQuizTaleListRes> addQuizTaleList(@RequestBody AddQuizTaleListReq addQuizTaleListReq, Authentication authentication) {
-        return ResultResponse.success(quizTaleListService.addQuizTaleList(addQuizTaleListReq, authentication.getName()));
+        return ResultResponse.success(quizTaleListService.addQuizTaleList(addQuizTaleListReq, Integer.parseInt(authentication.getName())));
     }
 }
