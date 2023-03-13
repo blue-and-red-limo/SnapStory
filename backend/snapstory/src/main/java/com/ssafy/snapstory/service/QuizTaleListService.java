@@ -23,29 +23,27 @@ public class QuizTaleListService {
     private final QuizTaleRepository quizTaleRepository;
     private final UserRepository userRepository;
 
-    public AddQuizTaleListRes addQuizTaleList(AddQuizTaleListReq addQuizTaleListReq, int userId) {
+    public AddQuizTaleListRes addQuizTaleList(int quizTaleId, int userId) {
         // 유저 상태가 유효한지 확인
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         // 퀴즈 동화가 해당 유저의 완성된 퀴즈 동화 리스트에 있는지 확인
-        Optional<QuizTaleList> quizTaleList = quizTaleListRepository.findByUser_UserIdAndQuizTale_QuizTaleId(user.getUserId(), addQuizTaleListReq.getQuizTaleId());
-        AddQuizTaleListRes addQuizTaleListRes;
+        Optional<QuizTaleList> quizTaleList = quizTaleListRepository.findByUser_UserIdAndQuizTale_QuizTaleId(user.getUserId(), quizTaleId);
+        AddQuizTaleListRes addQuizTaleListRes = new AddQuizTaleListRes();
         if (quizTaleList.isEmpty()) {
             // 해당 동화가 유효한지 확인
-            QuizTale quizTale = quizTaleRepository.findById(addQuizTaleListReq.getQuizTaleId()).orElseThrow(QuizTaleNotFoundException::new);
+            QuizTale quizTale = quizTaleRepository.findById(quizTaleId).orElseThrow(QuizTaleNotFoundException::new);
             // 완성된 퀴즈 동화에 추가(생성)
             QuizTaleList newQuizTaleList = QuizTaleList.builder()
                     .quizTale(quizTale)
                     .user(user)
                     .build();
             quizTaleListRepository.save(newQuizTaleList);
-            addQuizTaleListRes = new AddQuizTaleListRes(
-                    newQuizTaleList.getQuizTaleListId(),
-                    newQuizTaleList.getQuizTale(),
-                    newQuizTaleList.getUser()
-            );
-        } else {
-            // 이미 완성된 퀴즈 동화 리스트에 있는 경우
-            throw new QuizTaleDuplicateException();
+            addQuizTaleListRes.setQuizTaleListId(newQuizTaleList.getQuizTaleListId());
+            addQuizTaleListRes.setQuizTale(newQuizTaleList.getQuizTale());
+            addQuizTaleListRes.setUser(newQuizTaleList.getUser());
+//        } else {
+//            // 이미 완성된 퀴즈 동화 리스트에 있는 경우
+//            throw new QuizTaleDuplicateException();
         }
         return addQuizTaleListRes;
     }

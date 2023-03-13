@@ -42,7 +42,7 @@ public class QuizTaleItemListService {
         }
         // 퀴즈 성공 여부가 포함된 해당 퀴즈 동화의 퀴즈 동화 아이템 리스트 반환
         DrawQuizTaleItemList drawQuizTaleItemList = new DrawQuizTaleItemList(
-            // 우저 정보
+            // 유저 정보
             user.getUserId(),
             // 퀴즈 동화 정보
             quizTale.getQuizTaleId(),
