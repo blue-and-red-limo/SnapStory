@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Api(value = "AI동화 API", tags = {"AiTale"})
+@Api(value = "AI 동화 API", tags = {"AiTale"})
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${API}/ai-tales")
@@ -26,7 +26,7 @@ public class AiTaleController {
     }
 
     @GetMapping("/{aiTaleId}")
-    @ApiOperation(value = "AI 동화 조회", notes = "AI 동화 조회")
+    @ApiOperation(value = "AI 동화 개별 조회", notes = "AI 동화 개별 조회")
     public ResultResponse<GetAiTaleRes> getAiTale(@PathVariable int aiTaleId, Authentication authentication) {
         return ResultResponse.success(aiTaleService.getAiTale(aiTaleId, Integer.parseInt(authentication.getName())));
     }
