@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface QuizTaleItemListRepository extends JpaRepository<QuizTaleItemList, Integer> {
     List<QuizTaleItemList> findAllByQuizTale(QuizTale quizTale);
+    List<QuizTaleItemList> findAllByQuizTale_QuizTaleId(int quizTaleId);
 }
