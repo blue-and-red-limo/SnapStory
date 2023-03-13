@@ -26,10 +26,14 @@ public class QuizTaleItemDrawService {
     private final UserRepository userRepository;
 
     public DrawQuizTaleItemRes drawQuizTaleItem(DrawQuizTaleItemReq drawQuizTaleItemReq, int userId) {
+        // 유저 상태가 유효한지 확인
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        // 해당 퀴즈 동화의 아이템 리스트 확인
         QuizTaleItemList quizTaleItemList = quizTaleItemListRepository.findById(drawQuizTaleItemReq.getQuizTaleItemListId()).orElseThrow(QuizTaleItemListNotFoundException::new);
+        // 성공 여부를 확인/수정할 완성된 퀴즈 동화 아이템 리스트 불러오기
         Optional<QuizTaleItemDraw> quizTaleItemDraw = quizTaleItemDrawRepository.findByUserAndQuizTaleItemList(user, quizTaleItemList);
         DrawQuizTaleItemRes drawQuizTaleItemRes;
+        // 완성된 퀴즈 동화 아이템 리스트에 없는 경우 추가
         if (quizTaleItemDraw.isEmpty()) {
             QuizTaleItemDraw newQuizTaleItemDraw = QuizTaleItemDraw.builder()
                     .quizTaleItemList(quizTaleItemList)
@@ -42,6 +46,7 @@ public class QuizTaleItemDrawService {
                     newQuizTaleItemDraw.getQuizTaleItemDrawId()
             );
         } else {
+            // 완성된 퀴즈 동화 아이템 리스트에 있는 경우
             throw new QuizTaleItemListDuplicateException();
         }
         return drawQuizTaleItemRes;
