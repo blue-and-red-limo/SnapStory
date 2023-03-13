@@ -16,6 +16,6 @@ public class QuizTaleItemListController {
 
     @GetMapping("/{quizTaleId}")
     public ResultResponse<DrawQuizTaleItemList> getDrawQuizTaleItemList(@PathVariable int quizTaleId, Authentication authentication) {
-        return ResultResponse.success(quizTaleItemListService.getDrawQuizTaleItemList(quizTaleId, authentication.getName()));
+        return ResultResponse.success(quizTaleItemListService.getDrawQuizTaleItemList(quizTaleId, Integer.parseInt(authentication.getName())));
     }
 }
