@@ -17,6 +17,6 @@ public class QuizTaleItemDrawController {
 
     @PostMapping
     public ResultResponse<DrawQuizTaleItemRes> drawQuizTaleItem(@RequestBody DrawQuizTaleItemReq drawQuizTaleItemReq, Authentication authentication) {
-        return ResultResponse.success(quizTaleItemDrawService.drawQuizTaleItem(drawQuizTaleItemReq, authentication.getName()));
+        return ResultResponse.success(quizTaleItemDrawService.drawQuizTaleItem(drawQuizTaleItemReq, Integer.parseInt(authentication.getName())));
     }
 }

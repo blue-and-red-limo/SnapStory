@@ -9,11 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CreateAiTaleRes {
-    private int aiTaleId;
-    private int wordListId;
-    private String contentEng;
-    private String contentKor;
+public class UpdateAiTaleReq {
     private String image;
-    private String sound;
 }

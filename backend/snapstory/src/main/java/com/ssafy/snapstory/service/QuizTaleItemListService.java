@@ -22,8 +22,8 @@ public class QuizTaleItemListService {
     private final QuizTaleRepository quizTaleRepository;
     private final UserRepository userRepository;
 
-    public DrawQuizTaleItemList getDrawQuizTaleItemList(int quizTaleId, String userId) {
-        User user = userRepository.findById(Integer.parseInt(userId)).orElseThrow(UserNotFoundException::new);
+    public DrawQuizTaleItemList getDrawQuizTaleItemList(int quizTaleId, int userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         QuizTale quizTale = quizTaleRepository.findById(quizTaleId).orElseThrow(QuizTaleNotFoundException::new);
         List<QuizTaleItemList> quizTaleItemLists = quizTaleItemListRepository.findAllByQuizTale(quizTale);
         List<DrawQuizTaleItem> drawQuizTaleItems = new ArrayList<>();
