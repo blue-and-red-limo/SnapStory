@@ -1,0 +1,62 @@
+services:
+  database:
+    container_name: mysql
+    image: mysql:8.0.30
+    ports:
+      - 4444:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: snapstory401
+      MYSQL_DATABASE: snapstorydb
+      TZ: "Asia/Seoul"
+    restart: unless-stopped
+    volumes:
+      - /snapstory-data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend/snapstory/
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - 8080:8080
+    expose:
+      - 8080
+    depends_on:
+      - database
+    container_name: springboot
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/antennadb?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: snapstory401
+      TZ: "Asia/Seoul"
+  
+  # frontend:
+  #   build:
+  #     context: ./frontend/
+  #     dockerfile: Dockerfile
+  #   restart: on-failure
+  #   container_name: react
+  #   environment:
+  #     TZ: "Asia/Seoul"
+  #   ports:
+  #     - 3000:3000
+  #   expose:
+  #     - 3000
+  #   depends_on:
+  #     - backend
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.22.1
+    restart: always
+    volumes:
+      # - ./frontend/conf/:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt
+    environment:
+      TZ: "Asia/Seoul"
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - backend
+      # - frontend

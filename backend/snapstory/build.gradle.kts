@@ -27,7 +27,10 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
-	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+//	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE")
+	implementation("io.springfox:springfox-boot-starter:3.0.0")
+	implementation("io.springfox:springfox-swagger-ui:3.0.0")
+	implementation ("com.google.firebase:firebase-admin:9.1.1")
 }
 
 tasks.withType<Test> {
