@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +63,7 @@ class _LoginViewState extends State<LoginView> {
                   password: password,
                 );
                 final user = AuthService.firebase().currentUser;
+                print(await FirebaseAuth.instance.currentUser?.getIdToken());
                 if (user?.isEmailVerified ?? false) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     mainRoute,

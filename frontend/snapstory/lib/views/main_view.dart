@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
 import 'package:snapstory/services/crud/notes_service.dart';
 import 'package:flutter/material.dart';
+import 'package:snapstory/services/crud/user_service.dart';
+import 'package:snapstory/utilities/show_error_dialog.dart';
 import 'package:snapstory/views/onboarding.dart';
 
 import '../constants/routes.dart';
@@ -22,9 +24,9 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  late final NotesService _notesService;
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late final UserService _userService;
 
   // user 정보 받아오기
   String get userEmail => AuthService.firebase().currentUser!.email!;
@@ -113,9 +115,9 @@ class _MainViewState extends State<MainView> {
 
   @override
   void initState() {
-    _notesService = NotesService();
     _email = TextEditingController();
     _password = TextEditingController();
+    _userService = UserService();
     super.initState();
     _navigationController = CircularBottomNavigationController(selectedPos);
   }
@@ -124,7 +126,6 @@ class _MainViewState extends State<MainView> {
   void dispose() {
     _email.dispose();
     _password.dispose();
-    _notesService.close();
     super.dispose();
   }
 
@@ -256,6 +257,8 @@ class _MainViewState extends State<MainView> {
             TextField(controller: _password),
             TextButton(
               onPressed: () async {
+                bool result = await _userService.deleteUser(token: await FirebaseAuth.instance.currentUser!.getIdToken());
+                if (!result) await showErrorDialog(context, "DB ERROR");
                 await AuthService.firebase().deleteUser(email: _email.text, password: _password.text);
                 Navigator.of(context).pop(true);
               },

@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:native_screenshot/native_screenshot.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 class ARViewAndroid extends StatefulWidget {
   const ARViewAndroid({Key? key}) : super(key: key);
@@ -16,19 +17,26 @@ class ARViewAndroid extends StatefulWidget {
 class _ARViewAndroidState extends State<ARViewAndroid> {
   late ArCoreController arCoreController;
   late bool checked = false;
+  late FlutterTts flutterTts;
+
+  @override
+  void initState() {
+    flutterTts = FlutterTts();
+    flutterTts.setLanguage("en-US");
+    flutterTts.setSpeechRate(0.5); //speed of speech
+    flutterTts.setVolume(1.0); //volume of speech
+    flutterTts.setPitch(1); //pitc of sound
+    super.initState();
+  }
+
+  Future<int> makeSound({required String text})async {
+    return await flutterTts.speak("Hello World, this is Flutter Campus.");
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ANDROID'),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios_sharp),
-        ),
-      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Stack(
         children: [
           ArCoreView(
@@ -48,7 +56,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                   radius: const Radius.circular(30),
                   strokeWidth: 2,
                   //thickness of dash/dots
-                  dashPattern: [10, 6],
+                  dashPattern: const [10, 6],
                   //dash patterns, 10 is dash width, 6 is space width
                   child: Container(
                       //inner container
@@ -62,22 +70,98 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                 ),
               ),
             ),
-          if (checked) const Text('TAP'),
+          if (checked)
+            Positioned(
+              top: MediaQuery.of(context).size.height * 0.6,
+              left: MediaQuery.of(context).size.width * 0.15,
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () async => await makeSound(text: 'text'),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(23),
+                            color: const Color(0xffffdb1f),
+                          ),
+                          child: const Center(child: Text('1')),
+                        ),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(23),
+                          color: const Color(0xff86EC62),
+                        ),
+                        child: const Center(child: Text('2')),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(23),
+                          color: const Color(0xff86EC62),
+                        ),
+                        child: const Center(child: Text('3')),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(23),
+                          color: const Color(0xffffdb1f),
+                        ),
+                        child: const Center(child: Text('4')),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.85,
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(23),
+                  topRight: Radius.circular(23),
+                ),
+                color: Color(0xFFFFB628),
+              ),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.15,
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.05,
+            left: MediaQuery.of(context).size.width * 0.8,
+            child: IconButton(
+              alignment: Alignment.bottomRight,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.exit_to_app_outlined),
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.camera_alt), // Provide an onPressed callback.
         onPressed: () async {
           String? path = await NativeScreenshot.takeScreenshot();
-          await Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => DisplayPictureScreen(
-                // Pass the automatically generated path to
-                // the DisplayPictureScreen widget.
-                imagePath: path!,
-              ),
-            ),
-          );
+          _addSphere(arCoreController);
         },
       ),
     );
@@ -87,13 +171,29 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     arCoreController = controller;
     arCoreController?.onNodeTap = (name) => onTapHandler(name);
 
-    _addSphere(arCoreController);
-    _addCylindre(arCoreController);
-    _addCube(arCoreController);
+    // _addSphere(arCoreController);
+    // _addCylindre(arCoreController);
+    // _addCube(arCoreController);
+  }
+
+  void _addNode(ArCoreController controller, String name) {
+    final material =
+        ArCoreMaterial(color: const Color.fromARGB(120, 66, 134, 244));
+    final sphere = ArCoreSphere(
+      materials: [material],
+      radius: 0.1,
+    );
+    final node = ArCoreNode(
+      name: name,
+      shape: sphere,
+      position: Vector3(0, 0, 1),
+    );
+    controller.addArCoreNode(node);
   }
 
   void _addSphere(ArCoreController controller) {
-    final material = ArCoreMaterial(color: Color.fromARGB(120, 66, 134, 244));
+    final material =
+        ArCoreMaterial(color: const Color.fromARGB(120, 66, 134, 244));
     final sphere = ArCoreSphere(
       materials: [material],
       radius: 0.1,
@@ -126,24 +226,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
 
   void _addCube(ArCoreController controller) {
     final material = ArCoreMaterial(
-      color: Color.fromARGB(120, 66, 134, 244),
-      metallic: 1.0,
-    );
-    final cube = ArCoreCube(
-      materials: [material],
-      size: Vector3(0.5, 0.5, 0.5),
-    );
-    final node = ArCoreNode(
-      name: 'cube',
-      shape: cube,
-      position: Vector3(-0.5, 0.5, -3.5),
-    );
-    controller.addArCoreNode(node);
-  }
-
-  void _addText(ArCoreController controller) {
-    final material = ArCoreMaterial(
-      color: Color.fromARGB(120, 66, 134, 244),
+      color: const Color.fromARGB(120, 66, 134, 244),
       metallic: 1.0,
     );
     final cube = ArCoreCube(
