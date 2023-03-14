@@ -315,6 +315,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_tts:
+    dependency: "direct main"
+    description:
+      name: flutter_tts
+      sha256: e91ad17793ad12cca9c3066accf99ceb353bf0355ad06b767176f178b5c428f6
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.6.3"
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -437,6 +445,14 @@ packages:
     description:
       name: openai_dalle_wrapper
       sha256: de4ff9f94eed4f2677c11fdadea64ac1b094cc971aff166b55674b1dd95f57c7
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
+  native_screenshot:
+    dependency: "direct main"
+    description:
+      name: native_screenshot
+      sha256: dcdf119136be2ad3e52fafb38bad12f30e2acdbbe25b683e29e9129d52b44100
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
