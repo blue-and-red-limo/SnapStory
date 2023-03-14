@@ -53,7 +53,6 @@ public class WordListService {
             WordList newWordList = WordList.builder()
                     .wordExampleEng(addWordReq.getWordExampleEng())
                     .wordExampleKor(addWordReq.getWordExampleKor())
-                    .wordExampleSound(addWordReq.getWordExampleSound())
                     .word(word)
                     .user(user)
                     .build();
@@ -62,7 +61,6 @@ public class WordListService {
                     newWordList.getWordListId(),
                     newWordList.getWordExampleEng(),
                     newWordList.getWordExampleKor(),
-                    newWordList.getWordExampleSound(),
                     newWordList.getWord(),
                     newWordList.getUser()
             );

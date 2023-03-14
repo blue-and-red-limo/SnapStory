@@ -35,7 +35,9 @@ public class QuizTaleItemListService {
             drawQuizTaleItems.add(new DrawQuizTaleItem(
                 quizTaleItemList.getQuizTaleItemListId(),
                 quizTaleItemList.getQuizTaleItem().getItemEng(),
-                quizTaleItemList.getQuizTaleItem().getItemKor(),
+                quizTaleItemList.getQuizTaleItem().getImageBlack(),
+                quizTaleItemList.getQuizTaleItem().getImageColor(),
+
                 // 퀴즈 성공 여부
                 quizTaleItemDrawRepository.findByUserAndQuizTaleItemList(user, quizTaleItemList).isPresent()
             ));

@@ -15,5 +15,4 @@ public class CreateAiTaleRes {
     private String contentEng;
     private String contentKor;
     private String image;
-    private String sound;
 }

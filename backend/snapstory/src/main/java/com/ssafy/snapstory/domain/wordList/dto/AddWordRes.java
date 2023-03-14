@@ -15,7 +15,6 @@ public class AddWordRes {
     private int wordListId;
     private String wordExampleEng;
     private String wordExampleKor;
-    private String wordExampleSound;
     private Word word;
     private User user;
 }
