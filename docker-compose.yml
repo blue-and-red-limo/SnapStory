@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
     volumes:
       - /snapstory-data:/var/lib/mysql
-
+      - /snapstory-data/initdb.d:/docker-entrypoint-initdb.d
   backend:
     build:
       context: ./backend/snapstory/
