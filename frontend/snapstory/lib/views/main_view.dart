@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
 import 'package:snapstory/services/crud/notes_service.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,8 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView> {
   late final NotesService _notesService;
+  late final TextEditingController _email;
+  late final TextEditingController _password;
 
   // user 정보 받아오기
   String get userEmail => AuthService.firebase().currentUser!.email!;
@@ -58,9 +61,7 @@ class _MainViewState extends State<MainView> {
       ),
     ),
     TabItem(
-      Icons.menu_book,
-      "나만의 단어장",
-      const Color.fromRGBO(255, 182, 40, 1.0),
+      Icons.menu_book, "나만의 단어장", const Color.fromRGBO(255, 182, 40, 1.0),
       labelStyle: const TextStyle(
         color: Colors.orange,
         fontWeight: FontWeight.bold,
@@ -71,9 +72,7 @@ class _MainViewState extends State<MainView> {
 
   late CircularBottomNavigationController _navigationController;
 
-
   Widget bodyContainer() {
-
     return GestureDetector(
       child: _children.elementAt(selectedPos),
       // onTap: () {
@@ -121,9 +120,12 @@ class _MainViewState extends State<MainView> {
       ),
     );
   }
+
   @override
   void initState() {
     _notesService = NotesService();
+    _email = TextEditingController();
+    _password = TextEditingController();
     super.initState();
     selectedPos = widget.selectedPage;
     _navigationController = CircularBottomNavigationController(selectedPos);
@@ -131,6 +133,8 @@ class _MainViewState extends State<MainView> {
 
   @override
   void dispose() {
+    _email.dispose();
+    _password.dispose();
     _notesService.close();
     super.dispose();
   }
@@ -143,10 +147,9 @@ class _MainViewState extends State<MainView> {
           color: Colors.white,
         ),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(30),
-          )
-        ),
+            borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(30),
+        )),
         actions: [
           IconButton(
             onPressed: () {
@@ -156,77 +159,74 @@ class _MainViewState extends State<MainView> {
             },
             icon: const Icon(Icons.help_outline),
           ),
-          PopupMenuButton<MenuAction>(
-            onSelected: (value) async {
-              switch (value) {
-                case MenuAction.logout:
-                  final shouldLogout = await showLogoutDialog(context);
-                  if (shouldLogout) {
-                    await AuthService.firebase().logout();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      loginRoute,
-                      (_) => false,
-                    );
-                  }
-              }
-            },
-            itemBuilder: (context) {
-              return const [
-                PopupMenuItem<MenuAction>(
-                  value: MenuAction.logout,
-                  child: Text('SIGN OUT'),
-                ),
-              ];
-            },
-          )
         ],
       ),
       drawer: Drawer(
-          child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            currentAccountPicture: const CircleAvatar(
-              backgroundColor: Colors.white,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              currentAccountPicture: const CircleAvatar(
+                backgroundColor: Colors.white,
+              ),
+              accountName: Text('$userName 보호자님 안녕하세요.'),
+              accountEmail: Text(userEmail),
+              decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 255, 182, 40),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(40.0),
+                    bottomRight: Radius.circular(40.0),
+                  )),
             ),
-            accountName: Text('$userName 보호자님 안녕하세요.'),
-            accountEmail: Text(userEmail),
-            decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 255, 182, 40),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(40.0),
-                  bottomRight: Radius.circular(40.0),
-                )),
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.headphones,
-              color: Colors.grey[850],
+            ListTile(
+              leading: Icon(
+                Icons.headphones,
+                color: Colors.grey[850],
+              ),
+              title: const Text('소리설정'),
+              onTap: () {
+                print('소리설정 is clicked');
+              },
             ),
-            title: const Text('소리설정'),
-            onTap: () {
-              print('소리설정 is clicked');
-            },
-          ),
-          ListTile(
-            leading: Icon(
-              Icons.logout_rounded,
-              color: Colors.grey[850],
-            ),
-            title: const Text('로그아웃/탈퇴'),
-            onTap: () {
-              print('로그아웃/탈퇴 is clicked');
-            },
-          )
-        ],
-      )),
+            ListTile(
+              leading: Icon(
+                Icons.logout_rounded,
+                color: Colors.grey[850],
+              ),
+              title: const Text('로그아웃/탈퇴'),
+              onTap: () async {
+                print('로그아웃/탈퇴 is clicked');
+                final shouldLogout = await showLogoutDialog(context);
+                if (shouldLogout) {
+                  await AuthService.firebase().logout();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    loginRoute,
+                    (_) => false,
+                  );
+                } else {
+                  final shouldDelete = await showDeleteDialog(context);
+                  if(shouldDelete) {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      loginRoute,
+                          (_) => false,
+                    );
+                  }
+                }
+              },
+            )
+          ],
+        ),
+      ),
       body: Stack(
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(bottom: bottomNavBarHeight),
             child: bodyContainer(),
           ),
-          Align(alignment: Alignment.bottomCenter, child: bottomNav())
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: bottomNav(),
+          )
         ],
       ),
     );
@@ -255,6 +255,35 @@ class _MainViewState extends State<MainView> {
   //   },
   // ),
 
+  Future<bool> showDeleteDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('SIGN OUT'),
+          content: const Text('YOU SURE YOU WANNA DELETE YOUR ACCOUNT'),
+          actions: [
+            TextField(controller: _email),
+            TextField(controller: _password),
+            TextButton(
+              onPressed: () async {
+                await AuthService.firebase().deleteUser(email: _email.text, password: _password.text);
+                Navigator.of(context).pop(true);
+              },
+              child: const Text('DELETE'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text('CANCEL'),
+            ),
+          ],
+        );
+      },
+    ).then((value) => value ?? false);
+  }
+
   Future<bool> showLogoutDialog(BuildContext context) {
     return showDialog<bool>(
       context: context,
@@ -273,7 +302,7 @@ class _MainViewState extends State<MainView> {
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text('CANCEL'),
+              child: const Text('DELETE'),
             ),
           ],
         );

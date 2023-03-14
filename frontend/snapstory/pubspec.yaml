@@ -45,6 +45,10 @@ dependencies:
   openai_dalle_wrapper: ^1.0.0
   openai_client: ^0.0.7
   carousel_slider: ^4.2.1
+  arkit_plugin: ^1.0.5
+  arcore_flutter_plugin: ^0.1.0
+  camera: ^0.10.3+2
+  dotted_border: ^2.0.0+3
 
 dev_dependencies:
   flutter_test:

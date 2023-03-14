@@ -1,5 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:snapstory/views/home/find_word_view.dart';
+import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/views/home/fairytale_quiz_view.dart';
 
 class Home extends StatelessWidget {
@@ -15,9 +16,11 @@ class Home extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const FindWord()),
-                );
+                if (defaultTargetPlatform == TargetPlatform.iOS) {
+                  Navigator.of(context).pushNamed(iOSRoute);
+                } else if (defaultTargetPlatform == TargetPlatform.android) {
+                  Navigator.of(context).pushNamed(androidRoute);
+                }
               },
               child: Container(
                   width: 277,
@@ -32,7 +35,8 @@ class Home extends StatelessWidget {
             GestureDetector(
               onTap: () {
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const FairyTaleQuiz()),
+                  MaterialPageRoute(
+                      builder: (context) => const FairyTaleQuiz()),
                 );
               },
               child: Container(
@@ -44,8 +48,6 @@ class Home extends StatelessWidget {
                   ),
                   child: const Center(child: Text("동화 퀴즈"))),
             ),
-            
-            
           ],
         )));
   }
