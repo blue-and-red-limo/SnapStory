@@ -15,5 +15,4 @@ public class UpdateAiTaleRes {
     private String contentEng;
     private String contentKor;
     private String image;
-    private String sound;
 }

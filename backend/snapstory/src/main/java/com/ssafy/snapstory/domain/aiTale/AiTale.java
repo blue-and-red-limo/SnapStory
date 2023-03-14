@@ -28,9 +28,6 @@ public class AiTale extends Base {
     @Column(columnDefinition = "varchar(255) default null")
     private String image;
 
-    @Column(columnDefinition = "varchar(255) default null")
-    private String sound;
-
     @ManyToOne
     @JoinColumn(name="wordListId")
     private WordList wordList;

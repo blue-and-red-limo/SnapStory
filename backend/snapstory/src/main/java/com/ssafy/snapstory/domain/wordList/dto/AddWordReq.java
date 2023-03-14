@@ -12,6 +12,5 @@ import lombok.NoArgsConstructor;
 public class AddWordReq {
     private String wordExampleEng;
     private String wordExampleKor;
-    private String wordExampleSound;
     private int wordId;
 }

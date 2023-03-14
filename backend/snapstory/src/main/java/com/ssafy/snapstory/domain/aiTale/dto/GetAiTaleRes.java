@@ -21,5 +21,4 @@ public class GetAiTaleRes {
 
     private String image;
 
-    private String sound;
 }
