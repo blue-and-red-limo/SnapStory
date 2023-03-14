@@ -29,7 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         @Override
     public void configure(HttpSecurity http) throws Exception {
             http.csrf().disable().cors();
-            http.authorizeRequests().antMatchers("/swagger-resources/**").permitAll();
+            http.authorizeRequests().antMatchers( "/swagger-resources", "/configuration/security",
+                    "/swagger-ui.html", "/webjars/**","/swagger/**","/configuration/ui","/resources/**","/swagger-ui/**","/api/v1/users","/swagger-resources/**","/v3/api-docs").permitAll();
             http.authorizeRequests()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(new FirebaseTokenFilter(userDetailsService, firebaseAuth,userRepository),
