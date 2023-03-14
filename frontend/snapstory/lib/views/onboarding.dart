@@ -13,24 +13,24 @@ class OnBoardingPage extends StatelessWidget {
         PageViewModel(
             title: '',
             body: 'tutorial 1',
-            image: Image.asset('images/mainImage.png'),
+            image: Image.asset('assets/mainImage.png'),
             decoration: getPageDecoration()
         ),
         PageViewModel(
             title: '',
             body: 'tutorial 2',
-            image: Image.asset('images/mainImage.png'),
+            image: Image.asset('assets/mainImage.png'),
             decoration: getPageDecoration()
         ), PageViewModel(
             title: '',
             body: 'tutorial 3',
-            image: Image.asset('images/mainImage.png'),
+            image: Image.asset('assets/mainImage.png'),
             decoration: getPageDecoration()
         ),
         PageViewModel(
             title: '',
             body: 'tutorial 4',
-            image: Image.asset('images/mainImage.png'),
+            image: Image.asset('assets/mainImage.png'),
             decoration: getPageDecoration()
         ),
 
