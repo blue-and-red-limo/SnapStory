@@ -26,9 +26,6 @@ public class WordList extends Base {
     @Column(columnDefinition = "varchar(255) not null")
     private String wordExampleKor;
 
-    @Column(columnDefinition = "varchar(255) default null")
-    private String wordExampleSound;
-
     @ManyToOne
     @JoinColumn(name="userId")
     private User user;

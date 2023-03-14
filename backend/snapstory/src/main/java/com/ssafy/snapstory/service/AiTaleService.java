@@ -41,7 +41,7 @@ public class AiTaleService {
                                     .wordEng(wordList.getWord().getWordEng())
                                     .wordKor(wordList.getWord().getWordKor())
                             .contentEng(aiTale.get().getContentEng()).contentKor(aiTale.get().getContentKor())
-                            .image(aiTale.get().getImage()).sound(aiTale.get().getSound()).build());
+                            .image(aiTale.get().getImage()).build());
                 }
             }
         }
@@ -62,11 +62,10 @@ public class AiTaleService {
                 .contentEng(createAiTaleReq.getContentEng())
                 .contentKor(createAiTaleReq.getContentKor())
                 .image(createAiTaleReq.getImage())
-                .sound(createAiTaleReq.getSound())
                 .wordList(wordListRepository.findById(createAiTaleReq.getWordListId()).orElseThrow(WordListNotFoundException::new))
                 .build();
         aiTaleRepository.save(aiTale);
-        CreateAiTaleRes createAiTaleRes = new CreateAiTaleRes(aiTale.getAiTaleId(), aiTale.getWordList().getWordListId(), aiTale.getContentEng(), aiTale.getContentKor(), aiTale.getImage(), aiTale.getSound());
+        CreateAiTaleRes createAiTaleRes = new CreateAiTaleRes(aiTale.getAiTaleId(), aiTale.getWordList().getWordListId(), aiTale.getContentEng(), aiTale.getContentKor(), aiTale.getImage());
         return createAiTaleRes;
     }
 
@@ -84,7 +83,6 @@ public class AiTaleService {
                 .contentEng(aiTale.getContentEng())
                 .contentKor(aiTale.getContentKor())
                 .image(aiTale.getImage())
-                .sound(aiTale.getSound())
                 .build();
         return getAiTaleRes;
     }
@@ -102,8 +100,7 @@ public class AiTaleService {
             aiTale.getWordList().getWordListId(),
             aiTale.getContentEng(),
             aiTale.getContentKor(),
-            updateAiTaleReq.getImage(),
-            aiTale.getSound()
+            updateAiTaleReq.getImage()
         );
         return updateAiTaleRes;
     }

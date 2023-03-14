@@ -21,5 +21,8 @@ public class QuizTaleItem {
     private String itemEng;
 
     @Column(columnDefinition = "varchar(255) not null")
-    private String itemKor;
+    private String imageBlack;
+
+    @Column(columnDefinition = "varchar(255) not null")
+    private String imageColor;
 }

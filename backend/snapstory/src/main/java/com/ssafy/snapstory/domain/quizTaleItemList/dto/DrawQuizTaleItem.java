@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class DrawQuizTaleItem {
     private int itemId;
     private String itemEng;
-    private String itemKor;
+    private String imageBlack;
+    private String imageColor;
     private boolean draw;
 }

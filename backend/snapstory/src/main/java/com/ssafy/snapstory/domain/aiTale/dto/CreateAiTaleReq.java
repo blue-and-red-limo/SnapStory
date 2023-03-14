@@ -16,6 +16,4 @@ public class CreateAiTaleReq {
     private String contentKor;
 
     private String image;
-
-    private String sound;
 }

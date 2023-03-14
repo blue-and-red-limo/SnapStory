@@ -29,9 +29,7 @@ public class Word {
     @Column(columnDefinition = "varchar(255) not null")
     private String wordExplanationKor;
 
-    @Column(columnDefinition = "varchar(255) default null")
-    private String wordSound;
+    @Column(columnDefinition = "varchar(255) not null")
+    private String image;
 
-    @Column(columnDefinition = "varchar(255) default null")
-    private String wordExplanationSound;
 }
