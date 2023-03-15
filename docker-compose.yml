@@ -39,7 +39,7 @@ services:
   #     - 8800:8080
   #   environment:
   #     TZ: "Asia/Seoul"
-  
+
   # frontend:
   #   build:
   #     context: ./frontend/
@@ -69,5 +69,5 @@ services:
       - 443:443
     depends_on:
       - backend
-      - fastapi
+      # - fastapi
       # - frontend
