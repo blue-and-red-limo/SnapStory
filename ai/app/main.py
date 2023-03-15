@@ -15,12 +15,12 @@ class PredictionOut(BaseModel):
     language: str
 
 
-@app.get("/")
+@app.get("/ai")
 def home():
     return {"health_check": "OK", "model_version": model_version}
 
 
-@app.post("/predict", response_model=PredictionOut)
+@app.post("/ai/predict", response_model=PredictionOut)
 def predict(payload: TextIn):
     language = predict_pipeline(payload.text)
     return {"language": language}
