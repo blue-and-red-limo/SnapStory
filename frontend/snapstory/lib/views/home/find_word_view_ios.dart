@@ -66,6 +66,7 @@ class _ARViewIOSState extends State<ARViewIOS> {
         child: const Icon(Icons.camera_alt),
         onPressed: () async {
           String? path = await NativeScreenshot.takeScreenshot();
+          print(path!);
           MaterialPageRoute(
             builder: (context) => DisplayPictureScreen(imagePath: path!),
           );

@@ -47,5 +47,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+    <string>Take pretty screenshots and save it to the PhotoLibrary.</string>
 </dict>
 </plist>
