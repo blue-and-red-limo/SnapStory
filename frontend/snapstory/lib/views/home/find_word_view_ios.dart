@@ -4,6 +4,7 @@ import 'package:arkit_plugin/arkit_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:native_screenshot/native_screenshot.dart';
+import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:snapstory/utilities/ar_helper.dart';
 
 class ARViewIOS extends StatefulWidget {
@@ -15,6 +16,13 @@ class ARViewIOS extends StatefulWidget {
 
 class _ARViewIOSState extends State<ARViewIOS> {
   late ARKitController arkitController;
+  late ARAIService _araiService;
+
+  @override
+  void initState() {
+    super.initState();
+    _araiService = ARAIService();
+  }
 
   @override
   void dispose() {
@@ -67,6 +75,7 @@ class _ARViewIOSState extends State<ARViewIOS> {
         onPressed: () async {
           String? path = await NativeScreenshot.takeScreenshot();
           print(path!);
+          _araiService.postPictureAndGetWord(path: path);
           MaterialPageRoute(
             builder: (context) => DisplayPictureScreen(imagePath: path!),
           );
