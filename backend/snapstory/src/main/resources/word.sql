@@ -1,4 +1,4 @@
-insert into MY_TABLE (word_id, image, word_eng, word_explanation_eng, word_explanation_kor, word_kor)
+insert into snapstorydb.word (word_id, image, word_eng, word_explanation_eng, word_explanation_kor, word_kor)
 values  (1, 'assets/airplane.png', 'airplane', 'a powered flying vehicle with fixed wings and a weight greater than that of the air it displaces', '날개가 고정된 동력을 이용하여 공중에서 비행하는 탈것으로, 주로 대기 중의 공기보다 무거운 무게를 가지고 있음', '비행기'),
         (2, 'assets/apple.png', 'apple', 'a round fruit with red, yellow, or green skin and firm white flesh', '껍질이 빨강, 노랑, 초록이고 과육이 단단하고 하얀 둥근 과일', '사과'),
         (3, 'assets/ball.png', 'ball', 'a usually round object that is used in a game or sport or as a toy', '게임, 스포츠 또는 장난감으로 사용되는 보통 둥근 물체', '공'),
