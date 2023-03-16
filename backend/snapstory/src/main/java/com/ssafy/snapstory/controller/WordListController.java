@@ -5,6 +5,7 @@ import com.ssafy.snapstory.domain.wordList.WordList;
 import com.ssafy.snapstory.domain.wordList.dto.AddWordReq;
 import com.ssafy.snapstory.domain.wordList.dto.AddWordRes;
 import com.ssafy.snapstory.domain.wordList.dto.DeleteWordRes;
+import com.ssafy.snapstory.domain.wordList.dto.GetWordRes;
 import com.ssafy.snapstory.service.WordListService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,14 +24,15 @@ public class WordListController {
     private final WordListService wordListService;
     @GetMapping
     @ApiOperation(value = "단어장 전체 조회", notes = "단어장 전체 조회해서 리스트로 반환")
-    public ResultResponse<List<WordList>> getWordLists(Authentication authentication) {
+    public ResultResponse<List<GetWordRes>> getWordLists(Authentication authentication) {
         return ResultResponse.success(wordListService.getWordLists(Integer.parseInt(authentication.getName())));
     }
 
-    @GetMapping("/{wordListId}")
+    @GetMapping("/{word}")
     @ApiOperation(value = "단어장 개별 단어 조회", notes = "단어장 개별 단어 조회")
-    public ResultResponse<WordList> getWordList(@PathVariable int wordListId, Authentication authentication) {
-        return ResultResponse.success(wordListService.getWordList(wordListId, Integer.parseInt(authentication.getName())));
+    public ResultResponse<GetWordRes> getWordList(@PathVariable String word, Authentication authentication) {
+        System.out.println(word);
+        return ResultResponse.success(wordListService.getWordList(word, Integer.parseInt(authentication.getName())));
     }
 
     @PostMapping
