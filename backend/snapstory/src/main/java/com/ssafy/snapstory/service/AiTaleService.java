@@ -56,7 +56,7 @@ public class AiTaleService {
         //유저 있는지 확인
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         //해당 단어가 유저의 단어장에 있는지 체크
-        WordList wordList = wordListRepository.findByUser_UserIdAndWordListId(userId, createAiTaleReq.getWordListId()).orElseThrow(WordListNotFoundException::new);
+        WordList wordList = wordListRepository.findByUser_UserIdAndWord_WordEng(userId, createAiTaleReq.getWord()).orElseThrow(WordListNotFoundException::new);
         //이미 단어장으로 생성된 동화가 있는지 체크
         Optional<AiTale> temp = aiTaleRepository.findByWordList(wordList);
         if (temp.isPresent())
@@ -66,7 +66,7 @@ public class AiTaleService {
                 .contentEng(createAiTaleReq.getContentEng())
                 .contentKor(createAiTaleReq.getContentKor())
                 .image(createAiTaleReq.getImage())
-                .wordList(wordListRepository.findById(createAiTaleReq.getWordListId()).orElseThrow(WordListNotFoundException::new))
+                .wordList(wordList)
                 .build();
         aiTaleRepository.save(aiTale);
         CreateAiTaleRes createAiTaleRes = new CreateAiTaleRes(aiTale.getAiTaleId(), aiTale.getWordList().getWordListId(), aiTale.getContentEng(), aiTale.getContentKor(), aiTale.getImage());
