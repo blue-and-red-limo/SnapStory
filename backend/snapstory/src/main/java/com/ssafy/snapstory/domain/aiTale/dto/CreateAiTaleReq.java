@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class CreateAiTaleReq {
-    private int wordListId;
+    private String word;
     private String contentEng;
 
     private String contentKor;

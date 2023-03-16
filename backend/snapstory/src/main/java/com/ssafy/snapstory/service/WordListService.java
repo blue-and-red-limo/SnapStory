@@ -90,10 +90,10 @@ public class WordListService {
         return addWordRes;
     }
 
-    public DeleteWordRes deleteWordList(int wordListId, int userId) {
+    public DeleteWordRes deleteWordList(String word, int userId) {
         // 유저 상태가 유효한지 확인
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        WordList wordList = wordListRepository.findByUser_UserIdAndWordListId(user.getUserId(), wordListId).orElseThrow(WordNotFoundException::new);
+        WordList wordList = wordListRepository.findByUser_UserIdAndWord_WordEng(user.getUserId(), word).orElseThrow(WordNotFoundException::new);
         wordListRepository.deleteById(wordList.getWordListId());
         DeleteWordRes deleteWordRes = new DeleteWordRes(wordList.getWordListId());
         return deleteWordRes;

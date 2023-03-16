@@ -41,9 +41,9 @@ public class WordListController {
         return ResultResponse.success(wordListService.addWordList(addWordReq, Integer.parseInt(authentication.getName())));
     }
 
-    @DeleteMapping("/{wordListId}")
+    @DeleteMapping("/{word}")
     @ApiOperation(value = "단어 삭제", notes = "단어장에서 해당 단어 삭제")
-    public ResultResponse<DeleteWordRes> deleteWordList(@PathVariable int wordListId, Authentication authentication) {
-        return ResultResponse.success(wordListService.deleteWordList(wordListId, Integer.parseInt(authentication.getName())));
+    public ResultResponse<DeleteWordRes> deleteWordList(@PathVariable String word, Authentication authentication) {
+        return ResultResponse.success(wordListService.deleteWordList(word, Integer.parseInt(authentication.getName())));
     }
 }
