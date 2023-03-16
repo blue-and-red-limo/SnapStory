@@ -8,7 +8,13 @@ class ARAIService {
         http.MultipartRequest('POST', Uri.parse('$base/predictions/drawings'))
           ..files.add(await http.MultipartFile.fromPath('file', path));
     var response = await request.send();
-    if (response.statusCode == 200) print(response.toString());
-    return response.toString();
+    if (response.statusCode == 200) {
+      return response.stream.bytesToString();
+    } else {
+      return 'CANNOT GET WORD';
+    }
   }
+
+
+
 }
