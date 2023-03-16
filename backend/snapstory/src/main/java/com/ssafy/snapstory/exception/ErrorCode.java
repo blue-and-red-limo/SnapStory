@@ -8,6 +8,7 @@ public enum ErrorCode {
     // 유저
     USER_NOT_FOUND(NOT_FOUND, "해당하는 유저를 찾을 수 없습니다."),
     EMAIL_NOT_FOUND(NOT_FOUND, "해당하는 이메일을 찾을 수 없습니다."),
+    PHOTO_NOT_FOUND(NOT_FOUND, "해당하는 사진을 찾을 수 없습니다."),
     EMAIL_DUPLICATE(CONFLICT, "이미 가입한 회원입니다."),
 
     // 단어장
