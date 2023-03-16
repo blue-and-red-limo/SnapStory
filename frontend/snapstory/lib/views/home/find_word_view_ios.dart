@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:arkit_plugin/arkit_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:native_screenshot/native_screenshot.dart';
 import 'package:snapstory/utilities/ar_helper.dart';
 
 class ARViewIOS extends StatefulWidget {
   const ARViewIOS({Key? key}) : super(key: key);
+
   @override
   _ARViewIOSState createState() => _ARViewIOSState();
 }
@@ -46,14 +50,14 @@ class _ARViewIOSState extends State<ARViewIOS> {
               dashPattern: [10, 6],
               //dash patterns, 10 is dash width, 6 is space width
               child: Container(
-                //inner container
+                  //inner container
                   height: MediaQuery.of(context).size.height *
                       0.6, //height of inner container
                   width: MediaQuery.of(context).size.width *
                       0.8, //width to 100% match to parent container.
                   color: const Color.fromRGBO(
                       0, 0, 0, 0) //background color of inner container
-              ),
+                  ),
             ),
           ),
         ],
@@ -61,23 +65,29 @@ class _ARViewIOSState extends State<ARViewIOS> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.camera_alt),
         onPressed: () async {
-          try {
-            final image = await arkitController.snapshot();
-            // await Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => SnapshotPreview(
-            //       imageProvider: image,
-            //     ),
-            //   ),
-            // );
-            MaterialPageRoute(
-              builder: (context) => SnapshotPreview(imageProvider: image),
-            );
-          } catch (e) {
-            print(e);
-          }
+          String? path = await NativeScreenshot.takeScreenshot();
+          MaterialPageRoute(
+            builder: (context) => DisplayPictureScreen(imagePath: path!),
+          );
         },
+        // onPressed: () async {
+        //   try {
+        //     final image = await arkitController.snapshot();
+        //     // await Navigator.push(
+        //     //   context,
+        //     //   MaterialPageRoute(
+        //     //     builder: (context) => SnapshotPreview(
+        //     //       imageProvider: image,
+        //     //     ),
+        //     //   ),
+        //     // );
+        //     MaterialPageRoute(
+        //       builder: (context) => SnapshotPreview(imageProvider: image),
+        //     );
+        //   } catch (e) {
+        //     print(e);
+        //   }
+        // },
       ),
     );
   }
@@ -108,6 +118,22 @@ class SnapshotPreview extends StatelessWidget {
           Image(image: imageProvider),
         ],
       ),
+    );
+  }
+}
+
+class DisplayPictureScreen extends StatelessWidget {
+  final String imagePath;
+
+  const DisplayPictureScreen({super.key, required this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Display the Picture')),
+      // The image is stored as a file on the device. Use the `Image.file`
+      // constructor with the given path to display the image.
+      body: Image.file(File(imagePath)),
     );
   }
 }
