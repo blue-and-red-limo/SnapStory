@@ -13,7 +13,9 @@ import com.ssafy.snapstory.repository.AiTaleRepository;
 import com.ssafy.snapstory.repository.UserRepository;
 import com.ssafy.snapstory.repository.WordListRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,9 @@ public class AiTaleService {
     private final AiTaleRepository aiTaleRepository;
     private final WordListRepository wordListRepository;
     private final UserRepository userRepository;
-
+    private final AwsS3Service awsS3Service;
+    @Value("${aws-cloud.aws.s3.bucket.url}")
+    private String bucketUrl;
 
     public List<GetAiTaleRes> getAiTaleAll(int userId) {
         List<GetAiTaleRes> getAiTaleResList = new ArrayList<>();
@@ -87,20 +91,24 @@ public class AiTaleService {
         return getAiTaleRes;
     }
 
-    public UpdateAiTaleRes updateAiTale(int aiTaleId, UpdateAiTaleReq updateAiTaleReq, int userId) {
+    public UpdateAiTaleRes updateAiTale(int aiTaleId, MultipartFile image, int userId) {
         //그 동화가 유저가 쓴게 맞는지 확인 -> 동화 조회해서 단어장 인덱스의 유저가 나인지 확인
         AiTale aiTale = aiTaleRepository.findById(aiTaleId).orElseThrow(AiTaleNotFoundException::new);
         if (aiTale.getWordList().getUser().getUserId() != userId)
             throw new BadAccessException();
-        //유저가 선택한 이미지를 표지로 추가(업데이트)
-        aiTale.setImage(updateAiTaleReq.getImage());
+        //유저가 선택한 이미지가 있다면 추가한다.
+        if(image!=null){
+            String imageUrl = bucketUrl + awsS3Service.uploadImage(image);
+            aiTale.setImage(imageUrl);
+        }
+
         aiTaleRepository.save(aiTale);
         UpdateAiTaleRes updateAiTaleRes = new UpdateAiTaleRes(
             aiTale.getAiTaleId(),
             aiTale.getWordList().getWordListId(),
             aiTale.getContentEng(),
             aiTale.getContentKor(),
-            updateAiTaleReq.getImage()
+                aiTale.getImage()
         );
         return updateAiTaleRes;
     }
@@ -110,6 +118,12 @@ public class AiTaleService {
         AiTale aiTale = aiTaleRepository.findById(aiTaleId).orElseThrow(AiTaleNotFoundException::new);
         if (aiTale.getWordList().getUser().getUserId() != userId)
             throw new BadAccessException();
+        //동화 이미지가 있다면, 이미지 먼저 삭제
+        if (aiTale.getImage() != null) {
+            String []temp = aiTale.getImage().split("/");
+            String imageName = temp[temp.length-1];
+            awsS3Service.deleteImage(imageName);
+        }
         //유저 일치여부 확인 후 삭제 수행
         aiTaleRepository.deleteById((aiTale.getAiTaleId()));
         DeleteAiTaleRes deleteAiTaleRes = new DeleteAiTaleRes(aiTale.getAiTaleId());
