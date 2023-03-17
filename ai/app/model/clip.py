@@ -29,6 +29,8 @@ def predict(filename):
 
     # 사진 resizing 하기.
     resizedImage = image.resize(((int)(320/image.height*image.width),320))
+    # OSError: cannot write mode RGBA as JPEG, jpg는 투명도를 저장 못하는 문제.
+    resizedImage = resizedImage.convert('RGB')
     # resized된 이미지가 Image.Image 형식이므로 JPEG로 맞춰준다.
     resizedImage.save(IMAGEDIR+filename+'_resized.jpg', 'JPEG')
     # 확인.
