@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:snapstory/services/crud/user_service.dart';
 import 'package:snapstory/views/reset_password_view.dart';
 
 import '../services/auth/auth_exceptions.dart';
@@ -17,11 +18,13 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late final UserService _userService;
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    _userService = UserService();
     super.initState();
   }
 
@@ -169,6 +172,7 @@ class _LoginViewState extends State<LoginView> {
                           print(await FirebaseAuth.instance.currentUser?.getIdToken());
                           final user = AuthService.firebase().currentUser;
                           if (user?.isEmailVerified ?? false) {
+                            _userService.createUser(user: DBUser(email: email, name: user!.userName! ?? " ", uid: FirebaseAuth.instance.currentUser!.uid));
                             Navigator.of(context).pushNamedAndRemoveUntil(
                               mainRoute,
                                   (route) => false,

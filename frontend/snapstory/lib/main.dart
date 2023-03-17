@@ -1,5 +1,6 @@
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
+import 'package:snapstory/services/crud/user_service.dart';
 import 'package:snapstory/views/home/find_word_view_android.dart';
 import 'package:snapstory/views/home/find_word_view_ios.dart';
 import 'package:snapstory/views/home/home_view.dart';
@@ -18,7 +19,8 @@ void main() {
       title: 'SNAP STORY',
       theme: ThemeData(
         fontFamily: 'ONE Mobile POP',
-        primarySwatch: ColorService.createMaterialColor(const Color(0xFFFFB628)),
+        primarySwatch:
+            ColorService.createMaterialColor(const Color(0xFFFFB628)),
       ),
       home: const OnBoardingPage(),
       routes: {
@@ -35,7 +37,7 @@ void main() {
 }
 
 // 커스텀 색상 만드는 클래스
-class ColorService{
+class ColorService {
   static MaterialColor createMaterialColor(Color color) {
     List strengths = <double>[.05];
     Map swatch = {};
@@ -58,7 +60,6 @@ class ColorService{
     return MaterialColor(color.value, data);
   }
 }
-
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -87,5 +88,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
