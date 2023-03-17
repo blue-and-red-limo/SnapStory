@@ -30,8 +30,8 @@ class _CompleteStoryState extends State<CompleteStory> {
         child: Center(
           child: Column(
             children: [
-              Image.network(widget.fairyTale.img),
-              Text(widget.fairyTale.text),
+              Image.network(widget.fairyTale.image),
+              Text(widget.fairyTale.contentEng),
               OutlinedButton(onPressed: (){
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const MainView(selectedPage: 1)),

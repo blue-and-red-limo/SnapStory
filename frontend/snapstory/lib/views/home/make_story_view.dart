@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 // 필요한 것
@@ -23,11 +24,14 @@ final List<String> imgList = [];
 String story = ""; // chatGpt가 만든 스토리
 String selectedImg = ""; // 선택한 이미지
 
+// 동화 클래스
 class FairyTale {
-  final String text;
-  final String img;
+  final String contentEng;
+  final String contentKor;
+  final String image;
+  final int wordListId;
 
-  const FairyTale(this.text, this.img);
+  const FairyTale(this.contentEng, this.contentKor, this.image, this.wordListId);
 }
 
 final List<Widget> imageSliders = imgList
@@ -119,7 +123,7 @@ class _MakeStoryState extends State<MakeStory> {
         'presence_penalty': 0
       }),
     );
-    print(response.body.toString());
+    print(utf8.decode(response.bodyBytes));
 
     Map<String, dynamic> newresponse =
     jsonDecode(utf8.decode(response.bodyBytes));
@@ -145,7 +149,6 @@ class _MakeStoryState extends State<MakeStory> {
         .data;
 
     for (int i = 0; i < 4; i++) {
-      print(image.data.toList().elementAt(i).props.elementAt(0).toString());
       // 이미지 리스트에 추가
       imgList
           .add(image.data.toList().elementAt(i).props.elementAt(0).toString());
@@ -161,6 +164,8 @@ class _MakeStoryState extends State<MakeStory> {
 
   // GPT 사용하기 (동화텍스트와 동화 이미지 경로를 반환)
   Future<List<String>> askToGpt() async {
+    FairyTale ft = new FairyTale("abc", "가나다", "이미지", 0);
+
     String obj = "coffee"; // 인식한 사물 이름 넣기
     String data = await generateText(obj); // 동화와 이미지 문장 만들기
 
@@ -170,10 +175,31 @@ class _MakeStoryState extends State<MakeStory> {
     story = fairytale; // 전역변수 story에 저장
     String imgStr = str[1]; // 이미지 텍스트 저장
 
-    print(fairytale);
-    print(imgStr);
+    print("동화:" + fairytale);
+    print("이미지 설명:" + imgStr);
 
     String imgPath = await askToDalle(imgStr); // 달리로 이미지 경로 생성
+
+    // 토큰 뽑기
+    String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
+
+    // 이미지 없는 동화 먼저 저장
+    final response = await http.post(
+      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode({
+        "contentEng": ft.contentEng,
+        "contentKor": ft.contentKor,
+        "image": ft.image,
+        "wordListId": ft.wordListId
+      }),
+    );
+
+    print(response.body.toString());
+
 
     return [fairytale, imgPath]; // 동화텍스트와 동화 이미지 경로를 반환
   }
@@ -209,8 +235,8 @@ class _MakeStoryState extends State<MakeStory> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text("멋진 동화가 완성되었습니다!"),
-                        Text("원하는 동화 표지를 선택해주세요."),
+                        const Text("멋진 동화가 완성되었습니다!"),
+                        const Text("원하는 동화 표지를 선택해주세요."),
                         CarouselSlider(
                           options: CarouselOptions(
                               aspectRatio: 2.0,
@@ -228,14 +254,15 @@ class _MakeStoryState extends State<MakeStory> {
 
                         // Image.network(snapshot.data[1]),
                         OutlinedButton(
-                            onPressed: () {
+                            onPressed: () { // 표지 선택 누르면 put 요청 보냄 (만들어진 동화에 이미지 추가)
+
                               print(_current);
                               selectedImg = imgList[_current];
                               saveImg();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => CompleteStory(fairyTale: FairyTale(story, selectedImg)),
+                                  builder: (context) => CompleteStory(fairyTale: FairyTale(story, "", selectedImg, 0)),
                                 ),
                               );
                             },
