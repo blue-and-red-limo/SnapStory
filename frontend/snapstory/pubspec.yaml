@@ -41,7 +41,6 @@ dependencies:
   sqflite: ^2.2.5
   introduction_screen: ^3.0.0
   circular_bottom_navigation: ^2.3.0
-  http: ^0.13.5
   openai_dalle_wrapper: ^1.0.0
   openai_client: ^0.0.7
   carousel_slider: ^4.2.1
@@ -49,6 +48,9 @@ dependencies:
   arcore_flutter_plugin: ^0.1.0
   camera: ^0.10.3+2
   dotted_border: ^2.0.0+3
+  native_screenshot: ^1.0.0
+  http: ^0.13.5
+  flutter_tts: ^3.6.3
   network_to_file_image: ^4.0.1
   flutter_file_dialog: ^3.0.0
   flutter_native_splash: ^2.2.19

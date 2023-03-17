@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
+import 'package:snapstory/services/crud/user_service.dart';
 import 'package:snapstory/utilities/show_error_dialog.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +19,14 @@ class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final TextEditingController _userName;
+  late final UserService _userService;
+
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
     _userName = TextEditingController();
+    _userService = UserService();
 
     super.initState();
   }
