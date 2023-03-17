@@ -8,7 +8,7 @@ import uuid
 
 import os
 
-from app.model.clip import predict as model_test_predict
+from app.model.clip import predict_objects, predict_drawings
 
 app = FastAPI()
 
@@ -19,8 +19,8 @@ def home():
     return "서버 접속 성공!!"
 
 # 실제 사용할 api
-@app.post("/ai/predictions/drawings")
-async def predict_drawings(file: UploadFile = File(...)):
+@app.post("/ai/predictions/objects")
+async def predictions_objects(file: UploadFile = File(...)):
     # 파일 이름 유니크하게 설정
     file.filename = f"{uuid.uuid4()}.jpg"
 
@@ -31,19 +31,34 @@ async def predict_drawings(file: UploadFile = File(...)):
     with open(f"{IMAGEDIR}{file.filename}","wb") as f:
         f.write(contents)
 
-    return model_test_predict(file.filename)
+    return predict_objects(file.filename)
 
-# local에서 테스트하는 api
-@app.post("/ai/test/predictions/drawings")
-async def predict_drawings_test(file: UploadFile = File(...)):
-    
+@app.post("/ai/predictions/drawings")
+async def predictions_drawings(file: UploadFile = File(...)):
+    # 파일 이름 유니크하게 설정
     file.filename = f"{uuid.uuid4()}.jpg"
+
+    # 사진 읽어오기.
     contents = await file.read()
 
-    print("os.getcwd():"+os.getcwd())
-
-    # save the file
+    # 사진 저장
     with open(f"{IMAGEDIR}{file.filename}","wb") as f:
         f.write(contents)
 
-    return model_test_predict(file.filename)
+    return predict_drawings(file.filename)
+
+#############################################################
+# local에서 테스트하는 api
+# @app.post("/ai/test/predictions/drawings")
+# async def predict_drawings_test(file: UploadFile = File(...)):
+    
+#     file.filename = f"{uuid.uuid4()}.jpg"
+#     contents = await file.read()
+
+#     print("os.getcwd():"+os.getcwd())
+
+#     # save the file
+#     with open(f"{IMAGEDIR}{file.filename}","wb") as f:
+#         f.write(contents)
+
+#     return model_test_predict(file.filename)
