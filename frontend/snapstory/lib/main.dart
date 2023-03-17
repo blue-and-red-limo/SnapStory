@@ -17,6 +17,7 @@ void main() {
     MaterialApp(
       title: 'SNAP STORY',
       theme: ThemeData(
+        fontFamily: 'ONE Mobile POP',
         primarySwatch: ColorService.createMaterialColor(const Color(0xFFFFB628)),
       ),
       home: const OnBoardingPage(),
