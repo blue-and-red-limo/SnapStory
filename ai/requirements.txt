@@ -1,1 +1,4 @@
-scikit-learn==1.2.2
+datasets
+torch
+transformers
+pillow
