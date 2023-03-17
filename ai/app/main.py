@@ -1,37 +1,41 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from app.model.model import predict_pipeline
-from app.model.model import __version__ as model_version
+# from pydantic import BaseModel
+# from temp.model import predict_pipeline
+# from temp.model import __version__ as model_version
 
 from fastapi import File, UploadFile
 import uuid
 
 import os
 
+from app.model.clip import predict as model_test_predict
+
 app = FastAPI()
 
 IMAGEDIR=os.getcwd()+"/app/images/"
 
-class TextIn(BaseModel):
-    text: str
-
-
-class PredictionOut(BaseModel):
-    language: str
-
-
 @app.get("/ai")
 def home():
-    return {"health_check": "OK", "model_version": model_version}
+    return "서버 접속 성공!!"
 
-
-@app.post("/ai/predict", response_model=PredictionOut)
-def predict(payload: TextIn):
-    language = predict_pipeline(payload.text)
-    return {"language": language}
-
+# 실제 사용할 api
 @app.post("/ai/predictions/drawings")
-async def predict(file: UploadFile = File(...)):
+async def predict_drawings(file: UploadFile = File(...)):
+    # 파일 이름 유니크하게 설정
+    file.filename = f"{uuid.uuid4()}.jpg"
+
+    # 사진 읽어오기.
+    contents = await file.read()
+
+    # 사진 저장
+    with open(f"{IMAGEDIR}{file.filename}","wb") as f:
+        f.write(contents)
+
+    return model_test_predict(file.filename)
+
+# local에서 테스트하는 api
+@app.post("/ai/test/predictions/drawings")
+async def predict_drawings_test(file: UploadFile = File(...)):
     
     file.filename = f"{uuid.uuid4()}.jpg"
     contents = await file.read()
@@ -42,4 +46,4 @@ async def predict(file: UploadFile = File(...)):
     with open(f"{IMAGEDIR}{file.filename}","wb") as f:
         f.write(contents)
 
-    return "success"
+    return model_test_predict(file.filename)
