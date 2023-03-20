@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:native_screenshot/native_screenshot.dart';
+import 'package:snapstory/services/ar_ai_service.dart';
+import 'package:snapstory/utilities/show_error_dialog.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 class ARViewAndroid extends StatefulWidget {
@@ -18,10 +21,12 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   late ArCoreController arCoreController;
   late bool checked = false;
   late FlutterTts flutterTts;
+  late ARAIService _araiService;
 
   @override
   void initState() {
     flutterTts = FlutterTts();
+    _araiService = ARAIService();
     flutterTts.setLanguage("en-US");
     flutterTts.setSpeechRate(0.5); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
@@ -160,8 +165,10 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.camera_alt), // Provide an onPressed callback.
         onPressed: () async {
+          // Map<String, String> map = await _araiService.generateText(obj: 'airplane', token: await FirebaseAuth.instance.currentUser!.getIdToken());
+          // await showErrorDialog(context, map.toString());
           String? path = await NativeScreenshot.takeScreenshot();
-          _addSphere(arCoreController);
+          print(await _araiService.postPictureAndGetWord(path: path!));
         },
       ),
     );
