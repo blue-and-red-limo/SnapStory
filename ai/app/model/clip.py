@@ -281,10 +281,10 @@ def predict_drawings(filename):
 
     scores = np.dot(img_emb, label_emb.T)
 
-    # print(scores)
-    # sum = np.sum(scores)
-    # scores=scores/sum
-    # print(scores)
+    print(scores)
+    sum = np.sum(scores)
+    scores=scores/sum
+    print(scores)
 
     # get index of highest score
     pred = np.argmax(scores)
