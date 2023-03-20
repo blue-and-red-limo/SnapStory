@@ -10,7 +10,17 @@ import os
 
 from app.model.clip import predict_objects, predict_drawings
 
+# base64 decoding을 위한 import.
+import base64
+from PIL import Image
+from io import BytesIO
+# base64 encoding된 str 형식 지정하기 위해.
+from pydantic import BaseModel
+
 app = FastAPI()
+
+class Base64Request(BaseModel):
+    base64_file: str
 
 IMAGEDIR=os.getcwd()+"/app/images/"
 
@@ -34,12 +44,24 @@ async def predictions_objects(file: UploadFile = File(...)):
     return predict_objects(file.filename)
 
 @app.post("/ai/predictions/drawings")
-async def predictions_drawings(file: UploadFile = File(...)):
+async def predictions_drawings(request: Base64Request):
+    print("predictions_drawings in")
+    print(request.base64_file)
+    
+    file_content = request.base64_file
+    print("########################file content:",file_content)
+    # file 생성
+    file = File(...)
+
     # 파일 이름 유니크하게 설정
     file.filename = f"{uuid.uuid4()}.jpg"
 
+    # image decoding
+    # img = Image.open(BytesIO(base64.b64decode(file_content)))
+    contents = base64.b64decode(file_content)
+
     # 사진 읽어오기.
-    contents = await file.read()
+    # contents = await img.read()
 
     # 사진 저장
     with open(f"{IMAGEDIR}{file.filename}","wb") as f:
