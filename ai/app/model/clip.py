@@ -221,7 +221,7 @@ def predict_drawings(filename):
     # 빈 dataset에 mouse 넣어보기
     feature = Image(decode=False)
     new_image = {'image': feature.encode_example(image_resized)}
-    new_dataset=image_dataset.add_item({'image':new_image['image'],'label':'glasses'})
+    new_dataset=image_dataset.add_item({'image':new_image['image'],'label':'shoe'})
 
     # check labels in the dataset
     set(new_dataset['label'])
