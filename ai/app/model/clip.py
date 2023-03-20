@@ -202,14 +202,15 @@ def predict_drawings(filename):
                                 "dog",
                                 "apple",
                                 "flower",
-                                "heart",
-                                "nail",
-                                "hat",
-                                "tree",
-                                "castle",
                                 "horse",
+                                "sword",
+                                "bird",
+                                "tree",
+                                "snowflake",
+                                "castle",
                                 "lion",
-                                "bracelet"
+                                "rainbow",
+                                "lollipop"
                                 ]
                         ),
                     }
