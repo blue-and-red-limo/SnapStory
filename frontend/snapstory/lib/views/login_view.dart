@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:snapstory/constants/routes.dart';
+import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:snapstory/services/crud/user_service.dart';
@@ -19,12 +20,14 @@ class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
   late final UserService _userService;
+  late final ARAIService _araiService;
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
     _userService = UserService();
+    _araiService = ARAIService();
     super.initState();
   }
 
@@ -170,6 +173,8 @@ class _LoginViewState extends State<LoginView> {
                             password: password,
                           );
                           print(await FirebaseAuth.instance.currentUser?.getIdToken());
+                          await _araiService.generateText(obj: 'apple', token: await FirebaseAuth.instance.currentUser!.getIdToken());
+                          await _araiService.getWordList(token: await FirebaseAuth.instance.currentUser!.getIdToken());
                           final user = AuthService.firebase().currentUser;
                           if (user?.isEmailVerified ?? false) {
                             _userService.createUser(user: DBUser(email: email, name: user!.userName! ?? " ", uid: FirebaseAuth.instance.currentUser!.uid));
