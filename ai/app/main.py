@@ -63,16 +63,19 @@ async def predictions_drawings(request: Base64Request):
     file_content = request.base64_file
 
     # 빈 file 생성
-    file = File(...)
+    # file = File(...)
 
     # 파일 이름 유니크하게 설정
-    file.filename = f"{uuid.uuid4()}.jpg"
+    # file.filename = f"{uuid.uuid4()}.jpg"
 
     # image decoding
     contents = base64.b64decode(file_content)
 
     # 사진 저장
-    with open(f"{IMAGEDIR}{file.filename}","wb") as f:
-        f.write(contents)
+    # with open(f"{IMAGEDIR}{file.filename}","wb") as f:
+    #     f.write(contents)
 
-    return predict(file.filename,"drawings")
+    # 저장하지 않고 진행.
+    image = io.BytesIO(contents)
+
+    return predict(image,"drawings")
