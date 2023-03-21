@@ -54,6 +54,7 @@ dependencies:
   network_to_file_image: ^4.0.1
   flutter_file_dialog: ^3.0.0
   flutter_native_splash: ^2.2.19
+  ar_flutter_plugin: ^0.7.3
 
 dev_dependencies:
   flutter_test:
@@ -79,8 +80,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/mainImage.png
-    - assets/snappy.png
+    - assets/
+    - assets/Chicken_01/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

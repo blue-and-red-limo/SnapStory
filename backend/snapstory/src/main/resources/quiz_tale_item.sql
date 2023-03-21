@@ -1,0 +1,15 @@
+insert into snapstorydb.quiz_tale_item (quiz_tale_item_id, item_eng, image_black, image_color)
+values  (1, 'shoe', 'b', 'c'),
+        (2, 'crown', 'b', 'c'),
+        (3, 'mouse', 'b', 'c'),
+        (4, 'dog', 'b', 'c'),
+        (5, 'apple', 'b', 'c'),
+        (6, 'heart', 'b', 'c'),
+        (7, 'flower', 'b', 'c'),
+        (8, 'nail', 'b', 'c'),
+        (9, 'angel', 'b', 'c'),
+        (10, 'tree', 'b', 'c'),
+        (11, 'castle', 'b', 'c'),
+        (12, 'horse', 'b', 'c'),
+        (13, 'lion', 'b', 'c'),
+        (14, 'bracelet', 'b', 'c');

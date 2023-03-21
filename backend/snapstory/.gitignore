@@ -38,3 +38,6 @@ out/
 
 ### application.properties 무시 ###
 application.properties
+
+### firebase.json 무시 ###
+firebase.json

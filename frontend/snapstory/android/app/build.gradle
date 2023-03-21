@@ -29,6 +29,12 @@ android {
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
+    aaptOptions {
+        noCompress 'gltf'
+        noCompress 'bin'
+        noCompress 'glb'
+    }
+
 //    compileOptions {
 //        sourceCompatibility JavaVersion.VERSION_1_8
 //        targetCompatibility JavaVersion.VERSION_1_8
@@ -83,3 +89,4 @@ dependencies {
     // Alternatively, use ArSceneView without the UX dependency.
     implementation 'com.google.ar.sceneform:core:1.8.0'
 }
+

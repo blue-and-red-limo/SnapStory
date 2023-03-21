@@ -1,10 +1,19 @@
 import 'dart:io';
 
+import 'package:ar_flutter_plugin/datatypes/config_planedetection.dart';
+import 'package:ar_flutter_plugin/datatypes/node_types.dart';
+import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
+import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
+import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
+import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
+import 'package:ar_flutter_plugin/models/ar_node.dart';
+import 'package:ar_flutter_plugin/widgets/ar_view.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:native_screenshot/native_screenshot.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
@@ -19,7 +28,24 @@ class ARViewAndroid extends StatefulWidget {
 }
 
 class _ARViewAndroidState extends State<ARViewAndroid> {
-  late ArCoreController arCoreController;
+  late ARSessionManager arSessionManager;
+  late ARObjectManager arObjectManager;
+  late ARAnchorManager arAnchorManager;
+  late ARLocationManager arLocationManager;
+
+  //String localObjectReference;
+  ARNode? localObjectNode;
+
+  //String webObjectReference;
+  ARNode? webObjectNode;
+
+  @override
+  void dispose() {
+    arSessionManager.dispose();
+    super.dispose();
+  }
+
+  // 원래 있던거
   late bool checked = false;
   late FlutterTts flutterTts;
   late ARAIService _araiService;
@@ -59,9 +85,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Stack(
         children: [
-          ArCoreView(
-            onArCoreViewCreated: _onArCoreViewCreated,
-            enableTapRecognizer: true,
+          ARView(
+            onARViewCreated: onARViewCreated,
+            planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
           ),
           if (!checked)
             Positioned(
@@ -70,11 +96,11 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               child: IgnorePointer(
                 ignoring: true,
                 child: DottedBorder(
-                  color: const Color.fromARGB(255, 0, 0, 0),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   //color of dotted/dash line
                   borderType: BorderType.RRect,
                   radius: const Radius.circular(30),
-                  strokeWidth: 2,
+                  strokeWidth: 4,
                   //thickness of dash/dots
                   dashPattern: const [10, 6],
                   //dash patterns, 10 is dash width, 6 is space width
@@ -92,34 +118,45 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             ),
           if (checked)
             Positioned(
-              top: MediaQuery.of(context).size.height * 0.6,
-              left: MediaQuery.of(context).size.width * 0.15,
+              top: MediaQuery.of(context).size.height * 0.58,
+              left: MediaQuery.of(context).size.width * 0.1,
+              // width: MediaQuery.of(context).size.width * 0.15,
+
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Row(
                     children: [
                       GestureDetector(
                         onTap: () async => await makeSound(text: 'text'),
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(23),
-                            color: const Color(0xffffdb1f),
-                          ),
-                          child: const Center(child: Text('1')),
-                        ),
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            width: MediaQuery.of(context).size.width * 0.35,
+                            margin: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(23),
+                              border: Border.all(
+                                  width: 5, color: const Color(0xff1FD901)),
+                              color: const Color(0xffC7FCBE),
+                            ),
+                            child: const Center(
+                                child: Text('단어듣기',
+                                    style: TextStyle(fontSize: 20)))),
                       ),
                       Container(
                         height: MediaQuery.of(context).size.height * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.3,
+                        width: MediaQuery.of(context).size.width * 0.35,
                         margin: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(23),
-                          color: const Color(0xff86EC62),
+                          border: Border.all(
+                              width: 5, color: const Color(0xff00B2FF)),
+                          color: const Color(0xffB5FAFE),
                         ),
-                        child: const Center(child: Text('2')),
+                        child: const Center(
+                            child:
+                                Text('문장듣기', style: TextStyle(fontSize: 20))),
                       ),
                     ],
                   ),
@@ -127,32 +164,31 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                     children: [
                       Container(
                         height: MediaQuery.of(context).size.height * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.3,
+                        width: MediaQuery.of(context).size.width * 0.35,
                         margin: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(23),
-                          color: const Color(0xff86EC62),
+                          border: Border.all(
+                              width: 5, color: const Color(0xffFF93AD)),
+                          color: const Color(0xffFFCBE7),
                         ),
-                        child: const Center(child: Text('3')),
+                        child: const Center(
+                            child:
+                                Text('설명듣기', style: TextStyle(fontSize: 20))),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const MakeStory(word: 'apple')));
-                        },
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(23),
-                            color: const Color(0xffffdb1f),
-                          ),
-                          child: const Center(child: Text('4')),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        margin: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(23),
+                          border: Border.all(
+                              width: 5, color: const Color(0xffFFCA10)),
+                          color: const Color(0xffFFF0BB),
                         ),
+                        child: const Center(
+                            child:
+                                Text('동화만들기', style: TextStyle(fontSize: 20))),
                       ),
                     ],
                   ),
@@ -160,7 +196,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               ),
             ),
           Positioned(
-            top: MediaQuery.of(context).size.height * 0.85,
+            top: MediaQuery.of(context).size.height * 0.9,
             child: Container(
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
@@ -170,7 +206,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                 color: Color(0xFFFFB628),
               ),
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.15,
+              height: MediaQuery.of(context).size.height * 0.1,
             ),
           ),
           Positioned(
@@ -186,110 +222,78 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.camera_alt), // Provide an onPressed callback.
-        onPressed: () async {
-          // Map<String, String> map = await _araiService.generateText(obj: 'airplane', token: await FirebaseAuth.instance.currentUser!.getIdToken());
-          // await showErrorDialog(context, map.toString());
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil(androidRoute, (route) => false);
+      floatingActionButton: Container(
+        height: MediaQuery.of(context).size.height * 0.09,
+        // width:  MediaQuery.of(context).size.height * 0.1,
+        margin: EdgeInsets.fromLTRB(
+            0.0, 0.0, 0.0, MediaQuery.of(context).size.height * 0.03),
+        child: FittedBox(
+          child: FloatingActionButton(
+            elevation: 4,
+            backgroundColor: const Color(0xFFFFFFFF),
+            splashColor: const Color(0xffFFF0BB),
 
-          String? path = await NativeScreenshot.takeScreenshot();
-          print(await _araiService.postPictureAndGetWord(path: path!));
-        },
+            child: const Icon(Icons.camera, color: Color(0xFFFFB628), size: 37),
+            // Provide an onPressed callback.
+            onPressed: () async {
+              // 초기화
+
+              onWebObjectAtButtonPressed();
+            },
+          ),
+        ),
       ),
     );
   }
 
-  void _onArCoreViewCreated(ArCoreController controller) {
-    arCoreController = controller;
-    arCoreController.onNodeTap = (name) => onTapHandler(name);
+  void onARViewCreated(
+      ARSessionManager arSessionManager,
+      ARObjectManager arObjectManager,
+      ARAnchorManager arAnchorManager,
+      ARLocationManager arLocationManager) {
+    this.arSessionManager = arSessionManager;
+    this.arObjectManager = arObjectManager;
+    this.arAnchorManager = arAnchorManager;
 
-    _addSphere(arCoreController);
-    // _addCylindre(arCoreController);
-    // _addCube(arCoreController);
+    this.arSessionManager.onInitialize(
+        showFeaturePoints: false,
+        showPlanes: false,
+        showWorldOrigin: false,
+        handleTaps: false,
+        showAnimatedGuide: false);
+    this.arObjectManager.onInitialize();
+    this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
   }
 
-  void _addNode(ArCoreController controller, String name) {
-    final material =
-        ArCoreMaterial(color: const Color.fromARGB(120, 66, 134, 244));
-    final sphere = ArCoreSphere(
-      materials: [material],
-      radius: 0.1,
-    );
-    final node = ArCoreNode(
-      name: name,
-      shape: sphere,
-      position: Vector3(0, 0, 1),
-    );
-    controller.addArCoreNode(node);
-  }
+  Future<void> onWebObjectAtButtonPressed() async {
 
-  void _addSphere(ArCoreController controller) {
-    final material =
-        ArCoreMaterial(color: const Color.fromARGB(120, 66, 134, 244));
-    final sphere = ArCoreSphere(
-      materials: [material],
-      radius: 0.1,
-    );
-    final node = ArCoreNode(
-      name: 'sphere',
-      shape: sphere,
-      position: Vector3(0, 0, -1.5),
-    );
-    controller.addArCoreNode(node);
-  }
+    // ai 서버에서 정보 받아오기
+    String? path = await NativeScreenshot.takeScreenshot();
+    String wordName = await _araiService.postPictureAndGetWord(path: path!);
+    wordName = wordName.substring(1, wordName.length - 1);
+    print(wordName);
 
-  void _addCylindre(ArCoreController controller) {
-    final material = ArCoreMaterial(
-      color: const Color.fromRGBO(10, 10, 10, 10),
-      reflectance: 1.0,
-    );
-    final cylindre = ArCoreCylinder(
-      materials: [material],
-      radius: 0.5,
-      height: 0.3,
-    );
-    final node = ArCoreNode(
-      name: 'cylindre',
-      shape: cylindre,
-      position: Vector3(0.0, -0.5, -2.0),
-    );
-    controller.addArCoreNode(node);
-  }
+    if (webObjectNode != null) {
+      arObjectManager.removeNode(webObjectNode!);
+      webObjectNode = null;
+    }
 
-  void _addCube(ArCoreController controller) {
-    final material = ArCoreMaterial(
-      color: const Color.fromARGB(120, 66, 134, 244),
-      metallic: 1.0,
+    var newNode = ARNode(
+      name: wordName,
+      type: NodeType.webGLB,
+      uri:
+          "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
+      scale: Vector3(0.1, 0.1, 0.5),
+      position: Vector3(-0.01, -0.01, -0.1),
     );
-    final cube = ArCoreCube(
-      materials: [material],
-      size: Vector3(0.5, 0.5, 0.5),
-    );
-    final node = ArCoreNode(
-      name: 'cube',
-      shape: cube,
-      position: Vector3(-0.5, 0.5, -3.5),
-    );
-    controller.addArCoreNode(node);
-  }
 
-  @override
-  void dispose() {
-    arCoreController.dispose();
-    super.dispose();
+    bool? didAddWebNode = await arObjectManager.addNode(newNode);
+    webObjectNode = (didAddWebNode!) ? newNode : null;
   }
 
   void onTapHandler(String name) {
-    // showDialog<void>(
-    //   context: context,
-    //   builder: (BuildContext context) =>
-    //       AlertDialog(content: Text('onNodeTap on $name')),
-    // );
-    setState(() {
-      checked == true ? checked = false : checked = true;
-    });
+    checked == true ? checked = false : checked = true;
+    setState(() {});
   }
 }
 
