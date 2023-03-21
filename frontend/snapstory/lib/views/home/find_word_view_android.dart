@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:native_screenshot/native_screenshot.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
-import 'package:snapstory/utilities/show_error_dialog.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
+
+import '../../constants/routes.dart';
+import 'make_story_view.dart';
 
 class ARViewAndroid extends StatefulWidget {
   const ARViewAndroid({Key? key}) : super(key: key);
@@ -22,6 +23,20 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   late bool checked = false;
   late FlutterTts flutterTts;
   late ARAIService _araiService;
+  late bool isLoading = false;
+  late String word;
+
+  void showDialog() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void hideDialog() {
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   void initState() {
@@ -34,7 +49,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     super.initState();
   }
 
-  Future<int> makeSound({required String text})async {
+  Future<int> makeSound({required String text}) async {
     return await flutterTts.speak("Hello World, this is Flutter Campus.");
   }
 
@@ -120,15 +135,24 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                         ),
                         child: const Center(child: Text('3')),
                       ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.3,
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(23),
-                          color: const Color(0xffffdb1f),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const MakeStory(word: 'apple')));
+                        },
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.3,
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(23),
+                            color: const Color(0xffffdb1f),
+                          ),
+                          child: const Center(child: Text('4')),
                         ),
-                        child: const Center(child: Text('4')),
                       ),
                     ],
                   ),
@@ -167,6 +191,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
         onPressed: () async {
           // Map<String, String> map = await _araiService.generateText(obj: 'airplane', token: await FirebaseAuth.instance.currentUser!.getIdToken());
           // await showErrorDialog(context, map.toString());
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil(androidRoute, (route) => false);
+
           String? path = await NativeScreenshot.takeScreenshot();
           print(await _araiService.postPictureAndGetWord(path: path!));
         },
@@ -176,9 +203,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
 
   void _onArCoreViewCreated(ArCoreController controller) {
     arCoreController = controller;
-    arCoreController?.onNodeTap = (name) => onTapHandler(name);
+    arCoreController.onNodeTap = (name) => onTapHandler(name);
 
-    // _addSphere(arCoreController);
+    _addSphere(arCoreController);
     // _addCylindre(arCoreController);
     // _addCube(arCoreController);
   }
@@ -255,13 +282,14 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   void onTapHandler(String name) {
-    checked == true ? checked = false : checked = true;
     // showDialog<void>(
     //   context: context,
     //   builder: (BuildContext context) =>
     //       AlertDialog(content: Text('onNodeTap on $name')),
     // );
-    setState(() {});
+    setState(() {
+      checked == true ? checked = false : checked = true;
+    });
   }
 }
 
