@@ -1,0 +1,74 @@
+services:
+  database:
+    container_name: mysql
+    image: mysql:8.0.30
+    ports:
+      - 4444:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: snapstory401
+      MYSQL_DATABASE: snapstorydb
+      TZ: "Asia/Seoul"
+    restart: unless-stopped
+    volumes:
+      - /snapstory-data:/var/lib/mysql
+      - /snapstory-data/initdb.d:/docker-entrypoint-initdb.d
+    command:
+      - --character-set-server=utf8 
+      - --collation-server=utf8_general_ci
+  backend:
+    build:
+      context: ./backend/snapstory/
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - 8090:8080
+    # expose:
+    #   - 8080
+    depends_on:
+      - database
+    container_name: springboot
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/snapstorydb?useSSL=false&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: snapstory401
+      TZ: "Asia/Seoul"
+  ai:
+    container_name: fastapi
+    build:
+      context: ./ai
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - 8788:80
+
+  # frontend:
+  #   build:
+  #     context: ./frontend/
+  #     dockerfile: Dockerfile
+  #   restart: on-failure
+  #   container_name: react
+  #   environment:
+  #     TZ: "Asia/Seoul"
+  #   ports:
+  #     - 3000:3000
+  #   expose:
+  #     - 3000
+  #   depends_on:
+  #     - backend
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.22.1
+    restart: always
+    volumes:
+      - /jenkins/workspace/snapstory-master/backend/:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt
+    environment:
+      TZ: "Asia/Seoul"
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - backend
+      - ai
+      # - frontend
