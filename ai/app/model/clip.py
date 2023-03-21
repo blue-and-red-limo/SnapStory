@@ -17,26 +17,27 @@ import numpy as np
 
 ############################################################
 
-def predict(filename,type):
+def predict(image_file,type):
     # debug
     print("predict in")
 
     # 전역변수
-    IMAGEDIR=os.getcwd()+"/app/images/"
+    # IMAGEDIR=os.getcwd()+"/app/images/"
 
     # 사진 열기
-    image=PILImage.open(IMAGEDIR+filename)
+    image=PILImage.open(image_file)
 
     # 사진 resizing 하기.
     resizedImage = image.resize(((int)(320/image.height*image.width),320))
     # OSError: cannot write mode RGBA as JPEG, jpg는 투명도를 저장 못하는 문제.
     resizedImage = resizedImage.convert('RGB')
     # resized된 이미지가 Image.Image 형식이므로 JPEG로 맞춰준다.
-    resizedImage.save(IMAGEDIR+filename+'_resized.jpg', 'JPEG')
+    # resizedImage = resizedImage.save(IMAGEDIR+filename+'_resized.jpg', 'JPEG')
+    
     # 확인.
 
-    # 여전히 그대로이다. 파일을 다시 불러오기.
-    image_resized = PILImage.open(IMAGEDIR+filename+'_resized.jpg')
+    # 여전히 그대로이다. 파일을 다시 불러오기. -> 원래 변수에 다시 저장해주면 된다.
+    # image_resized = PILImage.open(IMAGEDIR+filename+'_resized.jpg')
 
     # Define the new feature structure
     if type=="objects":
@@ -153,8 +154,8 @@ def predict(filename,type):
 
     # 빈 dataset에 mouse 넣어보기
     feature = Image(decode=False)
-    new_image = {'image': feature.encode_example(image_resized)}
-    new_dataset=image_dataset.add_item({'image':new_image['image'],'label':'glasses'})
+    new_image = {'image': feature.encode_example(resizedImage)}
+    new_dataset=image_dataset.add_item({'image':new_image['image'],'label':'apple'})
 
     # check labels in the dataset
     set(new_dataset['label'])

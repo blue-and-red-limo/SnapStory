@@ -9,7 +9,7 @@ import uuid
 import os
 
 # 예측 함수 import.
-from app.model.clip import predict_objects, predict_drawings, predict
+from app.model.clip import predict
 
 # base64 decoding을 위한 import.
 import base64
@@ -18,6 +18,9 @@ from pydantic import BaseModel
 
 # application 시작 전에 prediciton에 필요한 모듈들을 미리 import하기위해.
 from contextlib import asynccontextmanager
+
+# 사진을 저장하지 않고 진행. byte format을 file-like object로 만들어줌. preidct 함수에서 Image.open 가능하게.
+import io
 
 # yield 이전 코드는 어플 시작 전에, yield 이후 코드는 어플 시작 후에.
 @asynccontextmanager
@@ -32,16 +35,11 @@ class Base64Request(BaseModel):
 
 IMAGEDIR=os.getcwd()+"/app/images/"
 
-@app.get("/")
-def root():
-    print("##############root#############")
-    return "root"
-
 @app.get("/ai")
 def home():
     return "서버 접속 성공!!"
 
-# 실제 사용할 api
+# 사진 이미지 분류
 @app.post("/ai/predictions/objects")
 async def predictions_objects(file: UploadFile = File(...)):
     # 파일 이름 유니크하게 설정
@@ -51,11 +49,15 @@ async def predictions_objects(file: UploadFile = File(...)):
     contents = await file.read()
 
     # 사진 저장
-    with open(f"{IMAGEDIR}{file.filename}","wb") as f:
-        f.write(contents)
+    # with open(f"{IMAGEDIR}{file.filename}","wb") as f:
+    #     f.write(contents)
 
-    return predict(file.filename,"objects")
+    # 저장하지 않고 진행.
+    image = io.BytesIO(contents)
 
+    return predict(image,"objects")
+
+# 손그림 이미지 분류
 @app.post("/ai/predictions/drawings")
 async def predictions_drawings(request: Base64Request):
     file_content = request.base64_file
