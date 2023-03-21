@@ -35,7 +35,7 @@ public class AwsS3Service {
             throw new PhotoNotFoundException();
         }
 
-        String fileName = createFileName(photo.getOriginalFilename());
+        String fileName = "images/"+createFileName(photo.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(photo.getSize());
         objectMetadata.setContentType(photo.getContentType());
