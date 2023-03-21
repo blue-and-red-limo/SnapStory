@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class ARAIService {
   final String aiBase = 'https://j8a401.p.ssafy.io/ai';
   final String springBase = 'https://j8a401.p.ssafy.io/api/v1';
-  final String apiKey = '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';
+  final String apiKey = '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';
   final String apiUrl = 'https://api.openai.com/v1/completions';
 
   Future<String> postPictureAndGetWord({required String path}) async {
@@ -20,8 +20,8 @@ class ARAIService {
     }
   }
 
-
-  Future<Map<String, String>> generateText({required String obj, required String token}) async {
+  Future<Map<String, String>> generateText(
+      {required String obj, required String token}) async {
     var response = await http.post(
       Uri.parse(apiUrl),
       headers: {
@@ -43,10 +43,13 @@ class ARAIService {
     Map<String, dynamic> newresponse =
         jsonDecode(utf8.decode(response.bodyBytes));
     List<String> str = newresponse['choices'][0]['text'].split('\n');
-    Map<String, String> result = {'word':obj, 'wordExampleKor':str[3].toString(), 'wordExampleEng':str[2].toString()};
+    Map<String, String> result = {
+      'word': obj,
+      'wordExampleKor': str[3].toString(),
+      'wordExampleEng': str[2].toString()
+    };
 
-
-    final res = await http.post(
+    await http.post(
       Uri.parse('$springBase/word-list'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -54,6 +57,16 @@ class ARAIService {
       },
       body: jsonEncode(result),
     );
+
+    final res = await http.get(
+      Uri.parse('$springBase/word-list/$obj'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    Map<String, dynamic> result2 = jsonDecode(utf8.decode(res.bodyBytes));
+    result.addAll({'wordExplanationEng' : result2['result']['word']['wordExplanationEng'], 'wordExplanationKor' : result2['result']['word']['wordExplanationKor']});
 
     return result;
   }

@@ -10,14 +10,15 @@ import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:ar_flutter_plugin/widgets/ar_view.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:native_screenshot/native_screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
-import 'package:snapstory/utilities/show_error_dialog.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
+
+import '../../constants/routes.dart';
+import 'make_story_view.dart';
 
 class ARViewAndroid extends StatefulWidget {
   const ARViewAndroid({Key? key}) : super(key: key);
@@ -48,6 +49,20 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   late bool checked = false;
   late FlutterTts flutterTts;
   late ARAIService _araiService;
+  late bool isLoading = false;
+  late String word;
+
+  void showDialog() {
+    setState(() {
+      isLoading = true;
+    });
+  }
+
+  void hideDialog() {
+    setState(() {
+      isLoading = false;
+    });
+  }
 
   @override
   void initState() {

@@ -14,7 +14,7 @@ import 'dart:io';
 
 import 'complete_story_view.dart';
 
-const apiKey = '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';
+const apiKey = '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';
 const apiUrl = 'https://api.openai.com/v1/completions';
 
 // dalle가 만든 이미지 리스트
@@ -97,8 +97,9 @@ Future<void> saveImg() async {
 // }
 
 class MakeStory extends StatefulWidget {
-  const MakeStory({Key? key}) : super(key: key);
+  const MakeStory({Key? key, required this.word}) : super(key: key);
 
+  final String word;
   @override
   State<MakeStory> createState() => _MakeStoryState();
 }
