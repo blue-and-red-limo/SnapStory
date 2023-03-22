@@ -40,7 +40,7 @@ class _MainViewState extends State<MainView> {
   late int selectedPos;
   double bottomNavBarHeight = 70;
 
-  final List<Widget> _children = [Home(), MyLibrary(), TempButton()]; // (Fix) 나중에 TempButton을 MyWord로 바꾸기
+  final List<Widget> _children = [Home(), MyLibrary(), MyWord()]; // (Fix) 나중에 TempButton을 MyWord로 바꾸기
 
   // 메인 탭 3개 아이콘
   List<TabItem> tabItems = List.of([
