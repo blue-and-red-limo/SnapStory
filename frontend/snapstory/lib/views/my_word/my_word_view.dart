@@ -257,7 +257,7 @@ class _MyWordState extends State<MyWord> {
     _araiService = ARAIService();
     flutterTts = FlutterTts();
     flutterTts.setLanguage("en-US");
-    flutterTts.setSpeechRate(1.0); //speed of speech
+    flutterTts.setSpeechRate(0.5); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
     flutterTts.setPitch(1); //pitc of sound
     super.initState();
@@ -316,7 +316,7 @@ class _MyWordState extends State<MyWord> {
                                                     .toString());
                                           },
                                           icon: const Icon(
-                                              Icons.volume_up_outlined),
+                                              Icons.volume_up_rounded),
                                           padding: const EdgeInsets.all(10),
                                           iconSize: MediaQuery.of(context)
                                                   .size
@@ -339,7 +339,8 @@ class _MyWordState extends State<MyWord> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.all(10.0),
-                                          child: Text(
+                                          child: 
+                                          Text(
                                             isEng
                                                 ? e['word']['wordEng']
                                                 : e['word']['wordKor'],
