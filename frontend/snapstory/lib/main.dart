@@ -8,6 +8,7 @@ import 'package:snapstory/views/login_view.dart';
 import 'package:snapstory/views/main_view.dart';
 import 'package:snapstory/views/register_view.dart';
 import 'package:snapstory/views/verify_email_view.dart';
+import 'package:snapstory/views/drawing_quiz/drawing_tale_list.dart';
 import 'package:flutter/material.dart';
 
 import 'views/onboarding.dart';
@@ -31,6 +32,7 @@ void main() {
         iOSRoute: (context) => const ARViewIOS(),
         androidRoute: (context) => const ARViewAndroid(),
         homeRoute: (context) => const Home(),
+        drawingTaleListRoute: (context) => const DrawingTaleList(),
       },
     ),
   );
