@@ -275,10 +275,10 @@ class _MyWordState extends State<MyWord> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return FutureBuilder(
-              future: _araiService.getWordList(token: snapshot.data as String),
+              future: _araiService.getWordList(token: snapshot.data.toString()),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
-                  wordList = snapshot.data as List;
+                  wordList = snapshot.data!.toList();
                   return Center(
                     child: CarouselSlider(
                       options: CarouselOptions(
@@ -339,7 +339,7 @@ class _MyWordState extends State<MyWord> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.all(10.0),
-                                          child: 
+                                          child:
                                           Text(
                                             isEng
                                                 ? e['word']['wordEng']
