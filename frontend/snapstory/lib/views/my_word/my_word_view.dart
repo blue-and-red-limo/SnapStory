@@ -250,6 +250,7 @@ class _MyWordState extends State<MyWord> {
   late List wordList;
   late FlutterTts flutterTts;
   late int _current = 0;
+  late bool isEng = true;
 
   @override
   void initState() {
@@ -289,32 +290,75 @@ class _MyWordState extends State<MyWord> {
                           onPageChanged: (index, reason) {
                             setState(() {
                               _current = index;
+                              isEng = true;
                             });
                           }),
                       items: wordList
-                          .map((e) => Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(23)),
-                              child: Column(
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      makeSound(text: e['wordExampleEng']);
-                                    },
-                                    icon: const Icon(Icons.volume_up_outlined),
-                                    padding: const EdgeInsets.all(10),
-                                    iconSize:
-                                        MediaQuery.of(context).size.width * 0.1,
-                                  ),
-                                  Image.asset(e['word']['image']
-                                      .toString()
-                                      .substring(7)),
-                                  Text(e['word']['wordEng'],
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context).size.width * 0.1)),
-                                  Text(e['wordExampleEng']),
-                                ],
-                              )))
+                          .map((e) => GestureDetector(
+                                onTap: () => setState(() {
+                                  isEng = !isEng;
+                                }),
+                                child: Card(
+                                    elevation: 5.0,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(23)),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        IconButton(
+                                          onPressed: () {
+                                            makeSound(
+                                                text: e['wordExampleEng']
+                                                    .toString());
+                                          },
+                                          icon: const Icon(
+                                              Icons.volume_up_outlined),
+                                          padding: const EdgeInsets.all(10),
+                                          iconSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.1,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Image.asset(
+                                            e['word']['image'].toString(),
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.6,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.6,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(
+                                            isEng
+                                                ? e['word']['wordEng']
+                                                : e['word']['wordKor'],
+                                            style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.1),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Text(isEng
+                                              ? e['wordExampleEng']
+                                              : e['wordExampleKor']),
+                                        ),
+                                      ],
+                                    )),
+                              ))
                           .toList(),
                     ),
                   );
