@@ -84,4 +84,17 @@ class ARAIService {
     print(result['result'].toString());
     return result['result'];
   }
+
+  Future<List> getAITaleList ({required String token}) async {
+    var res = await http.get(
+      Uri.parse('$springBase/ai-tales'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    Map<String, dynamic> result = jsonDecode(utf8.decode(res.bodyBytes));
+    print(result['result'].toString());
+    return result['result'];
+  }
 }
