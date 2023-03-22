@@ -235,6 +235,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
 
 class MyWord extends StatefulWidget {
@@ -247,34 +248,42 @@ class MyWord extends StatefulWidget {
 class _MyWordState extends State<MyWord> {
   late ARAIService _araiService;
   late List wordList;
-  late String token;
+  late FlutterTts flutterTts;
   late int _current = 0;
 
   @override
   void initState() {
     _araiService = ARAIService();
+    flutterTts = FlutterTts();
+    flutterTts.setLanguage("en-US");
+    flutterTts.setSpeechRate(1.0); //speed of speech
+    flutterTts.setVolume(1.0); //volume of speech
+    flutterTts.setPitch(1); //pitc of sound
     super.initState();
+  }
+
+  Future<int> makeSound({required String text}) async {
+    return await flutterTts.speak(text);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: FutureBuilder(
-          future: FirebaseAuth.instance.currentUser!.getIdToken(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return FutureBuilder(
-                future:
-                    _araiService.getWordList(token: snapshot.data as String),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    wordList = snapshot.data as List;
-                    return CarouselSlider(
+      body: FutureBuilder(
+        future: FirebaseAuth.instance.currentUser!.getIdToken(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return FutureBuilder(
+              future: _araiService.getWordList(token: snapshot.data as String),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  wordList = snapshot.data as List;
+                  return Center(
+                    child: CarouselSlider(
                       options: CarouselOptions(
-                          aspectRatio: 2.0,
+                          height: MediaQuery.of(context).size.height * 0.6,
                           enlargeCenterPage: true,
-                          enableInfiniteScroll: false,
+                          enableInfiniteScroll: true,
                           initialPage: 0,
                           autoPlay: false,
                           onPageChanged: (index, reason) {
@@ -283,19 +292,41 @@ class _MyWordState extends State<MyWord> {
                             });
                           }),
                       items: wordList
-                          .map((e) => Text(e['word'].toString()))
+                          .map((e) => Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(23)),
+                              child: Column(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      makeSound(text: e['wordExampleEng']);
+                                    },
+                                    icon: const Icon(Icons.volume_up_outlined),
+                                    padding: const EdgeInsets.all(10),
+                                    iconSize:
+                                        MediaQuery.of(context).size.width * 0.1,
+                                  ),
+                                  Image.asset(e['word']['image']
+                                      .toString()
+                                      .substring(7)),
+                                  Text(e['word']['wordEng'],
+                                      style: TextStyle(
+                                          fontSize: MediaQuery.of(context).size.width * 0.1)),
+                                  Text(e['wordExampleEng']),
+                                ],
+                              )))
                           .toList(),
-                    );
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
+                    ),
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            );
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }
