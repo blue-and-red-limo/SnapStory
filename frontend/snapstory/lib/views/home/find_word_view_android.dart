@@ -266,7 +266,6 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   Future<void> onWebObjectAtButtonPressed() async {
-
     // ai 서버에서 정보 받아오기
     String? path = await NativeScreenshot.takeScreenshot();
     String wordName = await _araiService.postPictureAndGetWord(path: path!);
