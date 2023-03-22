@@ -94,8 +94,7 @@ class _DrawingViewState extends State<DrawingView> {
   // 정답 확인 함수
   void isCorrect() async {
     // 이미지 보내기
-    img();
-
+    await img();
     print(answer);
 
     // 정답인지 확인
@@ -153,104 +152,69 @@ class _DrawingViewState extends State<DrawingView> {
         barrierDismissible: true,
         builder: (BuildContext context) => Stack(
               children: [
-                Container(
-                    width: 400,
-                    height: 500,
-                    margin: const EdgeInsets.only(
-                      left: 30,
-                      right: 30,
-                      bottom: 200,
-                      top: 200,
+                Center(
+                    child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  margin: const EdgeInsets.only(
+                    left: 30,
+                    right: 30,
+                    bottom: 200,
+                    top: 200,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: const Color(0xffffb628),
+                      width: 6,
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(
-                        color: const Color(0xffffb628),
-                        width: 6,
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x3f000000),
+                        blurRadius: 4,
+                        offset: Offset(0, 4),
                       ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x3f000000),
-                          blurRadius: 4,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                      color: Colors.white,
-                    ),
-                    child: (_correct)
-                        ?
-                        // 정답일 경우
-                        Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                                const Text(
-                                  "정답입니다!",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Color(0xffffb628),
-                                    fontSize: 30,
-                                  ),
-                                ),
-                                const SizedBox(height: 50),
-                                Text(
-                                  answer,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 60,
-                                  ),
-                                ),
-                                const SizedBox(height: 50),
-                                Container(
-                                    width: 115,
-                                    height: 46,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(13),
-                                      color: const Color(0xffffb628),
-                                    ),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        _confirm();
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xffffb628)),
-                                      child: const Text(
-                                        "확인",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                    )),
-                              ])
-                        :
-                        // 오답일 경우
-                        Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
+                    ],
+                    color: Colors.white,
+                  ),
+                  child: (_correct)
+                      ?
+                      // 정답일 경우
+                      Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
                               const Text(
-                                "오답입니다",
+                                "정답입니다!",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Color(0xffffb628), fontSize: 30),
+                                  color: Color(0xffffb628),
+                                  fontSize: 30,
+                                ),
                               ),
-                              const SizedBox(height: 20),
-                              Image.asset(
-                                'assets/snappy_crying.png',
-                                height: 180,
+                              const SizedBox(height: 50),
+                              FittedBox(
+                                fit: BoxFit.contain,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 30),
+                                  child: Text(
+                                    answer,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      // fontSize: 60,
+                                    ),
+                                  ),
+                                ),
                               ),
-                              const SizedBox(height: 30),
+                              const SizedBox(height: 50),
                               Container(
-                                  width: 150,
-                                  height: 46,
+                                  width: 115,
+                                  height: 50,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(13),
-                                    // color: Color(0xffffb628),
+                                    color: const Color(0xffffb628),
                                   ),
                                   child: ElevatedButton(
                                     onPressed: () {
@@ -260,7 +224,7 @@ class _DrawingViewState extends State<DrawingView> {
                                         backgroundColor:
                                             const Color(0xffffb628)),
                                     child: const Text(
-                                      "다시 그려보기",
+                                      "확인",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Colors.white,
@@ -268,8 +232,54 @@ class _DrawingViewState extends State<DrawingView> {
                                       ),
                                     ),
                                   )),
-                            ],
-                          )),
+                            ])
+                      :
+                      // 오답일 경우
+                      Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 20),
+                              child: const Text(
+                                "오답입니다",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Color(0xffffb628), fontSize: 30),
+                              ),
+                            ),
+                            Image.asset(
+                              'assets/snappy_crying.png',
+                              height: 180,
+                            ),
+                            Container(
+                                width: 150,
+                                height: 50,
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(13),
+                                  // color: Color(0xffffb628),
+                                ),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    _confirm();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xffffb628)),
+                                  child: const Text(
+                                    "다시 그려보기",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                )),
+                          ],
+                        ),
+                )),
+
                 // confetti
                 Align(
                   alignment: Alignment.topCenter,
@@ -422,88 +432,91 @@ class _DrawingViewState extends State<DrawingView> {
       body: Center(
         child: Column(
           children: [
-            //위 공간
-            const SizedBox(
-              height: 50,
-            ),
             // 나가기
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(drawingTaleListRoute);
-                },
-                icon: const Icon(
-                  Icons.cancel_rounded,
-                  color: Color(0xffffb628),
-                  size: 30,
+            Container(
+              margin: EdgeInsets.fromLTRB(
+                  0, MediaQuery.of(context).padding.top, 20, 0),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(drawingTaleListRoute);
+                  },
+                  icon: const Icon(
+                    Icons.cancel_rounded,
+                    color: Color(0xffffb628),
+                    size: 30,
+                  ),
+                  label: const Text(
+                    '나가기',
+                    style: TextStyle(color: Color(0xffffb628), fontSize: 20),
+                  ),
                 ),
-                label: const Text(
-                  '나가기',
-                  style: TextStyle(color: Color(0xffffb628), fontSize: 20),
-                ),
-              ),
-              const SizedBox(
-                width: 20,
-              )
-            ]),
+              ]),
+            ),
 
             // 동화 아이템
             Container(
-              height: 280,
-              margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+              height: MediaQuery.of(context).size.height * 0.35,
+              width: MediaQuery.of(context).size.width * 0.9,
+              margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               decoration: const BoxDecoration(color: Color(0xffd9d9d9)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FittedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 20),
+                              child: Image.asset(
+                                items[0],
+                                width: 120,
+                              )),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 20),
+                            child: Image.asset(
+                              items[1],
+                              width: 120,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
                           margin: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
+                              horizontal: 30, vertical: 20),
                           child: Image.asset(
-                            items[0],
-                            width: 100,
-                          )),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        child: Image.asset(
-                          items[1],
-                          width: 100,
+                            items[2],
+                            width: 120,
+                          ),
                         ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        child: Image.asset(
-                          items[2],
-                          width: 100,
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 20),
+                          child: Image.asset(
+                            items[3],
+                            width: 120,
+                          ),
                         ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        child: Image.asset(
-                          items[3],
-                          width: 100,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
 
             // 툴 + 그림 그리는 부분
             Container(
                 margin:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
                     border: Border.all(color: Colors.black, width: 1)),
                 child: Column(children: [
@@ -547,15 +560,16 @@ class _DrawingViewState extends State<DrawingView> {
                                   PaddleSliderValueIndicatorShape(),
                             ),
                             child: Slider(
-                                value: _controller.thickness,
-                                onChanged: (double value) => setState(() {
-                                      _controller.thickness = value;
-                                    }),
-                                min: 0.0,
-                                max: 20.0,
-                                divisions: 4,
-                                label: _controller.thickness.round().toString(),
-                                activeColor: Colors.black),
+                              value: _controller.thickness,
+                              onChanged: (double value) => setState(() {
+                                _controller.thickness = value;
+                              }),
+                              min: 0.0,
+                              max: 20.0,
+                              divisions: 4,
+                              label: _controller.thickness.round().toString(),
+                              activeColor: Colors.black,
+                            ),
                           ),
                         ),
 
@@ -585,9 +599,7 @@ class _DrawingViewState extends State<DrawingView> {
                     child: Painter(_controller),
                   ),
                 ])),
-            SizedBox(
-              height: 10,
-            ),
+
             // 정답 확인 버튼
             ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -596,7 +608,10 @@ class _DrawingViewState extends State<DrawingView> {
                   // 정답 확인 함수 실행
                   isCorrect();
                 },
-                child: const Text('정답 확인'))
+                child: const Text('정답 확인',
+                    style: TextStyle(
+                      color: Colors.white,
+                    )))
           ],
         ),
       ),
