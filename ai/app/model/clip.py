@@ -175,7 +175,10 @@ def predict(image_file,type):
         images=new_dataset[0]['image'],
         return_tensors='pt'
     )['pixel_values'].to(device)
-    image.shape
+
+    # image 출력해보기.
+    # print("image")
+    # print(image)
 
     img_emb = model.get_image_features(image)
     img_emb.shape
@@ -185,12 +188,15 @@ def predict(image_file,type):
     scores = np.dot(img_emb, label_emb.T)
 
     # print(scores)
-    # sum = np.sum(scores)
-    # scores=scores/sum
+    sum = np.sum(scores)
+    scores=scores/sum
     # print(scores)
 
     # get index of highest score
     pred = np.argmax(scores)
+
+    # debug
+    print("prediction:",pred,"score:",scores.max(),"%")
 
     # find text label with highest score
     return labels[pred]
