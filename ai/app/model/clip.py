@@ -196,7 +196,7 @@ def predict(image_file,type):
     pred = np.argmax(scores)
 
     # debug
-    print("prediction:",pred,"score:",scores.max()*100,"%")
+    print("prediction:",labels[pred],"score:",scores.max()*100,"%")
 
     # find text label with highest score
     return labels[pred]
