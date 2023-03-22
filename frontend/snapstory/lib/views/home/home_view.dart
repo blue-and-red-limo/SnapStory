@@ -34,10 +34,7 @@ class Home extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                      builder: (context) => const FairyTaleQuiz()),
-                );
+                Navigator.of(context).pushNamed(drawingTaleListRoute);
               },
               child: Container(
                   width: 277,
