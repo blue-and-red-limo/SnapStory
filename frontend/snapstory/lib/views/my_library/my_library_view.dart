@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
+import 'package:snapstory/utilities/loading_dialog.dart';
 
 class MyLibrary extends StatefulWidget {
   const MyLibrary({Key? key}) : super(key: key);
@@ -33,19 +34,25 @@ class _MyLibraryState extends State<MyLibrary> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   AITaleList = snapshot.data!.toList();
-                  return ListView(
-                    children:
-                        AITaleList.map((e) => Card(child: Text(e.toString())))
-                            .toList(),
+                  return GridView.count(
+                    crossAxisCount: 3,
+                    children: AITaleList.map(
+                      (e) => Card(
+                        elevation: 5.0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(23)),
+                        child: Center(child: Text(e['wordEng'])),
+                      ),
+                    ).toList(),
                   );
                 } else {
-                  return const CircularProgressIndicator();
+                  return const LoadingDialog();
                 }
               },
             ),
           );
         } else {
-          return const CircularProgressIndicator();
+          return const LoadingDialog();
         }
       },
     ));
