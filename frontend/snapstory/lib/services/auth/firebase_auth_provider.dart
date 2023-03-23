@@ -118,8 +118,12 @@ class FirebaseAuthProvider implements AuthProvider {
   Future<void> deleteUser({required String email, required String password}) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await user.reauthenticateWithCredential(EmailAuthProvider.credential(email: email, password: password));
-      await user.delete();
+      var userCredential = await user.reauthenticateWithCredential(EmailAuthProvider.credential(email: email, password: password));
+      if(userCredential.user?.uid == user.uid) {
+        await user.delete();
+      } else {
+        throw UserNotFoundAuthException();
+      }
     } else {
       throw UserNotLoggedInAuthException();
     }

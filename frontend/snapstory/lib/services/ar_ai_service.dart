@@ -49,6 +49,7 @@ class ARAIService {
       'wordExampleKor': str[3].split(":")[1].substring(1),
       'wordExampleEng': str[2].split(":")[1].substring(1)
     };
+    print(result.toString());
 
     await http.post(
       Uri.parse('$springBase/word-list'),
@@ -59,7 +60,7 @@ class ARAIService {
       body: jsonEncode(result),
     );
 
-    final res = await http.get(
+    var res = await http.get(
       Uri.parse('$springBase/word-list/$obj'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -68,7 +69,33 @@ class ARAIService {
     );
     Map<String, dynamic> result2 = jsonDecode(utf8.decode(res.bodyBytes));
     result.addAll({'wordExplanationEng' : result2['result']['word']['wordExplanationEng'], 'wordExplanationKor' : result2['result']['word']['wordExplanationKor']});
-
+    print(result.toString());
     return result;
+  }
+
+  Future<List> getWordList ({required String token}) async {
+    var res = await http.get(
+      Uri.parse('$springBase/word-list'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    Map<String, dynamic> result = jsonDecode(utf8.decode(res.bodyBytes));
+    print(result['result'].toString());
+    return result['result'];
+  }
+
+  Future<List> getAITaleList ({required String token}) async {
+    var res = await http.get(
+      Uri.parse('$springBase/ai-tales'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    Map<String, dynamic> result = jsonDecode(utf8.decode(res.bodyBytes));
+    print(result['result'].toString());
+    return result['result'];
   }
 }

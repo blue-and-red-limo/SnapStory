@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:ar_flutter_plugin/datatypes/config_planedetection.dart';
 import 'package:ar_flutter_plugin/datatypes/node_types.dart';
@@ -20,6 +21,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
+import 'package:screenshot/screenshot.dart';
+
+
 import '../../constants/routes.dart';
 import 'make_story_view.dart';
 
@@ -36,7 +40,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   late ARAnchorManager arAnchorManager;
   late ARLocationManager arLocationManager;
 
-  // ArCoreController _arCoreController;
+  ScreenshotController screenshotController = ScreenshotController();
 
   //String localObjectReference;
   ARNode? localObjectNode;
@@ -91,10 +95,14 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Stack(
         children: [
+          Screenshot(
+              controller: screenshotController,
+              child:
           ARView(
             onARViewCreated: onARViewCreated,
             planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
           ),
+      ),
           if (!checked)
             Positioned(
               top: MediaQuery.of(context).size.height * 0.15,
@@ -232,7 +240,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               icon: const Icon(Icons.exit_to_app_outlined),
             ),
           ),
-        ],
+
+    ],
       ),
       floatingActionButton: Container(
         height: MediaQuery.of(context).size.height * 0.09,
@@ -282,13 +291,19 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
 
   Future<void> onWebObjectAtButtonPressed() async {
 
+    final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
+    String fileName = '${DateTime
+        .now()
+        .microsecondsSinceEpoch}.png';
+
+    await screenshotController.captureAndSave(
+        '$directory', //set path where screenshot will be saved
+        fileName: fileName
+    );
     // ai 서버에서 정보 받아오기
-    // var img = await arSessionManager.snapshot();
-    // print("imgimgimgimgimgimgimgimgimgimgimgimgimgimgimg:"  + img.toString());
-    String? path = await NativeScreenshot.takeScreenshot();
-    String wordName = await _araiService.postPictureAndGetWord(path: path!);
+    String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
     wordName = wordName.substring(1, wordName.length - 1);
-    print(wordName);
+    print('wordname: $wordName');
 
     var map = await _araiService.generateText(obj: wordName, token: await FirebaseAuth.instance.currentUser!.getIdToken());
     setState(() {

@@ -10,18 +10,20 @@ class TempButton extends StatefulWidget {
 }
 
 class _TempButtonState extends State<TempButton> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child:  OutlinedButton(onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const MakeStory(word: "",)),
-            );
-
-          }, child: const Text("동화만들기")),
+        child: OutlinedButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const MakeStory(
+                          word: 'apple',
+                        )),
+              );
+            },
+            child: const Text("동화만들기")),
       ),
     );
   }
