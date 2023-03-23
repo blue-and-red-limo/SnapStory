@@ -7,12 +7,15 @@ import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
+import 'package:ar_flutter_plugin/models/ar_anchor.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:ar_flutter_plugin/widgets/ar_view.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:introduction_screen/introduction_screen.dart';
 import 'package:native_screenshot/native_screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
@@ -57,6 +60,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   late ARAIService _araiService;
   late bool isLoading = false;
   late String word;
+  late Map wordMap;
 
   void showDialog() {
     setState(() {
@@ -82,7 +86,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   Future<int> makeSound({required String text}) async {
-    return await flutterTts.speak("Hello World, this is Flutter Campus.");
+    return await flutterTts.speak(text);
   }
 
   @override
@@ -139,7 +143,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                   Row(
                     children: [
                       GestureDetector(
-                        onTap: () async => await makeSound(text: 'text'),
+                        onTap: () async => await makeSound(text: wordMap['word']),
                         child: Container(
                             height: MediaQuery.of(context).size.height * 0.1,
                             width: MediaQuery.of(context).size.width * 0.35,
@@ -154,37 +158,43 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                                 child: Text('단어듣기',
                                     style: TextStyle(fontSize: 20)))),
                       ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(23),
-                          border: Border.all(
-                              width: 5, color: const Color(0xff00B2FF)),
-                          color: const Color(0xffB5FAFE),
+                      GestureDetector(
+                        onTap: () async => await makeSound(text: wordMap['wordExampleEng']),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(23),
+                            border: Border.all(
+                                width: 5, color: const Color(0xff00B2FF)),
+                            color: const Color(0xffB5FAFE),
+                          ),
+                          child: const Center(
+                              child:
+                                  Text('문장듣기', style: TextStyle(fontSize: 20))),
                         ),
-                        child: const Center(
-                            child:
-                                Text('문장듣기', style: TextStyle(fontSize: 20))),
                       ),
                     ],
                   ),
                   Row(
                     children: [
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(23),
-                          border: Border.all(
-                              width: 5, color: const Color(0xffFF93AD)),
-                          color: const Color(0xffFFCBE7),
+                      GestureDetector(
+                        onTap: () => makeSound(text: wordMap['wordExplanationEng'].toString()),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(23),
+                            border: Border.all(
+                                width: 5, color: const Color(0xffFF93AD)),
+                            color: const Color(0xffFFCBE7),
+                          ),
+                          child: const Center(
+                              child:
+                                  Text('설명듣기', style: TextStyle(fontSize: 20))),
                         ),
-                        child: const Center(
-                            child:
-                                Text('설명듣기', style: TextStyle(fontSize: 20))),
                       ),
                       Container(
                         height: MediaQuery.of(context).size.height * 0.1,
@@ -249,6 +259,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             onPressed: () async {
               // 초기화
 
+              arObjectManager.onInitialize();
+              // arAnchorManager.initGoogleCloudAnchorMode();
               onWebObjectAtButtonPressed();
             },
           ),
@@ -265,6 +277,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     this.arSessionManager = arSessionManager;
     this.arObjectManager = arObjectManager;
     this.arAnchorManager = arAnchorManager;
+    this.arLocationManager = arLocationManager;
 
     this.arSessionManager.onInitialize(
         showFeaturePoints: false,
@@ -292,21 +305,38 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     wordName = wordName.substring(1, wordName.length - 1);
     print('wordname: $wordName');
 
+    var map = await _araiService.generateText(obj: wordName, token: await FirebaseAuth.instance.currentUser!.getIdToken());
+    setState(() {
+      wordMap = map;
+    });
+    print(wordMap.toString());
+
+
     if (webObjectNode != null) {
       arObjectManager.removeNode(webObjectNode!);
       webObjectNode = null;
     }
 
-    var newNode = ARNode(
+    // var newAnchor = ARPlaneAnchor(transformation: );
+
+    // final cameraPosition = arLocationManager.currentLocation;
+    // final forward = arLocationManager.currentLocation;
+    // print("cfcfcfcfcfcffcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfc:" + cameraPosition.toString() + forward.toString());
+    // final nodePosition = cameraPosition + (forward * -1.0);
+
+    var newNode = ARNode (
       name: wordName,
       type: NodeType.webGLB,
       uri:
           "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
       scale: Vector3(0.1, 0.1, 0.5),
       position: Vector3(-0.01, -0.01, -0.1),
+      // position: await arLocationManager.getLastKnownPosition();
     );
 
+
     bool? didAddWebNode = await arObjectManager.addNode(newNode);
+    print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee"+didAddWebNode.toString());
     webObjectNode = (didAddWebNode!) ? newNode : null;
   }
 
@@ -314,6 +344,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     checked == true ? checked = false : checked = true;
     setState(() {});
   }
+
+
+
 }
 
 class DisplayPictureScreen extends StatelessWidget {
