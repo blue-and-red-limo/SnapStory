@@ -23,7 +23,7 @@ void main() {
         primarySwatch:
             ColorService.createMaterialColor(const Color(0xFFFFB628)),
       ),
-      home: const OnBoardingPage(),
+      home: const HomePage(),
       routes: {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
