@@ -1,23 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:snapstory/services/auth/auth_service.dart';
-import 'package:snapstory/services/crud/notes_service.dart';
-import 'package:flutter/material.dart';
-import 'package:snapstory/services/crud/user_service.dart';
-import 'package:snapstory/utilities/show_error_dialog.dart';
-import 'package:snapstory/views/onboarding.dart';
-
-import '../constants/routes.dart';
-import '../enums/menu_action.dart';
 import 'package:circular_bottom_navigation/circular_bottom_navigation.dart';
 import 'package:circular_bottom_navigation/tab_item.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:snapstory/services/auth/auth_service.dart';
+import 'package:snapstory/services/crud/user_service.dart';
+import 'package:snapstory/utilities/show_error_dialog.dart';
 
 // 메인 탭 3개 페이지
 import 'package:snapstory/views/home/home_view.dart';
 import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:snapstory/views/my_word/my_word_view.dart';
+import 'package:snapstory/views/onboarding.dart';
 
-// 나중에 지울 것
-import 'package:snapstory/views/home/temp_button_view.dart';
+import '../constants/routes.dart';
 
 class MainView extends StatefulWidget {
   const MainView({Key? key, required this.selectedPage}) : super(key: key);
@@ -34,13 +29,18 @@ class _MainViewState extends State<MainView> {
 
   // user 정보 받아오기
   String get userEmail => AuthService.firebase().currentUser!.email!;
+
   String get userName => AuthService.firebase().currentUser!.userName!;
 
   // navigation bar
   late int selectedPos;
   double bottomNavBarHeight = 70;
 
-  final List<Widget> _children = [Home(), MyLibrary(), TempButton()]; // (Fix) 나중에 TempButton을 MyWord로 바꾸기
+  final List<Widget> _children = [
+    const Home(),
+    const MyLibrary(),
+    const MyWord()
+  ]; // (Fix) 나중에 TempButton을 MyWord로 바꾸기
 
   // 메인 탭 3개 아이콘
   List<TabItem> tabItems = List.of([
@@ -206,10 +206,10 @@ class _MainViewState extends State<MainView> {
                   );
                 } else {
                   final shouldDelete = await showDeleteDialog(context);
-                  if(shouldDelete) {
+                  if (shouldDelete) {
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       loginRoute,
-                          (_) => false,
+                      (_) => false,
                     );
                   }
                 }
@@ -261,25 +261,31 @@ class _MainViewState extends State<MainView> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('SIGN OUT'),
-          content: const Text('YOU SURE YOU WANNA DELETE YOUR ACCOUNT'),
+          title: const Text('탈퇴하기'),
+          content: const Text('이메일과 비밀번호를 입력해주세요.'),
           actions: [
             TextField(controller: _email),
-            TextField(controller: _password),
+            TextField(
+              controller: _password,
+              obscureText: true,
+            ),
             TextButton(
               onPressed: () async {
-                bool result = await _userService.deleteUser(token: await FirebaseAuth.instance.currentUser!.getIdToken());
+                bool result = await _userService.deleteUser(
+                    token:
+                        await FirebaseAuth.instance.currentUser!.getIdToken());
                 if (!result) await showErrorDialog(context, "DB ERROR");
-                await AuthService.firebase().deleteUser(email: _email.text, password: _password.text);
+                await AuthService.firebase()
+                    .deleteUser(email: _email.text, password: _password.text);
                 Navigator.of(context).pop(true);
               },
-              child: const Text('DELETE'),
+              child: const Text('탈퇴하기'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text('CANCEL'),
+              child: const Text('돌아가기'),
             ),
           ],
         );
@@ -292,20 +298,20 @@ class _MainViewState extends State<MainView> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('SIGN OUT'),
-          content: const Text('YOU SURE YOU WANNA SIGN OUT'),
+          title: const Text('로그아웃'),
+          content: const Text('로그아웃하시겠습니까 ?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(true);
               },
-              child: const Text('SIGN OUT'),
+              child: const Text('로그아웃'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(false);
               },
-              child: const Text('DELETE'),
+              child: const Text('탈퇴하기'),
             ),
           ],
         );
