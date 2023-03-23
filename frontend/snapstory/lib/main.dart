@@ -17,13 +17,15 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MaterialApp(
+      // Remove the debug banner
+      debugShowCheckedModeBanner: false,
       title: 'SNAP STORY',
       theme: ThemeData(
         fontFamily: 'ONE Mobile POP',
         primarySwatch:
             ColorService.createMaterialColor(const Color(0xFFFFB628)),
       ),
-      home: const OnBoardingPage(),
+      home: const HomePage(),
       routes: {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
