@@ -11,11 +11,13 @@ import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:ar_flutter_plugin/widgets/ar_view.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:native_screenshot/native_screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
+import 'package:snapstory/utilities/loading_dialog.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 import 'package:screenshot/screenshot.dart';
@@ -99,7 +101,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
           ),
       ),
-          if (!checked)
+          if (!checked && !isLoading)
             Positioned(
               top: MediaQuery.of(context).size.height * 0.15,
               left: MediaQuery.of(context).size.width * 0.1,
@@ -126,7 +128,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                 ),
               ),
             ),
-          if (checked)
+          if (checked && !isLoading)
             Positioned(
               top: MediaQuery.of(context).size.height * 0.58,
               left: MediaQuery.of(context).size.width * 0.1,
@@ -230,6 +232,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               icon: const Icon(Icons.exit_to_app_outlined),
             ),
           ),
+          if(isLoading) const Center(child: LoadingDialog()),
 
     ],
       ),
@@ -248,7 +251,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             // Provide an onPressed callback.
             onPressed: () async {
               // 초기화
-
+              setState(() {
+                isLoading = true;
+              });
               onWebObjectAtButtonPressed();
             },
           ),
@@ -308,6 +313,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
 
     bool? didAddWebNode = await arObjectManager.addNode(newNode);
     webObjectNode = (didAddWebNode!) ? newNode : null;
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void onTapHandler(String name) {

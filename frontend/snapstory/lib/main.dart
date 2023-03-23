@@ -17,6 +17,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     MaterialApp(
+      // Remove the debug banner
+      debugShowCheckedModeBanner: false,
       title: 'SNAP STORY',
       theme: ThemeData(
         fontFamily: 'ONE Mobile POP',
