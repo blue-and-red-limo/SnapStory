@@ -18,7 +18,7 @@ class _TempButtonState extends State<TempButton> {
       body: Center(
           child:  OutlinedButton(onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const MakeStory()),
+              MaterialPageRoute(builder: (context) => const MakeStory(word: "",)),
             );
 
           }, child: const Text("동화만들기")),

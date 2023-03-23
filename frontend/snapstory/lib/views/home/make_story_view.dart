@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:openai_client/openai_client.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
@@ -34,6 +33,7 @@ class FairyTale {
   const FairyTale(this.contentEng, this.contentKor, this.image, this.wordListId);
 }
 
+//
 final List<Widget> imageSliders = imgList
     .map((item) => Container(
       margin: const EdgeInsets.all(5.0),
@@ -62,39 +62,6 @@ Future<void> saveImg() async {
   File file = File(join(documentDirectory.path, 'imagetest.png'));
   file.writeAsBytesSync(response.bodyBytes);
 }
-// Future<void> _saveImage(BuildContext context) async {
-//   String? message;
-//   final scaffoldMessenger = ScaffoldMessenger.of(context);
-//
-//   try {
-//     // Download image
-//     final http.Response response = await http.get(Uri.parse("https://upload.wikimedia.org/wikipedia/en/8/86/Einstein_tongue.jpg"));
-//
-//     // Get temporary directory
-//     final dir = await getTemporaryDirectory();
-//
-//     // Create an image name
-//     var filename = '${dir.path}/image.png';
-//
-//     // Save to filesystem
-//     final file = File(filename);
-//     await file.writeAsBytes(response.bodyBytes);
-//
-//     // Ask the user to save it
-//     final params = SaveFileDialogParams(sourceFilePath: file.path);
-//     final finalPath = await FlutterFileDialog.saveFile(params: params);
-//
-//     if (finalPath != null) {
-//       message = 'Image saved to disk';
-//     }
-//   } catch (e) {
-//     message = 'An error occurred while saving the image';
-//   }
-//
-//   if (message != null) {
-//     scaffoldMessenger.showSnackBar(SnackBar(content: Text(message)));
-//   }
-// }
 
 class MakeStory extends StatefulWidget {
   const MakeStory({Key? key, required this.word}) : super(key: key);

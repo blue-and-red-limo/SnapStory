@@ -31,7 +31,7 @@ class ARAIService {
       body: jsonEncode({
         "model": "text-davinci-003",
         'prompt':
-            'give me one simple sentence about $obj and translation of that in korean too',
+            'give me one simple sentence about $obj and translation of that in korean too by using this templete: "eng: your answer1 kor: your answer2"',
         'max_tokens': 1000,
         'temperature': 0,
         'top_p': 1,
@@ -43,10 +43,11 @@ class ARAIService {
     Map<String, dynamic> newresponse =
         jsonDecode(utf8.decode(response.bodyBytes));
     List<String> str = newresponse['choices'][0]['text'].split('\n');
+    print("zzzzzzzzzzzzzzzzzzzzzzzz: "+ str.toString());
     Map<String, String> result = {
       'word': obj,
-      'wordExampleKor': str[3].toString(),
-      'wordExampleEng': str[2].toString()
+      'wordExampleKor': str[3].split(":")[1].substring(1),
+      'wordExampleEng': str[2].split(":")[1].substring(1)
     };
 
     await http.post(
