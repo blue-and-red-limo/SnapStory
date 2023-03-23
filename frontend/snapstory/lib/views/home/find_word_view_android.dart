@@ -88,7 +88,13 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   Future<int> makeSound({required String text}) async {
     return await flutterTts.speak(text);
   }
-
+  // Vector3(-0.01, -0.01, -0.1)
+  Vector3 addVecter(Vector3 vector3){
+    print('addVecter !!!!!!!');
+    Vector3 addVector = Vector3(-0.01, -0.01, -0.1);
+    vector3.add(addVector);
+    return vector3;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -284,13 +290,23 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
         showPlanes: false,
         showWorldOrigin: false,
         handleTaps: false,
-        showAnimatedGuide: false);
+        showAnimatedGuide: false,
+        handleRotation: true);
     this.arObjectManager.onInitialize();
     this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
+    this.arLocationManager.startLocationUpdates();
   }
-
+  // @override
+  // void didUpdateWidget(Widget oldWidget) {
+  //   print("===========================================================");
+  //   // this.arObjectManager.onInitialize();
+  //   onARViewCreated(
+  //        arSessionManager,
+  //        arObjectManager,
+  //        arAnchorManager,
+  //        arLocationManager);
+  // }
   Future<void> onWebObjectAtButtonPressed() async {
-
     final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
     String fileName = '${DateTime
         .now()
@@ -330,11 +346,12 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       uri:
           "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
       scale: Vector3(0.1, 0.1, 0.5),
-      position: Vector3(-0.01, -0.01, -0.1),
-      // position: await arLocationManager.getLastKnownPosition();
+      // position: Vector3(-0.01, -0.01, -0.1),
+      position: await arSessionManager.getCameraPose().then((value) => addVecter(value!.getTranslation())),
+      // position: await arSessionManager.getCameraPose().then((value) => (value?.getTranslation())),
     );
-
-
+    Matrix3 matrix3=await arSessionManager.getCameraPose().then((value) => value!.getRotation());
+    // newNode.rotation(matrix3);
     bool? didAddWebNode = await arObjectManager.addNode(newNode);
     print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee"+didAddWebNode.toString());
     webObjectNode = (didAddWebNode!) ? newNode : null;
