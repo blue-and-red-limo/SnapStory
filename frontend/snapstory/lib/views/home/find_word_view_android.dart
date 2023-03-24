@@ -19,6 +19,7 @@ import 'package:introduction_screen/introduction_screen.dart';
 import 'package:native_screenshot/native_screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
+import 'package:snapstory/utilities/loading_dialog.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 import 'package:screenshot/screenshot.dart';
@@ -104,7 +105,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
           ),
       ),
-          if (!checked)
+          if (!checked && !isLoading)
             Positioned(
               top: MediaQuery.of(context).size.height * 0.15,
               left: MediaQuery.of(context).size.width * 0.1,
@@ -131,7 +132,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                 ),
               ),
             ),
-          if (checked)
+          if (checked && !isLoading)
             Positioned(
               top: MediaQuery.of(context).size.height * 0.58,
               left: MediaQuery.of(context).size.width * 0.1,
@@ -248,6 +249,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               icon: const Icon(Icons.exit_to_app_outlined),
             ),
           ),
+          if(isLoading) const Center(child: LoadingDialog()),
 
     ],
       ),
@@ -266,7 +268,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             // Provide an onPressed callback.
             onPressed: () async {
               // 초기화
-
+              setState(() {
+                isLoading = true;
+              });
               arObjectManager.onInitialize();
               // arAnchorManager.initGoogleCloudAnchorMode();
               onWebObjectAtButtonPressed();
@@ -347,6 +351,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     bool? didAddWebNode = await arObjectManager.addNode(newNode);
     print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee"+didAddWebNode.toString());
     webObjectNode = (didAddWebNode!) ? newNode : null;
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void onTapHandler(String name) {
