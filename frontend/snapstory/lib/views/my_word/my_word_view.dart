@@ -237,7 +237,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
-import 'package:snapstory/utilities/show_error_dialog.dart';
 
 import '../../utilities/loading_dialog.dart';
 
@@ -380,7 +379,7 @@ class _MyWordState extends State<MyWord> {
                         child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
                           Row(mainAxisAlignment: MainAxisAlignment.center,children: [Image.asset('assets/snappy.png')]),
                           const Row(mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Text('단어장에 단어를 추가해주세요~', style: TextStyle(fontSize:  30),)],
+                            children: [Text('단어를 추가해주세요~', style: TextStyle(fontSize:  30),)],
                           )
                         ]),
                       ),
