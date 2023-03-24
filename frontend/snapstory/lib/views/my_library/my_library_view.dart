@@ -22,6 +22,7 @@ class _MyLibraryState extends State<MyLibrary> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
         body: FutureBuilder(
       future: FirebaseAuth.instance.currentUser!.getIdToken(),
       builder: (context, snapshot) {

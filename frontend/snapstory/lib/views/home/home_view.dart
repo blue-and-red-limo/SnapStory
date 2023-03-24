@@ -9,7 +9,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         body: Center(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -23,14 +23,20 @@ class Home extends StatelessWidget {
                 }
               },
               child: Container(
+
                   width: 277,
                   height: 253,
                   margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(23),
                     color: const Color(0xffffdb1f),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/find_word_btn.png'), // 배경 이미지
+                    ),
                   ),
-                  child: const Center(child: Text("주변 영단어 찾기"))),
+                  child: const Center(child: Text(""))
+              ),
             ),
             GestureDetector(
               onTap: () {
@@ -42,8 +48,12 @@ class Home extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(23),
                     color: const Color(0xff86EC62),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/draw_quiz_btn.png'), // 배경 이미지
+                    ),
                   ),
-                  child: const Center(child: Text("동화 퀴즈"))),
+                  child: const Center(child: Text(""))),
             ),
           ],
         )));
