@@ -70,7 +70,7 @@ class _MyLibraryState extends State<MyLibrary> {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) => CompleteStory(
-                                              fairyTale: AITale['aiTaleId']),
+                                              id: AITale['aiTaleId']),
                                         ),
                                       );
                                     },
