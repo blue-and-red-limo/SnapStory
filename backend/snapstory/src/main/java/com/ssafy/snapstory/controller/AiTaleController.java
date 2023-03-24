@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Api(value = "AI 동화 API", tags = {"AiTale"})
@@ -40,7 +41,7 @@ public class AiTaleController {
 
     @PutMapping("/{aiTaleId}")
     @ApiOperation(value = "AI 동화 그림 저장", notes = "AI 동화 그림 저장")
-    public ResultResponse<UpdateAiTaleRes> updateAiTale(@RequestParam int aiTaleId, @RequestPart MultipartFile image, Authentication authentication) {
+    public ResultResponse<UpdateAiTaleRes> updateAiTale(@RequestParam int aiTaleId, String image, Authentication authentication) throws IOException {
         return ResultResponse.success(aiTaleService.updateAiTale(aiTaleId, image, Integer.parseInt(authentication.getName())));
     }
 

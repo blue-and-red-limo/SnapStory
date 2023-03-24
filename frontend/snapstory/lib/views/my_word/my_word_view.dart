@@ -379,7 +379,7 @@ class _MyWordState extends State<MyWord> {
                         width: MediaQuery.of(context).size.width * 0.8,
                         child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
                           Row(mainAxisAlignment: MainAxisAlignment.center,children: [Image.asset('assets/snappy.png')]),
-                          const Row(mainAxisAlignment: MainAxisAlignment.center,
+                          Row(mainAxisAlignment: MainAxisAlignment.center,
                             children: [Text('단어장에 단어를 추가해주세요~', style: TextStyle(fontSize:  30),)],
                           )
                         ]),
