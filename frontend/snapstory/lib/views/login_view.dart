@@ -172,6 +172,8 @@ class _LoginViewState extends State<LoginView> {
                         password: password,
                       );
                       final user = AuthService.firebase().currentUser;
+                      print("==================asd===============");
+                      print(await FirebaseAuth.instance.currentUser!.getIdToken());
                       if (user?.isEmailVerified ?? false) {
                         if (await _userService.createUser(
                                 user: DBUser(

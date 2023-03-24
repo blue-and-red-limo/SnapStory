@@ -31,6 +31,10 @@ dependencies {
 	implementation("io.springfox:springfox-boot-starter:3.0.0")
 	implementation("io.springfox:springfox-swagger-ui:3.0.0")
 	implementation ("com.google.firebase:firebase-admin:9.1.1")
+	implementation ("com.github.downgoon:marvin:1.5.5")
+	implementation ("com.github.downgoon:MarvinPlugins:1.5.5")
+	// https://mvnrepository.com/artifact/org.springframework/spring-test
+	testImplementation("org.springframework:spring-test:5.1.13.RELEASE")
 }
 
 tasks.withType<Test> {

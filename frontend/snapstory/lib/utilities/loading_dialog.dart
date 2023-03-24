@@ -15,7 +15,7 @@ class LoadingDialog extends StatelessWidget {
       width: MediaQuery.of(context).size.width * 0.8,
       child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
         Row(mainAxisAlignment: MainAxisAlignment.center,children: [Image.asset('assets/snappy.png')]),
-        const Row(mainAxisAlignment: MainAxisAlignment.center,
+        Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [Text('잠시만 기다려주세요~', style: TextStyle(fontSize:  30),)],
         )
       ]),

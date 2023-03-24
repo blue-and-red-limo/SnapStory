@@ -1,3 +1,7 @@
+
+import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -9,11 +13,11 @@ import 'package:openai_client/openai_client.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+import 'dart:io' as io;
 
 import 'complete_story_view.dart';
 
-const apiKey = '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';
+const apiKey = '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';
 const apiUrl = 'https://api.openai.com/v1/completions';
 
 // dalle가 만든 이미지 리스트
@@ -22,15 +26,16 @@ final List<String> imgList = [];
 // complete_story_view로 넘어갈 변수 2개
 String story = ""; // chatGpt가 만든 스토리
 String selectedImg = ""; // 선택한 이미지
+late int aiTaleId;
 
 // 동화 클래스
 class FairyTale {
   final String contentEng;
   final String contentKor;
   final String image;
-  final int wordListId;
+  final String word;
 
-  const FairyTale(this.contentEng, this.contentKor, this.image, this.wordListId);
+  const FairyTale(this.contentEng, this.contentKor, this.image, this.word);
 }
 
 //
@@ -57,10 +62,26 @@ final List<Widget> imageSliders = imgList
     .toList();
 
 Future<void> saveImg() async {
-  var response = await http.get(Uri.parse("https://upload.wikimedia.org/wikipedia/en/8/86/Einstein_tongue.jpg"));
-  Directory documentDirectory = await getApplicationDocumentsDirectory();
-  File file = File(join(documentDirectory.path, 'imagetest.png'));
-  file.writeAsBytesSync(response.bodyBytes);
+  String imageURL = "https://blog.kakaocdn.net/dn/VIxFi/btqZqqf3QFS/n2otuLtHQo8TQVOwMAmmbk/img.png";
+
+  try {
+    // generate random number.
+    var rng = new Random();
+// get temporary directory of device.
+    io.Directory tempDir = await getTemporaryDirectory();
+// get temporary path from temporary directory.
+    String tempPath = tempDir.path;
+// create a new file in temporary path with random file name.
+    io.File file = io.File('$tempPath'+ (rng.nextInt(100)).toString() +'.png');
+// call http.get method and pass imageUrl into it to get response.
+    http.Response response = await http.get(imageURL as Uri);
+// write bodyBytes received in response to file.
+    await file.writeAsBytes(response.bodyBytes);
+// now return the file which is created with random name in
+// temporary directory and image bytes from response is written to // that file.
+  } catch (e) {
+    print(e);
+  }
 }
 
 class MakeStory extends StatefulWidget {
@@ -72,6 +93,17 @@ class MakeStory extends StatefulWidget {
 }
 
 class _MakeStoryState extends State<MakeStory> {
+
+  late Future myFuture;
+
+  @override
+  void initState() {
+    // assign this variable your Future
+    // myFuture = askToGpt();
+    super.initState();
+  }
+
+
   // chatGPT에게 물어볼 질문 생성 함수
   Future<String> generateText(String obj) async {
     final response = await http.post(
@@ -91,7 +123,35 @@ class _MakeStoryState extends State<MakeStory> {
         'presence_penalty': 0
       }),
     );
-    print(utf8.decode(response.bodyBytes));
+    // print(utf8.decode(response.bodyBytes));
+
+    Map<String, dynamic> newresponse =
+    jsonDecode(utf8.decode(response.bodyBytes));
+
+    return newresponse['choices'][0]['text'];
+  }
+
+
+  // chatGPT에게 물어볼 번역 함수
+  Future<String> translateText(String story) async {
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apiKey'
+      },
+      body: jsonEncode({
+        "model": "text-davinci-003",
+        'prompt':
+        'please translate next sentence in Korean "$story"',
+        'max_tokens': 1000,
+        'temperature': 0,
+        'top_p': 1,
+        'frequency_penalty': 0,
+        'presence_penalty': 0
+      }),
+    );
+    // print(utf8.decode(response.bodyBytes));
 
     Map<String, dynamic> newresponse =
     jsonDecode(utf8.decode(response.bodyBytes));
@@ -122,6 +182,8 @@ class _MakeStoryState extends State<MakeStory> {
           .add(image.data.toList().elementAt(i).props.elementAt(0).toString());
     }
 
+    print(imgList.toString());
+
     return (image.data
         .toList()
         .elementAt(1)
@@ -132,21 +194,27 @@ class _MakeStoryState extends State<MakeStory> {
 
   // GPT 사용하기 (동화텍스트와 동화 이미지 경로를 반환)
   Future<List<String>> askToGpt() async {
-    FairyTale ft = new FairyTale("abc", "가나다", "이미지", 0);
 
-    String obj = "coffee"; // 인식한 사물 이름 넣기
+    String obj = widget.word; // 인식한 사물 이름 넣기
     String data = await generateText(obj); // 동화와 이미지 문장 만들기
 
     List<String> str = data.split("Image:");
 
-    String fairytale = str[0]; // 동화 텍스트 저장
-    story = fairytale; // 전역변수 story에 저장
-    String imgStr = str[1]; // 이미지 텍스트 저장
+    String fairytale = str[0]; // 동화 저장
+    story = fairytale;
+    String imgStr = str[1]; // 달리한테 보내줄 이미지 설명 저장
+    String fairytaleKor = await translateText(fairytale); // 동화 번역하기
+    String? imgPath = await askToDalle(imgStr); // 달리로 이미지 경로 생성
 
+    // 확인
     print("동화:" + fairytale);
+    print("동화 해석:" + fairytaleKor);
     print("이미지 설명:" + imgStr);
+    // print("이미지 경로:" + imgPath);
 
-    String imgPath = await askToDalle(imgStr); // 달리로 이미지 경로 생성
+
+    // 동화 객체 만들기
+    FairyTale ft = FairyTale(fairytale, fairytaleKor, "", widget.word);
 
     // 토큰 뽑기
     String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
@@ -162,14 +230,36 @@ class _MakeStoryState extends State<MakeStory> {
         "contentEng": ft.contentEng,
         "contentKor": ft.contentKor,
         "image": ft.image,
-        "wordListId": ft.wordListId
+        "word": ft.word
       }),
     );
 
     print(response.body.toString());
+    aiTaleId = jsonDecode(utf8.decode(response.bodyBytes))['result']['aiTaleId'] as int;// 결과 확인하고 ai tale id 뽑아쓰기
 
+    return [fairytale, imgPath]; // 동화를 반환
+  }
 
-    return [fairytale, imgPath]; // 동화텍스트와 동화 이미지 경로를 반환
+  Future<bool> putImage(String url) async{
+
+    // 토큰 뽑기
+    String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
+
+    final response = await http.put(
+      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales/$aiTaleId"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode({
+        "image": url,
+
+      }),
+    );
+
+    print("put 요청 결과:"+response.body.toString());
+
+    return true;
   }
 
   int _current = 0;
@@ -213,24 +303,26 @@ class _MakeStoryState extends State<MakeStory> {
                               initialPage: 0,
                               autoPlay: false,
                               onPageChanged: (index, reason) {
-                                setState(() {
+                                // setState(() {
                                   _current = index;
-                                });
+                                // });
+
                               }),
                           items: imageSliders,
                         ),
 
                         // Image.network(snapshot.data[1]),
                         OutlinedButton(
-                            onPressed: () { // 표지 선택 누르면 put 요청 보냄 (만들어진 동화에 이미지 추가)
+                            onPressed: () async { // 표지 선택 누르면 put 요청 보냄 (만들어진 동화에 이미지 추가)
 
                               print(_current);
                               selectedImg = imgList[_current];
+                              await putImage(selectedImg); // put
                               saveImg();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => CompleteStory(fairyTale: FairyTale(story, "", selectedImg, 0)),
+                                  builder: (context) => CompleteStory(id: aiTaleId),
                                 ),
                               );
                             },
