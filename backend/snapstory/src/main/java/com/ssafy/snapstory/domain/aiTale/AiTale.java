@@ -21,10 +21,10 @@ public class AiTale extends Base {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int aiTaleId;
 
-    @Column(columnDefinition = "varchar(255) not null")
+    @Column(columnDefinition = "text not null")
     private String contentEng;
 
-    @Column(columnDefinition = "varchar(255) not null")
+    @Column(columnDefinition = "text not null")
     private String contentKor;
 
     @Column(columnDefinition = "varchar(255) default null")
