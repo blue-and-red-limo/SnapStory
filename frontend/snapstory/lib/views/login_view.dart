@@ -172,11 +172,8 @@ class _LoginViewState extends State<LoginView> {
                         password: password,
                       );
                       final user = AuthService.firebase().currentUser;
-
-                      // 토큰 뽑기
-                      String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
-                      print(token);
-
+                      print("==================asd===============");
+                      print(await FirebaseAuth.instance.currentUser!.getIdToken());
                       if (user?.isEmailVerified ?? false) {
                         if (await _userService.createUser(
                                 user: DBUser(
