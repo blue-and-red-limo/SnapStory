@@ -47,7 +47,7 @@ class _MyWordState extends State<MyWord> {
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   wordList = snapshot.data!.toList();
-                  if(wordList.isNotEmpty){
+                  if (wordList.isNotEmpty) {
                     return Center(
                       child: CarouselSlider(
                         options: CarouselOptions(
@@ -57,78 +57,81 @@ class _MyWordState extends State<MyWord> {
                             initialPage: 0,
                             autoPlay: false,
                             onPageChanged: (index, reason) {
+                              _current = index;
                               setState(() {
-                                _current = index;
                                 isEng = true;
                               });
                             }),
                         items: wordList
                             .map((e) => GestureDetector(
-                          onTap: () => setState(() {
-                            isEng = !isEng;
-                          }),
-                          child: Card(
-                              elevation: 5.0,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                  BorderRadius.circular(23)),
-                              child: Column(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
-                                crossAxisAlignment:
-                                CrossAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      makeSound(
-                                          text: e['wordExampleEng']
-                                              .toString());
-                                    },
-                                    icon: const Icon(
-                                        Icons.volume_up_rounded),
-                                    padding: const EdgeInsets.all(10),
-                                    iconSize: MediaQuery.of(context)
-                                        .size
-                                        .width *
-                                        0.1,
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Image.asset(
-                                      e['word']['image'].toString(),
-                                      height: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          0.6,
-                                      width: MediaQuery.of(context)
-                                          .size
-                                          .width *
-                                          0.6,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child:
-                                    Text(
-                                      isEng
-                                          ? e['word']['wordEng']
-                                          : e['word']['wordKor'],
-                                      style: TextStyle(
-                                          fontSize: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.1),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: Text(isEng
-                                        ? e['wordExampleEng']
-                                        : e['wordExampleKor']),
-                                  ),
-                                ],
-                              )),
-                        ))
+                                  onTap: () => setState(() {
+                                    isEng = !isEng;
+                                  }),
+                                  child: Card(
+                                      elevation: 5.0,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(23)),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              makeSound(
+                                                  text: e['wordExampleEng']
+                                                      .toString());
+                                            },
+                                            icon: const Icon(
+                                                Icons.volume_up_rounded),
+                                            padding: const EdgeInsets.all(10),
+                                            iconSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.1,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Image.asset(
+                                              e['word']['image'].toString(),
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.6,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.6,
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Text(
+                                              isEng
+                                                  ? e['word']['wordEng']
+                                                  : e['word']['wordKor'],
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.1),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(10.0),
+                                            child: Text(
+                                              isEng
+                                                  ? e['wordExampleEng']
+                                                  : e['wordExampleKor'],
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ],
+                                      )),
+                                ))
                             .toList(),
                       ),
                     );
@@ -139,15 +142,26 @@ class _MyWordState extends State<MyWord> {
                           borderRadius: BorderRadius.circular(23),
                           border: Border.all(
                               width: 5, color: const Color(0xffFFCA10)),
-                          color: const Color(0xffFFF0BB),),
+                          color: const Color(0xffFFF0BB),
+                        ),
                         height: MediaQuery.of(context).size.width * 0.8,
                         width: MediaQuery.of(context).size.width * 0.8,
-                        child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
-                          Row(mainAxisAlignment: MainAxisAlignment.center,children: [Image.asset('assets/snappy.png')]),
-                          const Row(mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Text('단어를 추가해주세요~', style: TextStyle(fontSize:  30),)],
-                          )
-                        ]),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [Image.asset('assets/snappy.png')]),
+                              const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    '단어를 추가해주세요~',
+                                    style: TextStyle(fontSize: 30),
+                                  )
+                                ],
+                              )
+                            ]),
                       ),
                     );
                   }
