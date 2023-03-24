@@ -1,15 +1,13 @@
+import 'dart:typed_data';
+import 'package:snapstory/constants/routes.dart';
+import 'package:snapstory/views/my_library/my_library_view.dart';
+import 'package:flutter/material.dart';
+import 'package:painter/painter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:confetti/confetti.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:painter/painter.dart';
-import 'package:snapstory/constants/routes.dart';
-import 'package:snapstory/utilities/loading_dialog.dart';
-import 'package:snapstory/views/my_library/my_library_view.dart';
 
 class DrawingView extends StatefulWidget {
   final int id;
@@ -31,7 +29,6 @@ class _DrawingViewState extends State<DrawingView> {
   bool _2 = false;
   bool _3 = false;
   bool _4 = false;
-  bool isLoading = false;
   String answer = '';
   dynamic _words = {};
   List<String> items = [
@@ -41,6 +38,7 @@ class _DrawingViewState extends State<DrawingView> {
     "assets/empty.png",
   ];
 
+  PainterController _controller = _newController();
   late ConfettiController _controllerTopCenter;
 
   getInfo() async {
@@ -96,9 +94,6 @@ class _DrawingViewState extends State<DrawingView> {
 
   // 정답 확인 함수
   void isCorrect() async {
-    setState(() {
-      isLoading = true;
-    });
     // 이미지 보내기
     await img();
     print(answer);
@@ -126,9 +121,6 @@ class _DrawingViewState extends State<DrawingView> {
     } else {
       _correct = false;
     }
-    setState(() {
-      isLoading = false;
-    });
     modal();
   }
 
@@ -410,8 +402,6 @@ class _DrawingViewState extends State<DrawingView> {
             ]));
   }
 
-  PainterController _controller = _newController();
-
   @override
   void initState() {
     getInfo();
@@ -439,194 +429,225 @@ class _DrawingViewState extends State<DrawingView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Stack(children: [
-          Column(
-            children: [
-              // 나가기
-              Container(
-                margin: EdgeInsets.fromLTRB(
-                    0, MediaQuery.of(context).padding.top, 20, 0),
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  TextButton.icon(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(drawingTaleListRoute);
-                    },
-                    icon: const Icon(
-                      Icons.cancel_rounded,
-                      color: Color(0xffffb628),
-                      size: 30,
-                    ),
-                    label: const Text(
-                      '나가기',
-                      style: TextStyle(color: Color(0xffffb628), fontSize: 20),
-                    ),
+        child: Column(
+          children: [
+            // 나가기
+            Container(
+              margin: EdgeInsets.fromLTRB(
+                  0, MediaQuery.of(context).padding.top, 20, 0),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(drawingTaleListRoute);
+                  },
+                  icon: const Icon(
+                    Icons.cancel_rounded,
+                    color: Color(0xffffb628),
+                    size: 30,
                   ),
-                ]),
-              ),
+                  label: const Text(
+                    '나가기',
+                    style: TextStyle(color: Color(0xffffb628), fontSize: 20),
+                  ),
+                ),
+              ]),
+            ),
 
-              // 동화 아이템
-              Container(
-                height: MediaQuery.of(context).size.height * 0.35,
-                width: MediaQuery.of(context).size.width * 0.9,
-                margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                decoration: const BoxDecoration(color: Color(0xffd9d9d9)),
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      FittedBox(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 30, vertical: 20),
-                                child: Image.asset(
-                                  items[0],
-                                  width: 120,
-                                )),
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 20),
-                              child: Image.asset(
-                                items[1],
-                                width: 120,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      Row(
+            // 동화 아이템
+            Container(
+              height: MediaQuery.of(context).size.height * 0.35,
+              width: MediaQuery.of(context).size.width * 0.9,
+              margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+              decoration: const BoxDecoration(color: Color(0xffd9d9d9)),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FittedBox(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 20),
-                            child: Image.asset(
-                              items[2],
-                              width: 120,
-                            ),
-                          ),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 30, vertical: 20),
+                              child: Image.asset(
+                                items[0],
+                                width: 120,
+                              )),
                           Container(
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 30, vertical: 20),
                             child: Image.asset(
-                              items[3],
+                              items[1],
                               width: 120,
                             ),
-                          ),
+                          )
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 20),
+                          child: Image.asset(
+                            items[2],
+                            width: 120,
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 20),
+                          child: Image.asset(
+                            items[3],
+                            width: 120,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
+            ),
 
-              // 툴 + 그림 그리는 부분
-              Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1)),
-                  child: Column(children: [
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xffffb628),
-                      ),
-                      // 툴바
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // 펜 or 지우개
-                          _controller.eraseMode
-                              ? RotatedBox(
-                                  quarterTurns: 2,
-                                  child: IconButton(
-                                      icon: const Icon(Icons.auto_fix_high),
-                                      tooltip: 'Enable eraser',
-                                      onPressed: () {
-                                        setState(() {
-                                          _controller.eraseMode =
-                                              !_controller.eraseMode;
-                                        });
-                                      }),
-                                )
-                              : IconButton(
-                                  icon: const Icon(Icons.create),
-                                  tooltip: 'Disable eraser',
-                                  onPressed: () {
-                                    setState(() {
-                                      _controller.eraseMode =
-                                          !_controller.eraseMode;
-                                    });
-                                  }),
-                          // 펜, 지우개 굵기 조절 Slider
-                          Container(
-                            width: 150,
-                            child: SliderTheme(
-                              data: const SliderThemeData(
-                                valueIndicatorShape:
-                                    PaddleSliderValueIndicatorShape(),
-                              ),
-                              child: Slider(
-                                value: _controller.thickness,
-                                onChanged: (double value) => setState(() {
-                                  _controller.thickness = value;
-                                }),
-                                min: 0.0,
-                                max: 20.0,
-                                divisions: 4,
-                                label: _controller.thickness.round().toString(),
-                                activeColor: Colors.black,
-                              ),
-                            ),
-                          ),
-
-                          // 되돌리기
-                          IconButton(
-                              icon: const Icon(
-                                Icons.undo,
-                              ),
-                              tooltip: 'Undo',
-                              onPressed: () {
-                                if (!_controller.isEmpty) {
-                                  _controller.undo();
-                                }
-                              }),
-                          // 다 지우기
-                          IconButton(
-                              icon: const Icon(Icons.refresh),
-                              tooltip: 'Clear',
-                              onPressed: _controller.clear)
-                        ],
-                      ),
+            // 툴 + 그림 그리는 부분
+            Container(
+                margin:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 1)),
+                child: Column(children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      color: Color(0xffffb628),
                     ),
-
-                    // 그림 그리는 부분
-                    AspectRatio(
-                      aspectRatio: 1.2,
-                      child: Painter(_controller),
+                    // 툴바
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        // 다 지우기
+                        IconButton(
+                            icon: const Icon(Icons.refresh),
+                            tooltip: 'Clear',
+                            onPressed: () {
+                              setState(() {
+                                path = [];
+                                _points = [];
+                              });
+                            })
+                      ],
                     ),
-                  ])),
+                  ),
+                  // 그림 그리는 부분
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1)),
+                    height: 250,
+                    width: 250,
+                    child: GestureDetector(
+                      child: CustomPaint(
+                        painter: DrawingPainter(_points),
+                        size: Size(250, 250),
+                      ),
+                      onPanStart: (details) {
+                        setState(() {
+                          _points.add([details.localPosition]);
+                          path.add([
+                            [details.localPosition.dx.toInt()],
+                            [details.localPosition.dy.toInt()]
+                          ]);
+                        });
+                      },
+                      onPanUpdate: (details) {
+                        setState(() {
+                          // 범위에서 벗어나면 리스트에 추가X
+                          if (details.localPosition.dx > 0 &&
+                              details.localPosition.dx < 250 &&
+                              details.localPosition.dy > 0 &&
+                              details.localPosition.dy < 250) {
+                            _points.last.add(details.localPosition);
+                            path.last[0].add(details.localPosition.dx.toInt());
+                            path.last[1].add(details.localPosition.dy.toInt());
+                          }
+                        });
+                      },
+                    ),
+                  )
+                ])),
 
-              // 정답 확인 버튼
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xffffb628)),
-                  onPressed: () {
-                    // 정답 확인 함수 실행
-                    isCorrect();
-                  },
-                  child: const Text('정답 확인',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ))),
-            ],
-          ),
-          if (isLoading) const Center(child: LoadingDialog()),
-        ]),
+            // 정답 확인 버튼
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xffffb628)),
+                onPressed: () {
+                  // 정답 확인 함수 실행
+                  // isCorrect();
+                  check();
+                },
+                child: const Text('정답 확인',
+                    style: TextStyle(
+                      color: Colors.white,
+                    )))
+          ],
+        ),
       ),
     );
+  }
+
+  // 캔버스에 그림 그리기 위해 담는 리스트
+  List<List<Offset>> _points = [];
+
+  // AI쪽에 보낼 정보를 담는 리스트
+  List<List<List<int>>> path = [];
+
+  check() async {
+    // try {
+    //   http.Response response = await http.post(
+    //       Uri.parse('https://j8a401.p.ssafy.io/ai/predictions/drawings'),
+    //       headers: {'Content-Type': "application/json"},
+    //       body: jsonEncode(
+    //           <String, List<List<List<double>>>>{"base64_file": path}));
+    //   // logDev.log(base64Encode(a));
+    //   var jsonResponse = jsonDecode(response.body);
+    //   answer = await jsonResponse;
+    // } catch (e) {
+    //   print('$e 이미지 확인 에러');
+    // }
+    // setState(() {
+    //   _points = [];
+    //   path = [];
+    // });
+    print(path);
+    // print(_points);
+  }
+}
+
+// 제스처로 수집한 데이터를 화면에 나타내는 부분
+class DrawingPainter extends CustomPainter {
+  List<List<Offset>> points;
+
+  DrawingPainter(this.points);
+
+  bool out = true;
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = Colors.black
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 5;
+
+    for (var pointList in points) {
+      for (int i = 0; i < pointList.length - 1; i++) {
+        canvas.drawLine(pointList[i], pointList[i + 1], paint);
+      }
+    }
+  }
+
+  // 바로바로 반영
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
