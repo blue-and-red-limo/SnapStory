@@ -1,8 +1,9 @@
+import 'package:firebase_auth_platform_interface/src/auth_credential.dart';
 import 'package:snapstory/services/auth/auth_exceptions.dart';
 import 'package:snapstory/services/auth/auth_provider.dart';
 import 'package:snapstory/services/auth/auth_user.dart';
 import 'package:firebase_auth/firebase_auth.dart'
-    show FirebaseAuth, FirebaseAuthException, User, UserCredential;
+    show EmailAuthProvider, FirebaseAuth, FirebaseAuthException, User, UserCredential;
 import 'package:firebase_core/firebase_core.dart';
 
 import '../../firebase_options.dart';
@@ -111,5 +112,20 @@ class FirebaseAuthProvider implements AuthProvider {
   @override
   Future<void> sendPasswordResetEmail({required String email}) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+  }
+
+  @override
+  Future<void> deleteUser({required String email, required String password}) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      var userCredential = await user.reauthenticateWithCredential(EmailAuthProvider.credential(email: email, password: password));
+      if(userCredential.user?.uid == user.uid) {
+        await user.delete();
+      } else {
+        throw UserNotFoundAuthException();
+      }
+    } else {
+      throw UserNotLoggedInAuthException();
+    }
   }
 }
