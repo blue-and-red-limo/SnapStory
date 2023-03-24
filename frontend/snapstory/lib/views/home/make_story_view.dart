@@ -13,7 +13,7 @@ import 'dart:io';
 
 import 'complete_story_view.dart';
 
-const apiKey = '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';
+const apiKey = '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';
 const apiUrl = 'https://api.openai.com/v1/completions';
 
 // dalle가 만든 이미지 리스트

@@ -92,7 +92,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   // Vector3(-0.01, -0.01, -0.1)
   Vector3 addVecter(Vector3 vector3){
     print('addVecter !!!!!!!');
-    Vector3 addVector = Vector3(-0.01, -0.01, -0.1);
+    Vector3 addVector = Vector3(0, -0.1, -0.2);
     vector3.add(addVector);
     return vector3;
   }
@@ -300,16 +300,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
     this.arLocationManager.startLocationUpdates();
   }
-  // @override
-  // void didUpdateWidget(Widget oldWidget) {
-  //   print("===========================================================");
-  //   // this.arObjectManager.onInitialize();
-  //   onARViewCreated(
-  //        arSessionManager,
-  //        arObjectManager,
-  //        arAnchorManager,
-  //        arLocationManager);
-  // }
+
   Future<void> onWebObjectAtButtonPressed() async {
     final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
     String fileName = '${DateTime
@@ -350,8 +341,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       uri:
           "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
       scale: Vector3(0.1, 0.1, 0.5),
-      // position: Vector3(-0.01, -0.01, -0.1),
       position: await arSessionManager.getCameraPose().then((value) => addVecter(value!.getTranslation())),
+      transformation: await arSessionManager.getCameraPose().then((value) => (value!)),
       // position: await arSessionManager.getCameraPose().then((value) => (value?.getTranslation())),
     );
     Matrix3 matrix3=await arSessionManager.getCameraPose().then((value) => value!.getRotation());
