@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:snapstory/constants/routes.dart';
-import 'package:snapstory/views/home/fairytale_quiz_view.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -16,9 +15,8 @@ class Home extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                if (defaultTargetPlatform == TargetPlatform.iOS) {
-                  Navigator.of(context).pushNamed(iOSRoute);
-                } else if (defaultTargetPlatform == TargetPlatform.android) {
+                if (defaultTargetPlatform == TargetPlatform.iOS ||
+                    defaultTargetPlatform == TargetPlatform.android) {
                   Navigator.of(context).pushNamed(androidRoute);
                 }
               },

@@ -93,7 +93,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   // Vector3(-0.01, -0.01, -0.1)
   Vector3 addVecter(Vector3 vector3){
     print('addVecter !!!!!!!');
-    Vector3 addVector = Vector3(0, -0.1, -0.2);
+    Vector3 addVector = Vector3(0, -0.05, -0.2);
     vector3.add(addVector);
     return vector3;
   }
@@ -302,8 +302,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
         showPlanes: false,
         showWorldOrigin: false,
         handleTaps: false,
-        showAnimatedGuide: false,
-        handleRotation: true);
+        showAnimatedGuide: false);
     this.arObjectManager.onInitialize();
     this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
     this.arLocationManager.startLocationUpdates();
