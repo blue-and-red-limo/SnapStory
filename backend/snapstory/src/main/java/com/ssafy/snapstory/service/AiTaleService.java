@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -91,7 +92,7 @@ public class AiTaleService {
         return getAiTaleRes;
     }
 
-    public UpdateAiTaleRes updateAiTale(int aiTaleId, MultipartFile image, int userId) {
+    public UpdateAiTaleRes updateAiTale(int aiTaleId, String image, int userId) throws IOException {
         //그 동화가 유저가 쓴게 맞는지 확인 -> 동화 조회해서 단어장 인덱스의 유저가 나인지 확인
         AiTale aiTale = aiTaleRepository.findById(aiTaleId).orElseThrow(AiTaleNotFoundException::new);
         if (aiTale.getWordList().getUser().getUserId() != userId)
