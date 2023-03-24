@@ -81,7 +81,7 @@ public class AwsS3Service {
         }
         URL imgURL = new URL(url);
         UUID uuid=UUID.randomUUID();
-        String fileName = uuid+".png";
+        String fileName = "images/"+uuid+".png";
         String fileFormat = "png";
         BufferedImage image = ImageIO.read(imgURL);
         //resizer 실횅
