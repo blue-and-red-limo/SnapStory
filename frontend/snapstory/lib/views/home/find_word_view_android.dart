@@ -23,6 +23,7 @@ import 'package:snapstory/utilities/loading_dialog.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 import 'package:screenshot/screenshot.dart';
+import 'package:snapstory/views/home/make_story_view.dart';
 
 
 import '../../constants/routes.dart';
@@ -203,19 +204,26 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                                   Text('설명듣기', style: TextStyle(fontSize: 20))),
                         ),
                       ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(23),
-                          border: Border.all(
-                              width: 5, color: const Color(0xffFFCA10)),
-                          color: const Color(0xffFFF0BB),
+                      GestureDetector(
+                        onTap: () => {
+                        Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => MakeStory(word: word),
+                        )),
+                        },
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * 0.1,
+                          width: MediaQuery.of(context).size.width * 0.35,
+                          margin: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(23),
+                            border: Border.all(
+                                width: 5, color: const Color(0xffFFCA10)),
+                            color: const Color(0xffFFF0BB),
+                          ),
+                          child: const Center(
+                              child:
+                                  Text('동화만들기', style: TextStyle(fontSize: 20))),
                         ),
-                        child: const Center(
-                            child:
-                                Text('동화만들기', style: TextStyle(fontSize: 20))),
                       ),
                     ],
                   ),
@@ -315,6 +323,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
     wordName = wordName.substring(1, wordName.length - 1);
     print('wordname: $wordName');
+    word = wordName;
 
     var map = await _araiService.generateText(obj: wordName, token: await FirebaseAuth.instance.currentUser!.getIdToken());
     setState(() {
