@@ -17,7 +17,7 @@ import 'dart:io' as io;
 
 import 'complete_story_view.dart';
 
-const apiKey = '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';
+const apiKey = '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';
 const apiUrl = 'https://api.openai.com/v1/completions';
 
 // dalle가 만든 이미지 리스트
@@ -99,7 +99,7 @@ class _MakeStoryState extends State<MakeStory> {
   @override
   void initState() {
     // assign this variable your Future
-    myFuture = askToGpt();
+    // myFuture = askToGpt();
     super.initState();
   }
 
@@ -182,6 +182,8 @@ class _MakeStoryState extends State<MakeStory> {
           .add(image.data.toList().elementAt(i).props.elementAt(0).toString());
     }
 
+    print(imgList.toString());
+
     return (image.data
         .toList()
         .elementAt(1)
@@ -238,7 +240,7 @@ class _MakeStoryState extends State<MakeStory> {
     return [fairytale, imgPath]; // 동화를 반환
   }
 
-  void putImage(String url) async{
+  Future<bool> putImage(String url) async{
 
     // 토큰 뽑기
     String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
@@ -256,6 +258,8 @@ class _MakeStoryState extends State<MakeStory> {
     );
 
     print("put 요청 결과:"+response.body.toString());
+
+    return true;
   }
 
   int _current = 0;
@@ -299,9 +303,9 @@ class _MakeStoryState extends State<MakeStory> {
                               initialPage: 0,
                               autoPlay: false,
                               onPageChanged: (index, reason) {
-                                setState(() {
+                                // setState(() {
                                   _current = index;
-                                });
+                                // });
 
                               }),
                           items: imageSliders,
@@ -309,16 +313,16 @@ class _MakeStoryState extends State<MakeStory> {
 
                         // Image.network(snapshot.data[1]),
                         OutlinedButton(
-                            onPressed: () { // 표지 선택 누르면 put 요청 보냄 (만들어진 동화에 이미지 추가)
+                            onPressed: () async { // 표지 선택 누르면 put 요청 보냄 (만들어진 동화에 이미지 추가)
 
                               print(_current);
                               selectedImg = imgList[_current];
-                              putImage(selectedImg); // put
+                              await putImage(selectedImg); // put
                               saveImg();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => CompleteStory(id: aiTaleId, ft: new FairyTale(story, "한글번역", selectedImg, widget.word)),
+                                  builder: (context) => CompleteStory(id: aiTaleId),
                                 ),
                               );
                             },

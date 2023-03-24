@@ -14,10 +14,9 @@ import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 
 class CompleteStory extends StatefulWidget {
-  const CompleteStory({Key? key, required this.id, required this.ft}) : super(key: key);
+  const CompleteStory({Key? key, required this.id}) : super(key: key);
 
   final int id;
-  final FairyTale ft;
 
   @override
   State<CompleteStory> createState() => _CompleteStoryState();
@@ -26,27 +25,41 @@ class CompleteStory extends StatefulWidget {
 class _CompleteStoryState extends State<CompleteStory> {
 
   late FlutterTts flutterTts;
+  late FairyTale ft;
 
   Future<int> makeSound({required String text}) async {
     return await flutterTts.speak(text);
   }
 
   // 스토리 정보 받아오기
-  void getStory() async {
+  Future<FairyTale> getStory() async {
 
     // 토큰 뽑기
     String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
+    print(token);
     // 동화 정보 불러오기
     // 이미지 없는 동화 먼저 저장
     final response = await http.get(
-      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales/$widget.id"),
+      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales/${widget.id}"),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
       },
     );
 
+    // String? contentEng = jsonDecode(utf8.decode(response.bodyBytes))["result"]["contentEng"];
+    // String? contentKor = jsonDecode(utf8.decode(response.bodyBytes))["result"]["contentKor"];
+    // String? image = jsonDecode(utf8.decode(response.bodyBytes))["result"]["image"];
+    // String? wordEng = jsonDecode(utf8.decode(response.bodyBytes))["result"]["wordEng"];
+
+    Map<String, dynamic> result = jsonDecode(utf8.decode(response.bodyBytes));
+    makeSound(text: result["result"]["contentEng"]);
+
+
     print(jsonDecode(utf8.decode(response.bodyBytes)));
+    // print("넘어온 정보: $contentEng:$contentKor:$image:$wordEng");
+
+    return FairyTale(result["result"]["contentEng"], result["result"]["contentKor"], result["result"]["image"], result["result"]["wordEng"]);
   }
 
   @override
@@ -56,8 +69,6 @@ class _CompleteStoryState extends State<CompleteStory> {
     flutterTts.setSpeechRate(0.5); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
     flutterTts.setPitch(1);
-    makeSound(text: "word");
-
 
     super.initState();
   }
@@ -67,69 +78,98 @@ class _CompleteStoryState extends State<CompleteStory> {
         body: SafeArea(
       child: SingleChildScrollView(
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 15,
-              ),
-              Image.network(widget.ft.image, width: 350.0),
+          child: FutureBuilder(
+              future: getStory(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
 
-              // SizedBox(
-              //   height: MediaQuery.of(context).size.height * 0.05,
-              // ),
-              Container(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  margin: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
-                  child: Row(
-                    children: [
-                      const Text(
-                        "Story about ",
-                        style: TextStyle(fontSize: 22),
-                      ),
-                      const Text(
-                        "word",
-                        style: TextStyle(fontSize: 22, color: Colors.red),
-                      )
-                    ],
-                  )),
+                //error가 발생하게 될 경우 반환하게 되는 부분
+                if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: const TextStyle(fontSize: 50),
+                    ),
+                  );
+                }
+                //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
+                else if (snapshot.hasData == false) {
+                  return const CircularProgressIndicator();
+                }
+                // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                else {
+                  ft = snapshot.data! as FairyTale;
+                  print("ft.image:" + ft.image);
+                  return Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Image.network(ft.image, width: 350.0),
 
-              Container(
-                height: 1.0,
-                width: MediaQuery.of(context).size.width * 0.85,
-                color: Colors.grey,
-              ),
+                        // SizedBox(
+                        //   height: MediaQuery.of(context).size.height * 0.05,
+                        // ),
+                        Container(
+                            width: MediaQuery.of(context).size.width * 0.85,
+                            margin: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
+                            child: Row(
+                              children: [
+                                const Text(
+                                  "Story about ",
+                                  style: TextStyle(fontSize: 22),
+                                ),
+                                Text(
+                                  ft.word,
+                                  style: TextStyle(fontSize: 22, color: Colors.red),
+                                )
+                              ],
+                            )),
 
-              Container(
-                // color: Colors.orange,
+                        Container(
+                          height: 1.0,
+                          width: MediaQuery.of(context).size.width * 0.85,
+                          color: Colors.grey,
+                        ),
 
-                // height: MediaQuery.of(context).size.height * 0.35,
-                margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                child: Text(
-                  widget.ft.contentEng.split("\"")[1].split("\n")[2],
-                  style: const TextStyle(fontSize: 19 ),
-                    textAlign: TextAlign.justify
-                ),
-              ),
+                        Container(
+                          // color: Colors.orange,
 
-              Container(
-                  // color: Colors.grey,
-                  width: MediaQuery.of(context).size.width,
-                  child: Align(
-                    alignment: Alignment(0.75, 0.0),
-                    child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const MainView(selectedPage: 1)),
-                          );
-                        },
-                        child: const Text("나만의 도서관 가기")),
-                  ))
-            ],
-          ),
+                          // height: MediaQuery.of(context).size.height * 0.35,
+                          margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                          child: Text(
+                              ft.contentEng.split("\"")[1].split("\n")[2],
+                              style: const TextStyle(fontSize: 19 ),
+                              textAlign: TextAlign.justify
+                          ),
+                        ),
+
+                        Container(
+                          // color: Colors.grey,
+                            width: MediaQuery.of(context).size.width,
+                            child: Align(
+                              alignment: Alignment(0.75, 0.0),
+                              child: OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                          const MainView(selectedPage: 1)),
+                                    );
+                                  },
+                                  child: const Text("나만의 도서관 가기")),
+                            ))
+                      ],
+                    )
+                  );
+
+                }
+              })
+
+          ,
         ),
       ),
     ));
