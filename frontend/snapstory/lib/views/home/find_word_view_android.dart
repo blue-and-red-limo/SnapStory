@@ -13,6 +13,7 @@ import 'package:ar_flutter_plugin/widgets/ar_view.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -84,6 +85,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     flutterTts.setSpeechRate(0.5); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
     flutterTts.setPitch(1); //pitc of sound
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      flutterTts.setSharedInstance(true);
+    }
     super.initState();
   }
 
@@ -309,17 +313,36 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   Future<void> onWebObjectAtButtonPressed() async {
-    final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
-    String fileName = '${DateTime
-        .now()
-        .microsecondsSinceEpoch}.png';
+    String wordName;
+    if(defaultTargetPlatform == TargetPlatform.android){
+      final directory = (await getApplicationDocumentsDirectory())
+          .path; //from path_provide package
+      String fileName = '${DateTime.now().microsecondsSinceEpoch}.png';
 
-    await screenshotController.captureAndSave(
-        '$directory', //set path where screenshot will be saved
-        fileName: fileName
-    );
+      print(directory + fileName);
+
+      await screenshotController
+          .capture(delay: const Duration(milliseconds: 10))
+          .then((image) async {
+        if (image != null) {
+          final imagePath = await File('$directory/$fileName').create();
+          await imagePath.writeAsBytes(image);
+        }
+      });
+      wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
+    } else {
+      String? path = await NativeScreenshot.takeScreenshot();
+      wordName = await _araiService.postPictureAndGetWord(path: path!);
+    }
+
+    // await screenshotController.captureAndSave(
+    //     '$directory', //set path where screenshot will be saved
+    //     delay: Duration(milliseconds: 100),
+    //     fileName: fileName,
+    //     pixelRatio: 1.0
+    // );
     // ai 서버에서 정보 받아오기
-    String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
+    // String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
     wordName = wordName.substring(1, wordName.length - 1);
     print('wordname: $wordName');
     word = wordName;
@@ -349,9 +372,10 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       uri:
           "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
       scale: Vector3(0.1, 0.1, 0.5),
-      position: await arSessionManager.getCameraPose().then((value) => addVecter(value!.getTranslation())),
-      transformation: await arSessionManager.getCameraPose().then((value) => (value!)),
-      // position: await arSessionManager.getCameraPose().then((value) => (value?.getTranslation())),
+      //position: await arSessionManager.getCameraPose().then((value) => addVecter(value!.getTranslation())),
+      //transformation: await arSessionManager.getCameraPose().then((value) => (value!)),
+      //position: await arSessionManager.getCameraPose().then((value) => (value?.getTranslation())),
+      position:  Vector3(-0.01, -0.01, -0.1)
     );
     Matrix3 matrix3=await arSessionManager.getCameraPose().then((value) => value!.getRotation());
     // newNode.rotation(matrix3);
