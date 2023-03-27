@@ -365,19 +365,19 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     // final forward = arLocationManager.currentLocation;
     // print("cfcfcfcfcfcffcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfc:" + cameraPosition.toString() + forward.toString());
     // final nodePosition = cameraPosition + (forward * -1.0);
-
+    Matrix3 matrix3=await arSessionManager.getCameraPose().then((value) => value!.getRotation());
     var newNode = ARNode (
       name: wordName,
       type: NodeType.webGLB,
       uri:
           "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
       scale: Vector3(0.1, 0.1, 0.5),
-      //position: await arSessionManager.getCameraPose().then((value) => addVecter(value!.getTranslation())),
-      //transformation: await arSessionManager.getCameraPose().then((value) => (value!)),
-      //position: await arSessionManager.getCameraPose().then((value) => (value?.getTranslation())),
-      position:  Vector3(-0.01, -0.01, -0.1)
+      position: await arSessionManager.getCameraPose().then((value) => addVecter(value!.getTranslation())),
+
+      transformation: await arSessionManager.getCameraPose().then((value) => value!),
+      // position: await arSessionManager.getCameraPose().then((value) => (value?.getTranslation())),
     );
-    Matrix3 matrix3=await arSessionManager.getCameraPose().then((value) => value!.getRotation());
+
     // newNode.rotation(matrix3);
     bool? didAddWebNode = await arObjectManager.addNode(newNode);
     print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee"+didAddWebNode.toString());
