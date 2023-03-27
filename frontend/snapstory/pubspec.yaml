@@ -57,6 +57,7 @@ dependencies:
   painter: ^2.0.0
   confetti: ^0.7.0
   screenshot: ^1.3.0
+  youtube_player_flutter: ^8.1.2
 
 dev_dependencies:
   flutter_test:
