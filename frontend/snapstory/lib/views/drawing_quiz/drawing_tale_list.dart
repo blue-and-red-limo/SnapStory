@@ -39,7 +39,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
           IconButton(
             padding: EdgeInsets.zero,
             iconSize: 220,
-            icon: Image.asset("assets/quizTaleList/0.jpg"),
+            icon: Image.asset("assets/quizTaleList/1.jpg"),
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => DrawingView(1)));
@@ -48,7 +48,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
           IconButton(
             padding: EdgeInsets.zero,
             iconSize: 220,
-            icon: Image.asset("assets/quizTaleList/1.jpg"),
+            icon: Image.asset("assets/quizTaleList/2.jpg"),
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => DrawingView(2)));
@@ -57,7 +57,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
           IconButton(
             padding: EdgeInsets.zero,
             iconSize: 220,
-            icon: Image.asset("assets/quizTaleList/2.jpg"),
+            icon: Image.asset("assets/quizTaleList/3.jpg"),
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => DrawingView(3)));
@@ -66,7 +66,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
           IconButton(
             padding: EdgeInsets.zero,
             iconSize: 220,
-            icon: Image.asset("assets/quizTaleList/3.jpg"),
+            icon: Image.asset("assets/quizTaleList/4.jpg"),
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => DrawingView(4)));
@@ -75,7 +75,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
           IconButton(
             padding: EdgeInsets.zero,
             iconSize: 220,
-            icon: Image.asset("assets/quizTaleList/4.jpg"),
+            icon: Image.asset("assets/quizTaleList/5.jpg"),
             onPressed: () {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => DrawingView(5)));
