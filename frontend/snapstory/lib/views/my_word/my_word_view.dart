@@ -6,6 +6,11 @@ import 'package:snapstory/services/ar_ai_service.dart';
 
 import '../../utilities/loading_dialog.dart';
 
+const List<Widget> viewType = <Widget>[
+  Icon(Icons.view_carousel_rounded),
+  Icon(Icons.list_alt_rounded),
+];
+
 class MyWord extends StatefulWidget {
   const MyWord({Key? key}) : super(key: key);
 
@@ -19,6 +24,7 @@ class _MyWordState extends State<MyWord> {
   late FlutterTts flutterTts;
   late int _current = 0;
   late bool isEng = true;
+  final List<bool> _selected = <bool>[true, false];
 
   @override
   void initState() {
@@ -49,92 +55,217 @@ class _MyWordState extends State<MyWord> {
                 if (snapshot.hasData) {
                   wordList = snapshot.data!.toList();
                   if (wordList.isNotEmpty) {
-                    return Center(
-                      child: CarouselSlider(
-                        options: CarouselOptions(
-                            height: MediaQuery.of(context).size.height * 0.6,
-                            enlargeCenterPage: true,
-                            enableInfiniteScroll: true,
-                            initialPage: 0,
-                            autoPlay: false,
-                            onPageChanged: (index, reason) {
-                              _current = index;
-                              setState(() {
-                                isEng = true;
-                              });
-                            }),
-                        items: wordList
-                            .map((e) => GestureDetector(
-                                  onTap: () => setState(() {
-                                    isEng = !isEng;
+                    return Stack(
+                      children: [
+                        if (_selected[0])
+                          Center(
+                            child: CarouselSlider(
+                              options: CarouselOptions(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.6,
+                                  enlargeCenterPage: true,
+                                  enableInfiniteScroll: true,
+                                  initialPage: 0,
+                                  autoPlay: false,
+                                  onPageChanged: (index, reason) {
+                                    _current = index;
+                                    setState(() {
+                                      isEng = true;
+                                    });
                                   }),
-                                  child: Card(
-                                      elevation: 5.0,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(23)),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          IconButton(
-                                            onPressed: () {
-                                              makeSound(
-                                                  text: e['wordExampleEng']
-                                                      .toString());
-                                            },
-                                            icon: const Icon(
-                                                Icons.volume_up_rounded),
-                                            padding: const EdgeInsets.all(10),
-                                            iconSize: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.1,
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Image.asset(
-                                              e['word']['image'].toString(),
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.6,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.6,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Text(
-                                              isEng
-                                                  ? e['word']['wordEng']
-                                                  : e['word']['wordKor'],
-                                              style: TextStyle(
-                                                  fontSize:
+                              items: wordList
+                                  .map((e) => GestureDetector(
+                                        onTap: () => setState(() {
+                                          isEng = !isEng;
+                                        }),
+                                        child: Card(
+                                            elevation: 5.0,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(23)),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                IconButton(
+                                                  onPressed: () {
+                                                    makeSound(
+                                                        text:
+                                                            e['wordExampleEng']
+                                                                .toString());
+                                                  },
+                                                  icon: const Icon(
+                                                      Icons.volume_up_rounded),
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  iconSize:
                                                       MediaQuery.of(context)
                                                               .size
                                                               .width *
-                                                          0.1),
-                                            ),
+                                                          0.1,
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Image.asset(
+                                                    e['word']['image']
+                                                        .toString(),
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.6,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.6,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Text(
+                                                    isEng
+                                                        ? e['word']['wordEng']
+                                                        : e['word']['wordKor'],
+                                                    style: TextStyle(
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.1),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      10.0),
+                                                  child: Text(
+                                                    isEng
+                                                        ? e['wordExampleEng']
+                                                        : e['wordExampleKor'],
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                              ],
+                                            )),
+                                      ))
+                                  .toList(),
+                            ),
+                          ),
+                        if (_selected[1])
+                          ListView.separated(
+                            padding: EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * 0.05),
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    isEng = !isEng;
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Image.asset(
+                                            wordList[index]['word']['image'],
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.2,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Text(
-                                              isEng
-                                                  ? e['wordExampleEng']
-                                                  : e['wordExampleKor'],
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ))
-                            .toList(),
-                      ),
+                                        ),
+                                        Text(
+                                          isEng
+                                              ? wordList[index]['word']
+                                                  ['wordEng']
+                                              : wordList[index]['word']
+                                                  ['wordKor'],
+                                          style: TextStyle(
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.04),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.6,
+                                      child: Text(
+                                        isEng
+                                            ? wordList[index]['wordExampleEng']
+                                            : wordList[index]['wordExampleKor'],
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    IconButton(
+                                        onPressed: () async {
+                                          final shouldDelete =
+                                              await showDeleteDialog(context);
+                                          if (shouldDelete) {
+                                            bool result =
+                                                await _araiService.deleteWord(
+                                                    word: wordList[index]
+                                                        ['word']['wordEng'],
+                                                    token: await FirebaseAuth
+                                                        .instance.currentUser!
+                                                        .getIdToken());
+                                            if (result) setState(() {});
+                                          }
+                                        },
+                                        icon: const Icon(
+                                            Icons.delete_forever_rounded))
+                                  ],
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) => const Divider(
+                              color: Color(0xFFFFB628),
+                            ),
+                            itemCount: wordList.length,
+                          ),
+                        Positioned(
+                          top: MediaQuery.of(context).size.height * 0.02,
+                          left: MediaQuery.of(context).size.width * 0.75,
+                          child: ToggleButtons(
+                            direction: Axis.horizontal,
+                            onPressed: (int index) {
+                              setState(() {
+                                // The button that is tapped is set to true, and the others to false.
+                                for (int i = 0; i < _selected.length; i++) {
+                                  _selected[i] = i == index;
+                                }
+                              });
+                            },
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(23)),
+                            selectedBorderColor: const Color(0xFFFFB628),
+                            selectedColor: Colors.white,
+                            fillColor: const Color(0xFFFFB628),
+                            color: const Color(0xFFFFB628),
+                            disabledColor: Colors.white,
+                            constraints: BoxConstraints(
+                              minHeight:
+                                  MediaQuery.of(context).size.height * 0.05,
+                              minWidth: MediaQuery.of(context).size.width * 0.1,
+                            ),
+                            isSelected: _selected,
+                            children: viewType,
+                          ),
+                        ),
+                      ],
                     );
                   } else {
                     return Center(
@@ -177,5 +308,31 @@ class _MyWordState extends State<MyWord> {
         },
       ),
     );
+  }
+
+  Future<bool> showDeleteDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('단어삭제'),
+          content: const Text('단어장에서 삭제하시겠습니끼 ?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text('삭제하기'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: const Text('취소하기'),
+            ),
+          ],
+        );
+      },
+    ).then((value) => value ?? false);
   }
 }

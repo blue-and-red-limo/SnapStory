@@ -153,4 +153,19 @@ class ARAIService {
     return newresponse['choices'][0]['text'];
   }
 
+
+  Future<bool> deleteWord ({required String word, required String token}) async {
+    var res = await http.delete(
+      Uri.parse('$springBase/word-list/$word'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    print(res.body);
+    if (res.statusCode==200) {
+      return true;
+    }
+    return false;
+  }
 }
