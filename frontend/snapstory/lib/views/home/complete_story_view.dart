@@ -154,10 +154,11 @@ class _CompleteStoryState extends State<CompleteStory> {
                               alignment: Alignment(0.75, 0.0),
                               child: OutlinedButton(
                                   onPressed: () {
-                                    Navigator.of(context).push(
+                                    flutterTts.stop();
+                                    Navigator.of(context).pushReplacement(
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                          const MainView(selectedPage: 1)),
+                                          const MainView(selectedPage: 1))
                                     );
                                   },
                                   child: const Text("나만의 도서관 가기")),

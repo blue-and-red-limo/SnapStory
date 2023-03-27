@@ -98,4 +98,59 @@ class ARAIService {
     print(result['result'].toString());
     return result['result'];
   }
+
+  // chatGPT에게 물어볼 질문 생성 함수
+  Future<String> generateStoryandImage(String obj) async {
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apiKey'
+      },
+      body: jsonEncode({
+        "model": "text-davinci-003",
+        'prompt':
+        'make a instructive story about $obj in 7 sentence for kids. And give me one sentence about this storys image by using this templete: "image: your answer',
+        'max_tokens': 1000,
+        'temperature': 0,
+        'top_p': 1,
+        'frequency_penalty': 0,
+        'presence_penalty': 0
+      }),
+    );
+    // print(utf8.decode(response.bodyBytes));
+
+    Map<String, dynamic> newresponse =
+    jsonDecode(utf8.decode(response.bodyBytes));
+
+    return newresponse['choices'][0]['text'];
+  }
+
+  // chatGPT에게 물어볼 번역 함수
+  Future<String> translateText(String story) async {
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apiKey'
+      },
+      body: jsonEncode({
+        "model": "text-davinci-003",
+        'prompt':
+        'please translate next sentence in Korean "$story"',
+        'max_tokens': 1000,
+        'temperature': 0,
+        'top_p': 1,
+        'frequency_penalty': 0,
+        'presence_penalty': 0
+      }),
+    );
+    // print(utf8.decode(response.bodyBytes));
+
+    Map<String, dynamic> newresponse =
+    jsonDecode(utf8.decode(response.bodyBytes));
+
+    return newresponse['choices'][0]['text'];
+  }
+
 }

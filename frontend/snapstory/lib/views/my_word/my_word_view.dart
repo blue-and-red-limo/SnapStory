@@ -153,7 +153,7 @@ class _MyWordState extends State<MyWord> {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [Image.asset('assets/snappy.png')]),
-                              const Row(
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(

@@ -13,6 +13,7 @@ import 'package:openai_client/openai_client.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:snapstory/services/ar_ai_service.dart';
 import 'dart:io' as io;
 
 import 'complete_story_view.dart';
@@ -95,69 +96,14 @@ class MakeStory extends StatefulWidget {
 class _MakeStoryState extends State<MakeStory> {
 
   late Future myFuture;
+  late ARAIService _araiService;
 
   @override
   void initState() {
-    // assign this variable your Future
-    // myFuture = askToGpt();
+    _araiService = ARAIService();
     super.initState();
   }
 
-
-  // chatGPT에게 물어볼 질문 생성 함수
-  Future<String> generateText(String obj) async {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $apiKey'
-      },
-      body: jsonEncode({
-        "model": "text-davinci-003",
-        'prompt':
-        'make a instructive story about $obj in 7 sentence for kids. And give me one sentence about this storys image by using this templete: "image: your answer',
-        'max_tokens': 1000,
-        'temperature': 0,
-        'top_p': 1,
-        'frequency_penalty': 0,
-        'presence_penalty': 0
-      }),
-    );
-    // print(utf8.decode(response.bodyBytes));
-
-    Map<String, dynamic> newresponse =
-    jsonDecode(utf8.decode(response.bodyBytes));
-
-    return newresponse['choices'][0]['text'];
-  }
-
-
-  // chatGPT에게 물어볼 번역 함수
-  Future<String> translateText(String story) async {
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $apiKey'
-      },
-      body: jsonEncode({
-        "model": "text-davinci-003",
-        'prompt':
-        'please translate next sentence in Korean "$story"',
-        'max_tokens': 1000,
-        'temperature': 0,
-        'top_p': 1,
-        'frequency_penalty': 0,
-        'presence_penalty': 0
-      }),
-    );
-    // print(utf8.decode(response.bodyBytes));
-
-    Map<String, dynamic> newresponse =
-    jsonDecode(utf8.decode(response.bodyBytes));
-
-    return newresponse['choices'][0]['text'];
-  }
 
   // dall-e 사용하기
   Future<String> askToDalle(String imgStr) async {
@@ -196,14 +142,14 @@ class _MakeStoryState extends State<MakeStory> {
   Future<List<String>> askToGpt() async {
 
     String obj = widget.word; // 인식한 사물 이름 넣기
-    String data = await generateText(obj); // 동화와 이미지 문장 만들기
+    String data = await _araiService.generateStoryandImage(obj); // 동화와 이미지 문장 만들기
 
     List<String> str = data.split("Image:");
 
     String fairytale = str[0]; // 동화 저장
     story = fairytale;
     String imgStr = str[1]; // 달리한테 보내줄 이미지 설명 저장
-    String fairytaleKor = await translateText(fairytale); // 동화 번역하기
+    String fairytaleKor = await _araiService.translateText(fairytale); // 동화 번역하기
     String? imgPath = await askToDalle(imgStr); // 달리로 이미지 경로 생성
 
     // 확인
