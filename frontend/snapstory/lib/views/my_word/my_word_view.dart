@@ -158,7 +158,7 @@ class _MyWordState extends State<MyWord> {
                         if (_selected[1])
                           ListView.separated(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.05),
+                                top: MediaQuery.of(context).size.height * 0.05, bottom: MediaQuery.of(context).size.height * 0.04),
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 onTap: () {
@@ -166,73 +166,77 @@ class _MyWordState extends State<MyWord> {
                                     isEng = !isEng;
                                   });
                                 },
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Image.asset(
-                                            wordList[index]['word']['image'],
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.2,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.2,
-                                          ),
-                                        ),
-                                        Text(
-                                          isEng
-                                              ? wordList[index]['word']
-                                                  ['wordEng']
-                                              : wordList[index]['word']
-                                                  ['wordKor'],
-                                          style: TextStyle(
-                                              fontSize: MediaQuery.of(context)
+                                child: Padding(
+                                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Image.asset(
+                                              wordList[index]['word']['image'],
+                                              height: MediaQuery.of(context)
                                                       .size
                                                       .width *
-                                                  0.04),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.6,
-                                      child: Text(
-                                        isEng
-                                            ? wordList[index]['wordExampleEng']
-                                            : wordList[index]['wordExampleKor'],
-                                        textAlign: TextAlign.center,
+                                                  0.2,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.2,
+                                            ),
+                                          ),
+                                          Text(
+                                            isEng
+                                                ? wordList[index]['word']
+                                                    ['wordEng']
+                                                : wordList[index]['word']
+                                                    ['wordKor'],
+                                            style: TextStyle(
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.04),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    IconButton(
-                                        onPressed: () async {
-                                          final shouldDelete =
-                                              await showDeleteDialog(context);
-                                          if (shouldDelete) {
-                                            bool result =
-                                                await _araiService.deleteWord(
-                                                    word: wordList[index]
-                                                        ['word']['wordEng'],
-                                                    token: await FirebaseAuth
-                                                        .instance.currentUser!
-                                                        .getIdToken());
-                                            if (result) setState(() {});
-                                          }
-                                        },
-                                        icon: const Icon(
-                                            Icons.delete_forever_rounded))
-                                  ],
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.6,
+                                        child: Text(
+                                          isEng
+                                              ? wordList[index]['wordExampleEng']
+                                              : wordList[index]['wordExampleKor'],
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      IconButton(
+                                          onPressed: () async {
+                                            final shouldDelete =
+                                                await showDeleteDialog(context);
+                                            if (shouldDelete) {
+                                              bool result =
+                                                  await _araiService.deleteWord(
+                                                      word: wordList[index]
+                                                          ['word']['wordEng'],
+                                                      token: await FirebaseAuth
+                                                          .instance.currentUser!
+                                                          .getIdToken());
+                                              if (result) setState(() {});
+                                            }
+                                          },
+                                          icon: const Icon(
+                                              Icons.delete_forever_rounded))
+                                    ],
+                                  ),
                                 ),
                               );
                             },
                             separatorBuilder: (context, index) => const Divider(
-                              color: Color(0xFFFFB628),
+                              color: Colors.white,
+                              thickness: 1.6,
                             ),
                             itemCount: wordList.length,
                           ),
