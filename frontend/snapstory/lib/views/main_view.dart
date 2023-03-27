@@ -54,7 +54,7 @@ class _MainViewState extends State<MainView> {
       ),
     ),
     TabItem(
-      Icons.library_books,
+      Icons.menu_book,
       "나만의 도서관",
       const Color.fromRGBO(255, 182, 40, 1.0),
       labelStyle: const TextStyle(
@@ -63,7 +63,7 @@ class _MainViewState extends State<MainView> {
       ),
     ),
     TabItem(
-      Icons.menu_book, "나만의 단어장", const Color.fromRGBO(255, 182, 40, 1.0),
+      Icons.spellcheck, "나만의 단어장", const Color.fromRGBO(255, 182, 40, 1.0),
       labelStyle: const TextStyle(
         color: Colors.orange,
         fontWeight: FontWeight.bold,
@@ -142,93 +142,104 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white,
+    return Container(
+      decoration: const BoxDecoration(
+        // borderRadius: BorderRadius.circular(23),
+        // color: const Color(0xffffdb1f),
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: AssetImage('assets/home_background.png'), // 배경 이미지
         ),
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(30),
-        )),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const OnBoardingPage()),
-              );
-            },
-            icon: const Icon(Icons.help_outline),
-          ),
-        ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              currentAccountPicture: const CircleAvatar(
-                backgroundColor: Colors.white,
-              ),
-              accountName: Text('$userName 보호자님 안녕하세요.'),
-              accountEmail: Text(userEmail),
-              decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 255, 182, 40),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40.0),
-                    bottomRight: Radius.circular(40.0),
-                  )),
-            ),
-            ListTile(
-              leading: Icon(
-                Icons.headphones,
-                color: Colors.grey[850],
-              ),
-              title: const Text('소리설정'),
-              onTap: () {
-                print('소리설정 is clicked');
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          )),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const OnBoardingPage()),
+                );
               },
+              icon: const Icon(Icons.help_outline),
             ),
-            ListTile(
-              leading: Icon(
-                Icons.logout_rounded,
-                color: Colors.grey[850],
+          ],
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                currentAccountPicture: const CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                accountName: Text('$userName 보호자님 안녕하세요.'),
+                accountEmail: Text(userEmail),
+                decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 255, 182, 40),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(40.0),
+                      bottomRight: Radius.circular(40.0),
+                    )),
               ),
-              title: const Text('로그아웃/탈퇴'),
-              onTap: () async {
-                print('로그아웃/탈퇴 is clicked');
-                final shouldLogout = await showLogoutDialog(context);
-                if (shouldLogout) {
-                  await AuthService.firebase().logout();
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    loginRoute,
-                    (_) => false,
-                  );
-                } else {
-                  final shouldDelete = await showDeleteDialog(context);
-                  if (shouldDelete) {
+              ListTile(
+                leading: Icon(
+                  Icons.headphones,
+                  color: Colors.grey[850],
+                ),
+                title: const Text('소리설정'),
+                onTap: () {
+                  print('소리설정 is clicked');
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.logout_rounded,
+                  color: Colors.grey[850],
+                ),
+                title: const Text('로그아웃/탈퇴'),
+                onTap: () async {
+                  print('로그아웃/탈퇴 is clicked');
+                  final shouldLogout = await showLogoutDialog(context);
+                  if (shouldLogout) {
+                    await AuthService.firebase().logout();
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       loginRoute,
                       (_) => false,
                     );
+                  } else {
+                    final shouldDelete = await showDeleteDialog(context);
+                    if (shouldDelete) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        loginRoute,
+                        (_) => false,
+                      );
+                    }
                   }
-                }
-              },
+                },
+              )
+            ],
+          ),
+        ),
+        body: Stack(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(bottom: bottomNavBarHeight),
+              child: bodyContainer(),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: bottomNav(),
             )
           ],
         ),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(bottom: bottomNavBarHeight),
-            child: bodyContainer(),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: bottomNav(),
-          )
-        ],
       ),
     );
   }
