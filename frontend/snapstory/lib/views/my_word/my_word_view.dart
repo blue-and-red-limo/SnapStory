@@ -44,6 +44,7 @@ class _MyWordState extends State<MyWord> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: FutureBuilder(
         future: FirebaseAuth.instance.currentUser!.getIdToken(),
         builder: (context, snapshot) {
@@ -283,7 +284,7 @@ class _MyWordState extends State<MyWord> {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [Image.asset('assets/snappy.png')]),
-                              const Row(
+                              Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
