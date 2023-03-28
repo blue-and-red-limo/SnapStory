@@ -26,6 +26,8 @@ class _CompleteStoryState extends State<CompleteStory> {
 
   late FlutterTts flutterTts;
   late FairyTale ft;
+  late bool isEng = true;
+  late String wordKor;
 
   Future<int> makeSound({required String text}) async {
     return await flutterTts.speak(text);
@@ -56,7 +58,9 @@ class _CompleteStoryState extends State<CompleteStory> {
     makeSound(text: result["result"]["contentEng"]);
 
 
+    print("----------스토리 정보------------");
     print(jsonDecode(utf8.decode(response.bodyBytes)));
+    wordKor = result["result"]["wordKor"];
     // print("넘어온 정보: $contentEng:$contentKor:$image:$wordEng");
 
     return FairyTale(result["result"]["contentEng"], result["result"]["contentKor"], result["result"]["image"], result["result"]["wordEng"]);
@@ -99,7 +103,6 @@ class _CompleteStoryState extends State<CompleteStory> {
                 // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
                 else {
                   ft = snapshot.data! as FairyTale;
-                  print("ft.image:" + ft.image);
                   return Center(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -113,21 +116,27 @@ class _CompleteStoryState extends State<CompleteStory> {
                         // SizedBox(
                         //   height: MediaQuery.of(context).size.height * 0.05,
                         // ),
-                        Container(
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            margin: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
-                            child: Row(
-                              children: [
-                                const Text(
-                                  "Story about ",
-                                  style: TextStyle(fontSize: 22),
-                                ),
-                                Text(
-                                  ft.word,
-                                  style: TextStyle(fontSize: 22, color: Colors.red),
-                                )
-                              ],
-                            )),
+                        GestureDetector(
+                          onTap: () => setState(() {
+                            isEng = !isEng;
+                          }),
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              margin: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 10.0),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    isEng ?
+                                    "Story about " : wordKor,
+                                    style: isEng ? TextStyle(fontSize: 22) : TextStyle(fontSize: 22, color: Colors.red),
+                                  ),
+                                  Text(
+                                    isEng ? ft.wordEng : "이야기",
+                                    style: isEng? TextStyle(fontSize: 22, color: Colors.red) : TextStyle(fontSize: 22),
+                                  )
+                                ],
+                              )),
+                        ),
 
                         Container(
                           height: 1.0,
@@ -135,15 +144,24 @@ class _CompleteStoryState extends State<CompleteStory> {
                           color: Colors.grey,
                         ),
 
-                        Container(
-                          // color: Colors.orange,
+                        GestureDetector(
+                          onTap: ()=> setState(() {
+                            isEng = !isEng;
+                          }),
+                          child: Container(
+                            // color: Colors.orange,
 
-                          // height: MediaQuery.of(context).size.height * 0.35,
-                          margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                          child: Text(
-                              ft.contentEng.split("\"")[1].split("\n")[2],
-                              style: const TextStyle(fontSize: 19 ),
-                              textAlign: TextAlign.justify
+                            // height: MediaQuery.of(context).size.height * 0.35,
+                            margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                            child: isEng ? Text(
+                                ft.contentEng.split("\"")[1].split("\n")[2],
+                                style: const TextStyle(fontSize: 19 ),
+                                textAlign: TextAlign.justify
+                            ) : Text(
+                                ft.contentKor.split("\"")[0].split("\n")[2],
+                                style: const TextStyle(fontSize: 19 ),
+                                textAlign: TextAlign.justify
+                            )
                           ),
                         ),
 
