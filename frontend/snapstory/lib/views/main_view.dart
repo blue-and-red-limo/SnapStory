@@ -148,7 +148,7 @@ class _MainViewState extends State<MainView> {
         // color: const Color(0xffffdb1f),
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: selectedPos != 0 ? AssetImage('assets/bg/bg-main${selectedPos+1}.png') : const AssetImage('assets/bg/bg-main.png') // 배경 이미지
+          image: selectedPos != 0 ? AssetImage('assets/main/bg-main${selectedPos+1}.png') : const AssetImage('assets/main/bg-main.png') // 배경 이미지
         ),
       ),
       child: Scaffold(
