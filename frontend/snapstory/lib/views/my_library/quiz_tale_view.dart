@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
+import 'package:snapstory/views/main_view.dart';
 
 class QuizTaleView extends StatefulWidget {
   final dynamic quizInfo;
 
-  // const DrawingView({Key? key, this.id}) : super(key: key);
   const QuizTaleView(this.quizInfo);
 
   @override
@@ -14,21 +13,18 @@ class QuizTaleView extends StatefulWidget {
 
 class _QuizTaleViewState extends State<QuizTaleView> {
   late YoutubePlayerController _controller;
-  // late YoutubePlayerValue isFullScreen;
   dynamic quizInfo = '';
   String title = '';
-  bool isFull = false;
 
   @override
   void initState() {
     quizInfo = widget.quizInfo;
     title = quizInfo["title"];
-    _controller = YoutubePlayerController(
-      initialVideoId: quizInfo["video"],
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
-        enableCaption: true,
-        captionLanguage: "ko",
+    _controller = YoutubePlayerController.fromVideoId(
+      videoId: quizInfo["video"],
+      autoPlay: false,
+      params: const YoutubePlayerParams(
+        showFullscreenButton: true,
       ),
     );
 
@@ -37,62 +33,73 @@ class _QuizTaleViewState extends State<QuizTaleView> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller.close();
     super.dispose();
   }
 
-  //  _controller.toggleFullScreenMode(){
-
-  //  }
-
   @override
   Widget build(BuildContext context) {
-    print(_controller.value.isFullScreen);
     return Scaffold(
-        body: Center(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      YoutubePlayerBuilder(
-          player: YoutubePlayer(
+        body: YoutubePlayerScaffold(
             controller: _controller,
-            bottomActions: [
-              CurrentPosition(),
-              ProgressBar(isExpanded: true),
-              RemainingDuration(),
-              // FullScreenButton()
-              IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isFull ? isFull = false : isFull = true;
-                    });
-                    print(_controller.value.isFullScreen);
-                  },
-                  icon: Icon(
-                    Icons.fullscreen,
-                    color: Colors.white,
-                  ))
-            ],
-            // showVideoProgressIndicator: true,
-            // progressIndicatorColor: Colors.blueAccent,
-          ),
-          builder: (context, player) {
-            return (isFull)
-                ? Container(
-                    child: player,
-                  )
-                : Column(
-                    children: [
-                      Container(
-                        child: Text(title, style: TextStyle(fontSize: 30)),
-                        margin: EdgeInsets.all(10),
+            builder: (context, player) {
+              return Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage('assets/bg/bg-main3.png'))),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.9,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(title, style: TextStyle(fontSize: 30)),
+                              Container(
+                                child: player,
+                                margin: EdgeInsets.all(10),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/bg/bg-bar.png',
+                          ),
+                          Positioned(
+                            top: -20,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: Colors.white),
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const MainView(selectedPage: 1)));
+                                },
+                                icon: Icon(Icons.exit_to_app_rounded),
+                                color: Color(0xffffb628),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      Container(
-                        child: player,
-                        margin: EdgeInsets.all(10),
-                      )
-                    ],
-                  );
-          })
-    ])));
+                    ),
+                  )
+                ],
+              );
+            }));
   }
 }
