@@ -2,3 +2,4 @@ datasets
 torch
 transformers
 pillow
+#tensorflow==2.11.0
