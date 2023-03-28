@@ -240,75 +240,78 @@ class _MyWordState extends State<MyWord> {
                                     isEng = !isEng;
                                   });
                                 },
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.3,
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.01),
-                                            child: Image.asset(
-                                              wordList[index]['word']['image'],
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.2,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.2,
-                                            ),
-                                          ),
-                                          Text(
-                                            isEng
-                                                ? wordList[index]['word']
-                                                    ['wordEng']
-                                                : wordList[index]['word']
-                                                    ['wordKor'],
-                                            style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
+                                child: Container(
+                                  decoration: ShapeDecoration(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(23)),color: Colors.white70),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.3,
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.01),
+                                              child: Image.asset(
+                                                wordList[index]['word']['image'],
+                                                height: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.04),
-                                          ),
-                                        ],
+                                                    0.2,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.2,
+                                              ),
+                                            ),
+                                            Text(
+                                              isEng
+                                                  ? wordList[index]['word']
+                                                      ['wordEng']
+                                                  : wordList[index]['word']
+                                                      ['wordKor'],
+                                              style: TextStyle(
+                                                  fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.04),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.55,
-                                      child: Text(
-                                        isEng
-                                            ? wordList[index]['wordExampleEng']
-                                            : wordList[index]['wordExampleKor'],
-                                        textAlign: TextAlign.center,
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.55,
+                                        child: Text(
+                                          isEng
+                                              ? wordList[index]['wordExampleEng']
+                                              : wordList[index]['wordExampleKor'],
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.15,
-                                      child: IconButton(
-                                        onPressed: () async {
-                                          final shouldDelete =
-                                              await showDeleteDialog(context);
-                                          if (shouldDelete) {
-                                            bool result =
-                                                await _araiService.deleteWord(
-                                                    word: wordList[index]
-                                                        ['word']['wordEng'],
-                                                    token: await FirebaseAuth
-                                                        .instance.currentUser!
-                                                        .getIdToken());
-                                            if (result) setState(() {});
-                                          }
-                                        },
-                                        icon: const Icon(
-                                            Icons.delete_forever_rounded),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.15,
+                                        child: IconButton(
+                                          onPressed: () async {
+                                            final shouldDelete =
+                                                await showDeleteDialog(context);
+                                            if (shouldDelete) {
+                                              bool result =
+                                                  await _araiService.deleteWord(
+                                                      word: wordList[index]
+                                                          ['word']['wordEng'],
+                                                      token: await FirebaseAuth
+                                                          .instance.currentUser!
+                                                          .getIdToken());
+                                              if (result) setState(() {});
+                                            }
+                                          },
+                                          icon: const Icon(
+                                              Icons.delete_forever_rounded),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               );
                             },
