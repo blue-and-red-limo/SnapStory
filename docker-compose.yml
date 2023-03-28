@@ -35,7 +35,7 @@ services:
   ai:
     container_name: fastapi
     build:
-      context: ./ai
+      context: ./ai/clip
       dockerfile: Dockerfile
     restart: on-failure
     ports:
