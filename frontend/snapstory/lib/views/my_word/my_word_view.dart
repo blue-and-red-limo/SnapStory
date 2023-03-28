@@ -6,11 +6,6 @@ import 'package:snapstory/services/ar_ai_service.dart';
 
 import '../../utilities/loading_dialog.dart';
 
-const List<Widget> viewType = <Widget>[
-  Icon(Icons.view_carousel_rounded),
-  Icon(Icons.list_alt_rounded),
-];
-
 class MyWord extends StatefulWidget {
   const MyWord({Key? key}) : super(key: key);
 
@@ -24,6 +19,7 @@ class _MyWordState extends State<MyWord> {
   late FlutterTts flutterTts;
   late int _current = 0;
   late bool isEng = true;
+  late bool isCarousel = false;
   final List<bool> _selected = <bool>[true, false];
 
   @override
@@ -59,103 +55,178 @@ class _MyWordState extends State<MyWord> {
                     return Stack(
                       children: [
                         if (_selected[0])
-                          Center(
-                            child: CarouselSlider(
-                              options: CarouselOptions(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.6,
-                                  enlargeCenterPage: true,
-                                  enableInfiniteScroll: true,
-                                  initialPage: 0,
-                                  autoPlay: false,
-                                  onPageChanged: (index, reason) {
-                                    _current = index;
-                                    setState(() {
-                                      isEng = true;
-                                    });
-                                  }),
-                              items: wordList
-                                  .map((e) => GestureDetector(
-                                        onTap: () => setState(() {
-                                          isEng = !isEng;
+                          Stack(children: [
+                            if (isCarousel)
+                              Stack(children: [
+                                Center(
+                                  child: CarouselSlider(
+                                    options: CarouselOptions(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.6,
+                                        aspectRatio: 1.61803398875,
+                                        enlargeCenterPage: true,
+                                        enableInfiniteScroll: true,
+                                        initialPage: _current,
+                                        autoPlay: false,
+                                        onPageChanged: (index, reason) {
+                                          setState(() {
+                                            _current = index;
+                                            isEng = true;
+                                          });
                                         }),
-                                        child: Card(
-                                            elevation: 5.0,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(23)),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                IconButton(
-                                                  onPressed: () {
-                                                    makeSound(
-                                                        text:
-                                                            e['wordExampleEng']
-                                                                .toString());
-                                                  },
-                                                  icon: const Icon(
-                                                      Icons.volume_up_rounded),
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  iconSize:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          0.1,
+                                    items: wordList
+                                        .map((e) => GestureDetector(
+                                              onTap: () => setState(() {
+                                                isEng = !isEng;
+                                              }),
+                                              child: Card(
+                                                  elevation: 5.0,
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              23)),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+
+                                                      Padding(
+                                                        padding:EdgeInsets
+                                                                .all(MediaQuery.of(context).size.width*0.05),
+                                                        child: Image.asset(
+                                                          e['word']['image']
+                                                              .toString(),
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.6,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.6,
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                             EdgeInsets
+                                                                .all(MediaQuery.of(context).size.width*0.0125),
+                                                        child: Text(
+                                                          isEng
+                                                              ? e['word']
+                                                                  ['wordEng']
+                                                              : e['word']
+                                                                  ['wordKor'],
+                                                          style: TextStyle(
+                                                              fontSize: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.1),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:EdgeInsets
+                                                                .all(MediaQuery.of(context).size.width*0.0125),
+                                                        child: Text(
+                                                          isEng
+                                                              ? e['wordExampleEng']
+                                                              : e['wordExampleKor'],
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )),
+                                            ))
+                                        .toList(),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.04),
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          child: Image.asset(
+                                            'assets/aiTale/btn-ai-example.png',
+                                            height: MediaQuery.of(context).size.width*0.25,
+                                            width: MediaQuery.of(context).size.width*0.25,
+                                          ),
+                                          onTap: () => makeSound(
+                                              text: wordList[_current]
+                                                  ['wordExampleEng']),
+                                        ),
+                                        GestureDetector(
+                                          child: Image.asset(
+                                            'assets/aiTale/btn-ai-word.png',
+                                            height: MediaQuery.of(context).size.width*0.25,
+                                            width: MediaQuery.of(context).size.width*0.25,
+                                          ),
+                                          onTap: () => makeSound(
+                                              text: wordList[_current]['word']
+                                                  ['wordEng']),
+                                        ),
+                                        Image.asset(
+                                          'assets/aiTale/btn-ai-story.png',
+                                          height: MediaQuery.of(context).size.width*0.25,
+                                          width: MediaQuery.of(context).size.width*0.25,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                            if (!isCarousel)
+                              GridView.count(
+                                  padding: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.height * 0.06,
+                                      bottom: MediaQuery.of(context).size.height * 0.01),
+                                  crossAxisCount: 2,
+                                  children: wordList
+                                      .map((e) => Container(
+                                    margin: const EdgeInsets.all(23),
+                                    decoration: const ShapeDecoration(shape: CircleBorder(), color: Colors.white70),
+                                        child: GestureDetector(
+                                              onTap: () {
+                                                for (int i = 0;
+                                                    i < wordList.length;
+                                                    i++) {
+                                                  if (wordList[i]['word'] ==
+                                                      e['word']) {
+                                                    setState(() {
+                                                      _current = i;
+                                                      isCarousel = !isCarousel;
+                                                    });
+                                                  }
+                                                }
+                                              },
+                                              child: Padding(
+                                                padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.03),
+                                                child: Image.asset(
+                                                  e['word']['image'],
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.2,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.2,
                                                 ),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      10.0),
-                                                  child: Image.asset(
-                                                    e['word']['image']
-                                                        .toString(),
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.6,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.6,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      10.0),
-                                                  child: Text(
-                                                    isEng
-                                                        ? e['word']['wordEng']
-                                                        : e['word']['wordKor'],
-                                                    style: TextStyle(
-                                                        fontSize: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.1),
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      10.0),
-                                                  child: Text(
-                                                    isEng
-                                                        ? e['wordExampleEng']
-                                                        : e['wordExampleKor'],
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ],
-                                            )),
+                                              ),
+                                            ),
                                       ))
-                                  .toList(),
-                            ),
-                          ),
+                                      .toList()),
+                          ]),
                         if (_selected[1])
                           ListView.separated(
                             padding: EdgeInsets.only(
@@ -169,77 +240,78 @@ class _MyWordState extends State<MyWord> {
                                     isEng = !isEng;
                                   });
                                 },
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.3,
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Image.asset(
-                                              wordList[index]['word']['image'],
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.2,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.2,
-                                            ),
-                                          ),
-                                          Text(
-                                            isEng
-                                                ? wordList[index]['word']
-                                                    ['wordEng']
-                                                : wordList[index]['word']
-                                                    ['wordKor'],
-                                            style: TextStyle(
-                                                fontSize: MediaQuery.of(context)
+                                child: Container(
+                                  decoration: ShapeDecoration(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(23)),color: Colors.white70),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.3,
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.01),
+                                              child: Image.asset(
+                                                wordList[index]['word']['image'],
+                                                height: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.04),
-                                          ),
-                                        ],
+                                                    0.2,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.2,
+                                              ),
+                                            ),
+                                            Text(
+                                              isEng
+                                                  ? wordList[index]['word']
+                                                      ['wordEng']
+                                                  : wordList[index]['word']
+                                                      ['wordKor'],
+                                              style: TextStyle(
+                                                  fontSize: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.04),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.55,
-                                      child: Text(
-                                        isEng
-                                            ? wordList[index]['wordExampleEng']
-                                            : wordList[index]['wordExampleKor'],
-                                        textAlign: TextAlign.center,
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.55,
+                                        child: Text(
+                                          isEng
+                                              ? wordList[index]['wordExampleEng']
+                                              : wordList[index]['wordExampleKor'],
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.15,
-                                      child: IconButton(
-                                        onPressed: () async {
-                                          final shouldDelete =
-                                              await showDeleteDialog(context);
-                                          if (shouldDelete) {
-                                            bool result =
-                                                await _araiService.deleteWord(
-                                                    word: wordList[index]
-                                                        ['word']['wordEng'],
-                                                    token: await FirebaseAuth
-                                                        .instance.currentUser!
-                                                        .getIdToken());
-                                            if (result) setState(() {});
-                                          }
-                                        },
-                                        icon: const Icon(
-                                            Icons.delete_forever_rounded),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width *
+                                            0.15,
+                                        child: IconButton(
+                                          onPressed: () async {
+                                            final shouldDelete =
+                                                await showDeleteDialog(context);
+                                            if (shouldDelete) {
+                                              bool result =
+                                                  await _araiService.deleteWord(
+                                                      word: wordList[index]
+                                                          ['word']['wordEng'],
+                                                      token: await FirebaseAuth
+                                                          .instance.currentUser!
+                                                          .getIdToken());
+                                              if (result) setState(() {});
+                                            }
+                                          },
+                                          icon: const Icon(
+                                              Icons.delete_forever_rounded),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               );
                             },
@@ -260,6 +332,7 @@ class _MyWordState extends State<MyWord> {
                                 for (int i = 0; i < _selected.length; i++) {
                                   _selected[i] = i == index;
                                 }
+                                isCarousel = false;
                               });
                             },
                             borderRadius:
@@ -268,14 +341,17 @@ class _MyWordState extends State<MyWord> {
                             selectedColor: Colors.white,
                             fillColor: const Color(0xFFFFB628),
                             color: const Color(0xFFFFB628),
-                            disabledColor: Colors.white,
+                            disabledColor: Colors.black,
                             constraints: BoxConstraints(
                               minHeight:
                                   MediaQuery.of(context).size.height * 0.05,
                               minWidth: MediaQuery.of(context).size.width * 0.1,
                             ),
                             isSelected: _selected,
-                            children: viewType,
+                            children: const [
+                              Icon(Icons.grid_view_rounded),
+                              Icon(Icons.list_alt_rounded),
+                            ],
                           ),
                         ),
                       ],

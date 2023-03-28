@@ -86,10 +86,11 @@ flutter:
     - assets/aiTale/
     - assets/bg/
     - assets/library/
+    - assets/main/
     - assets/quizTaleList/
     - assets/quizItems/
     - assets/words/
-
+    - assets/wordList/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

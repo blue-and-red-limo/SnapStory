@@ -143,12 +143,12 @@ class _MainViewState extends State<MainView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         // borderRadius: BorderRadius.circular(23),
         // color: const Color(0xffffdb1f),
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: AssetImage('assets/home_background.png'), // 배경 이미지
+          image: selectedPos != 0 ? AssetImage('assets/main/bg-main${selectedPos+1}.png') : const AssetImage('assets/main/bg-main.png') // 배경 이미지
         ),
       ),
       child: Scaffold(
