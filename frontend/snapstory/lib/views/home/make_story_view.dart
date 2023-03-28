@@ -34,9 +34,9 @@ class FairyTale {
   final String contentEng;
   final String contentKor;
   final String image;
-  final String word;
+  final String wordEng;
 
-  const FairyTale(this.contentEng, this.contentKor, this.image, this.word);
+  const FairyTale(this.contentEng, this.contentKor, this.image, this.wordEng);
 }
 
 //
@@ -176,7 +176,7 @@ class _MakeStoryState extends State<MakeStory> {
         "contentEng": ft.contentEng,
         "contentKor": ft.contentKor,
         "image": ft.image,
-        "word": ft.word
+        "word": ft.wordEng
       }),
     );
 
