@@ -27,10 +27,16 @@ public class AiTaleController {
         return ResultResponse.success(aiTaleService.getAiTaleAll(Integer.parseInt(authentication.getName())));
     }
 
-    @GetMapping("/{wordName}")
-    @ApiOperation(value = "AI 동화 개별 조회", notes = "단어로 해당하는 AI 동화 개별 조회")
-    public ResultResponse<GetAiTaleRes> getAiTale(@PathVariable String wordName, Authentication authentication) {
-        return ResultResponse.success(aiTaleService.getAiTale(wordName, Integer.parseInt(authentication.getName())));
+    @GetMapping("/{aiTaleId}")
+    @ApiOperation(value = "AI 동화 개별 조회", notes = "AI 동화 개별 조회")
+    public ResultResponse<GetAiTaleRes> getAiTale(@PathVariable int aiTaleId, Authentication authentication) {
+        return ResultResponse.success(aiTaleService.getAiTale(aiTaleId, Integer.parseInt(authentication.getName())));
+    }
+
+    @GetMapping("/word/{wordName}")
+    @ApiOperation(value = "AI 동화 단어로 개별 조회", notes = "단어에 해당하는 AI 동화 개별 조회")
+    public ResultResponse<GetAiTaleRes> getAiTaleByWord(@PathVariable String wordName, Authentication authentication) {
+        return ResultResponse.success(aiTaleService.getAiTaleByWord(wordName, Integer.parseInt(authentication.getName())));
     }
 
     @PostMapping
