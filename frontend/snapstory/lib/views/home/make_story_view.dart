@@ -107,6 +107,56 @@ class _MakeStoryState extends State<MakeStory> {
 
   // GPT 사용하기 (동화텍스트와 동화 이미지 경로를 반환)
   Future<List<String>> askToGpt(BuildContext context) async {
+
+    // 토큰 뽑기
+    String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
+
+    final res = await http.get(
+      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales/${widget.word}"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+
+    );
+
+    print("단어로 동화 조회 결과");
+
+
+    if(jsonDecode(utf8.decode(res.bodyBytes))['resultCode'] == "SUCCESS"){ // 단어로 만든 동화가 있으면
+      // 중복된 단어 있다고 알림 띄우기
+      // set up the button
+      Widget okButton = TextButton(
+      child: const Text("확인"),
+      onPressed: () {
+      int count = 0;
+      Navigator.of(context).popUntil((_) => count++ >= 2);
+      },
+      );
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+      title: const Text("중복된 동화가 있습니다."),
+      content: const Text("새로운 동화를 만들고 싶다면\n동화 화면에서 기존 동화를 삭제해주세요."),
+      actions: [
+      okButton,
+      ],
+      );
+
+      // show the dialog
+      await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+      return alert;
+      },
+      );
+    }
+
+    // 단어로 만든 동화가 없으면 진행
+
+
+
+
     String obj = widget.word; // 인식한 사물 이름 넣기
     String data =
         await _araiService.generateStoryandImage(obj); // 동화와 이미지 문장 만들기
@@ -129,8 +179,7 @@ class _MakeStoryState extends State<MakeStory> {
     // 동화 객체 만들기
     FairyTale ft = FairyTale(fairytale, fairytaleKor, "", widget.word);
 
-    // 토큰 뽑기
-    String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
+
 
     // 이미지 없는 동화 먼저 저장
     final response = await http.post(
@@ -151,31 +200,31 @@ class _MakeStoryState extends State<MakeStory> {
     print(jsonDecode(utf8.decode(response.bodyBytes))['result']['errorCode']);
     if(jsonDecode(utf8.decode(response.bodyBytes))['result']['errorCode'] == "AI_TALE_DUPLICATE"){ // 중복 알림창 띄우기
 
-      // set up the button
-      Widget okButton = TextButton(
-        child: const Text("확인"),
-        onPressed: () {
-          int count = 0;
-          Navigator.of(context).popUntil((_) => count++ >= 2);
-        },
-      );
-
-      // set up the AlertDialog
-      AlertDialog alert = AlertDialog(
-        title: const Text("중복된 동화가 있습니다."),
-        content: const Text("새로운 동화를 만들고 싶다면\n동화 화면에서 기존 동화를 삭제해주세요."),
-        actions: [
-          okButton,
-        ],
-      );
-
-      // show the dialog
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );
+      // // set up the button
+      // Widget okButton = TextButton(
+      //   child: const Text("확인"),
+      //   onPressed: () {
+      //     int count = 0;
+      //     Navigator.of(context).popUntil((_) => count++ >= 2);
+      //   },
+      // );
+      //
+      // // set up the AlertDialog
+      // AlertDialog alert = AlertDialog(
+      //   title: const Text("중복된 동화가 있습니다."),
+      //   content: const Text("새로운 동화를 만들고 싶다면\n동화 화면에서 기존 동화를 삭제해주세요."),
+      //   actions: [
+      //     okButton,
+      //   ],
+      // );
+      //
+      // // show the dialog
+      // showDialog(
+      //   context: context,
+      //   builder: (BuildContext context) {
+      //     return alert;
+      //   },
+      // );
 
 
     }
@@ -225,8 +274,8 @@ class _MakeStoryState extends State<MakeStory> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               //error가 발생하게 될 경우 반환하게 되는 부분
               if (snapshot.hasError) {
-                return const Center(
-                  child: Text("에러가 발생했습니다. 앱을 다시 실행해주세요."),
+                return Center(
+                  child: Text("에러가 발생했습니다. 앱을 다시 실행해주세요. ${snapshot.error}"),
                 );
               }
               //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.

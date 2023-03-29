@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class ARAIService {
   final String aiBase = 'https://j8a401.p.ssafy.io/ai';
   final String springBase = 'https://j8a401.p.ssafy.io/api/v1';
-  final String apiKey = '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';
+  final String apiKey = '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';
   final String apiUrl = 'https://api.openai.com/v1/completions';
 
   Future<String> postPictureAndGetWord({required String path}) async {
