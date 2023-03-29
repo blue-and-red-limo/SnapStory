@@ -15,7 +15,6 @@ import com.ssafy.snapstory.repository.WordListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,11 +73,13 @@ public class AiTaleService {
         return createAiTaleRes;
     }
 
-    public GetAiTaleRes getAiTale(int aiTaleId, int userId) {
+    public GetAiTaleRes getAiTale(String wordName, int userId) {
         //유저 있는지 확인
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        //그 동화가 유저가 쓴게 맞는지 확인 -> 동화 조회해서 단어장 인덱스의 유저가 나인지 확인
-        AiTale aiTale = aiTaleRepository.findById(aiTaleId).orElseThrow(AiTaleNotFoundException::new);
+        //단어장 인덱스 조회
+        WordList wordList = wordListRepository.findByUser_UserIdAndWord_WordEng(user.getUserId(), wordName).orElseThrow(WordListNotFoundException::new);
+        //해당 단어로 만들어진 동화가 있는지 확인 -> 동화 조회해서 단어장 인덱스의 유저가 나인지 확인
+        AiTale aiTale = aiTaleRepository.findByWordList(wordList).orElseThrow(AiTaleNotFoundException::new);
         if (aiTale.getWordList().getUser().getUserId() != userId)
             throw new BadAccessException();
         GetAiTaleRes getAiTaleRes = GetAiTaleRes.builder()
@@ -98,11 +99,10 @@ public class AiTaleService {
         if (aiTale.getWordList().getUser().getUserId() != userId)
             throw new BadAccessException();
         //유저가 선택한 이미지가 있다면 추가한다.
-        if(image!=null){
+        if (image!=null) {
             String imageUrl = bucketUrl + awsS3Service.uploadImage(image);
             aiTale.setImage(imageUrl);
         }
-
         aiTaleRepository.save(aiTale);
         UpdateAiTaleRes updateAiTaleRes = new UpdateAiTaleRes(
             aiTale.getAiTaleId(),
