@@ -195,6 +195,9 @@ class _MainViewState extends State<MainView> {
                 accountName: Text('$userName 보호자님 안녕하세요.'),
                 accountEmail: Text(userEmail),
                 decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/main/drawer.png'),
+                        fit: BoxFit.fill),
                     color: Color.fromARGB(255, 255, 182, 40),
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(40.0),
