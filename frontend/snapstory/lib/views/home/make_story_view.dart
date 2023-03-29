@@ -112,7 +112,7 @@ class _MakeStoryState extends State<MakeStory> {
     String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
 
     final res = await http.get(
-      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales/${widget.word}"),
+      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales/word/${widget.word}"),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
@@ -131,6 +131,7 @@ class _MakeStoryState extends State<MakeStory> {
       onPressed: () {
       int count = 0;
       Navigator.of(context).popUntil((_) => count++ >= 2);
+        // Navigator.of(context).pop();
       },
       );
 
@@ -280,7 +281,7 @@ class _MakeStoryState extends State<MakeStory> {
               }
               //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
               else if (snapshot.hasData == false) {
-                return const CircularProgressIndicator();
+                return Container(child: Column(children: [const CircularProgressIndicator(), Text("동화를 만들고 있어요!")],));
               }
               // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
               else {
