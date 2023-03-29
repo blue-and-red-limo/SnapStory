@@ -10,6 +10,5 @@ import java.util.Optional;
 public interface WordListRepository extends JpaRepository<WordList, Integer> {
     List<WordList> findAllByUser(User user);
     List<WordList> findAllByUser_UserId(int userId);
-    Optional<WordList> findByUser_UserIdAndWordListId(int userId, int wordListId);
     Optional<WordList> findByUser_UserIdAndWord_WordEng(int userId, String wordEng);
 }
