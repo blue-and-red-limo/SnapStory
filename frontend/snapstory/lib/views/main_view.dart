@@ -147,9 +147,11 @@ class _MainViewState extends State<MainView> {
         // borderRadius: BorderRadius.circular(23),
         // color: const Color(0xffffdb1f),
         image: DecorationImage(
-          fit: BoxFit.cover,
-          image: selectedPos != 0 ? AssetImage('assets/main/bg-main${selectedPos+1}.png') : const AssetImage('assets/main/bg-main.png') // 배경 이미지
-        ),
+            fit: BoxFit.cover,
+            image: selectedPos != 0
+                ? AssetImage('assets/main/bg-main${selectedPos + 1}.png')
+                : const AssetImage('assets/main/bg-main.png') // 배경 이미지
+            ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -157,9 +159,18 @@ class _MainViewState extends State<MainView> {
           iconTheme: const IconThemeData(
             color: Colors.white,
           ),
+          centerTitle: true,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/main/appbar_img.png'),
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(30),
+            bottom: Radius.circular(44),
           )),
           actions: [
             IconButton(
@@ -184,6 +195,9 @@ class _MainViewState extends State<MainView> {
                 accountName: Text('$userName 보호자님 안녕하세요.'),
                 accountEmail: Text(userEmail),
                 decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/main/drawer.png'),
+                        fit: BoxFit.fill),
                     color: Color.fromARGB(255, 255, 182, 40),
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(40.0),
