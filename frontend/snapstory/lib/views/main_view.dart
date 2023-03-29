@@ -165,7 +165,8 @@ class _MainViewState extends State<MainView> {
             IconButton(
               onPressed: () {
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const OnBoardingPage()),
+                  MaterialPageRoute(
+                      builder: (context) => const OnBoardingPage()),
                 );
               },
               icon: const Icon(Icons.help_outline),
