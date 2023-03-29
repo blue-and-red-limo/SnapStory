@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:path/path.dart' as p;
@@ -12,6 +13,7 @@ import 'package:snapstory/views/main_view.dart';
 import 'package:http/http.dart' as http;
 import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
+import 'package:simplytranslate/simplytranslate.dart';
 
 class CompleteStory extends StatefulWidget {
   const CompleteStory({Key? key, required this.id}) : super(key: key);
@@ -27,6 +29,11 @@ class _CompleteStoryState extends State<CompleteStory> {
   late FairyTale ft;
   late bool isEng = true;
   late String wordKor;
+  bool isSearch = false;
+  final gt = SimplyTranslator(EngineType.google);
+  final searchController = TextEditingController();
+  String searchWord = '';
+  String result = '';
 
   Future<int> makeSound({required String text}) async {
     return await flutterTts.speak(text);
@@ -36,7 +43,7 @@ class _CompleteStoryState extends State<CompleteStory> {
   Future<FairyTale> getStory() async {
     // 토큰 뽑기
     String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
-    print(token);
+
     // 동화 정보 불러오기
     // 이미지 없는 동화 먼저 저장
     final response = await http.get(
@@ -55,8 +62,8 @@ class _CompleteStoryState extends State<CompleteStory> {
     Map<String, dynamic> result = jsonDecode(utf8.decode(response.bodyBytes));
     makeSound(text: result["result"]["contentEng"]);
 
-    print("----------스토리 정보------------");
-    print(jsonDecode(utf8.decode(response.bodyBytes)));
+    // print("----------스토리 정보------------");
+    // print(jsonDecode(utf8.decode(response.bodyBytes)));
     wordKor = result["result"]["wordKor"];
     // print("넘어온 정보: $contentEng:$contentKor:$image:$wordEng");
 
@@ -76,6 +83,100 @@ class _CompleteStoryState extends State<CompleteStory> {
     flutterTts.setPitch(1);
 
     super.initState();
+  }
+
+  // 검색 모달창
+  searchModal() async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('search'),
+            content: Column(
+              children: [
+                TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchWord = value;
+                    });
+                  },
+                  controller: searchController,
+                ),
+                Text(result),
+              ],
+            ),
+            actions: <Widget>[
+              MaterialButton(
+                color: Colors.green,
+                textColor: Colors.white,
+                child: Text('OK'),
+                onPressed: () {
+                  search();
+                },
+              ),
+            ],
+          );
+        });
+
+    // if (isSearch) {
+    // return showDialog(
+    //     barrierColor: Colors.transparent,
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return Container(
+    //         // height: MediaQuery.of(context).size.height * 0.3,
+    //         margin: EdgeInsets.fromLTRB(
+    //             MediaQuery.of(context).size.width * 0.15,
+    //             MediaQuery.of(context).size.height * 0.55,
+    //             MediaQuery.of(context).size.width * 0.15,
+    //             MediaQuery.of(context).size.height * 0.15),
+    //         decoration: BoxDecoration(
+    //           color: Colors.white,
+    //           borderRadius: BorderRadius.circular(30),
+    //           border: Border.all(
+    //             color: Color(0xffffb628),
+    //             width: 5,
+    //           ),
+    //           boxShadow: [
+    //             BoxShadow(
+    //               color: Color(0x3f000000),
+    //               blurRadius: 4,
+    //               offset: Offset(0, 4),
+    //             ),
+    //           ],
+    //         ),
+    //         child: Column(
+    //           children: [
+    //             TextField(
+    //               onChanged: (value) {},
+    //               controller: searchController,
+    //               decoration: InputDecoration(hintText: "Text Field in Dialog"),
+    //             ),
+    //             // IconButton(
+    //             //   onPressed: () {
+    //             //     setState(() async {
+    //             //       searchWord = searchController.text;
+    //             //       result = await gt.trSimply((searchWord), "en", 'ko');
+    //             //     });
+    //             //   },
+    //             //   icon: Icon(Icons.search_off_rounded),
+    //             //   iconSize: 20,
+    //             // ),
+    //             Container(
+    //               child: Text(result),
+    //             ),
+    //           ],
+    //         ),
+    //       );
+    //     });
+    // }
+  }
+
+  // 검색
+  search() async {
+    result = await gt.trSimply((searchWord), "en", 'ko');
+    setState(() {});
+    print(result);
   }
 
   @override
@@ -210,6 +311,9 @@ class _CompleteStoryState extends State<CompleteStory> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.1,
               decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(32),
+                    topRight: Radius.circular(32)),
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: AssetImage('assets/aiTale/bottom_bar.png'),
@@ -218,6 +322,7 @@ class _CompleteStoryState extends State<CompleteStory> {
               ),
             ),
           ),
+          // Positioned(child: searchModal()),
           Positioned(
             bottom: 1,
             left: MediaQuery.of(context).size.width * 0.2,
@@ -225,18 +330,24 @@ class _CompleteStoryState extends State<CompleteStory> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  height: MediaQuery.of(context).size.width * 0.3,
-                  // margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(23),
-                    image: const DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/aiTale/btn-aitale-search.png'),
-                      // 배경 이미지
+                GestureDetector(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    height: MediaQuery.of(context).size.width * 0.3,
+                    // margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(23),
+                      image: const DecorationImage(
+                        fit: BoxFit.cover,
+                        image:
+                            AssetImage('assets/aiTale/btn-aitale-search.png'),
+                        // 배경 이미지
+                      ),
                     ),
                   ),
+                  onTap: () {
+                    searchModal();
+                  },
                 ),
                 GestureDetector(
                   onTap: () => {
