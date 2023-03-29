@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
+import 'package:snapstory/views/home/make_story_view.dart';
 
 import '../../utilities/loading_dialog.dart';
 
@@ -270,17 +271,21 @@ class _MyWordState extends State<MyWord> {
                                               text: wordList[_current]['word']
                                                   ['wordEng']),
                                         ),
-                                        Image.asset(
-                                          'assets/aiTale/btn-ai-story.png',
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                        )
+                                        GestureDetector(
+                                          child: Image.asset(
+                                            'assets/aiTale/btn-ai-story.png',
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
+                                          ),
+                                          onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                              builder: (context) => MakeStory(word: wordList[_current]['word']['wordEng']))
+                                        )),
                                       ],
                                     ),
                                   ),
