@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'package:confetti/confetti.dart';
+import 'dart:developer' as logDev;
 
 class DrawingView extends StatefulWidget {
   final int id;
@@ -620,6 +621,7 @@ class _DrawingViewState extends State<DrawingView> {
     //   path = [];
     // });
     print(path);
+    logDev.log(path.toString());
     // print(_points);
   }
 }

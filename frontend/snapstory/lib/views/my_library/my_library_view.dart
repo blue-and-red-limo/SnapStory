@@ -139,6 +139,7 @@ class _MyLibraryState extends State<MyLibrary> {
                                     margin: const EdgeInsets.all(4),
                                     child: GestureDetector(
                                       onTap: () {
+                                        print(AITale['aiTaleId']);
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (context) => CompleteStory(
