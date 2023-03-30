@@ -274,11 +274,12 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
         showFeaturePoints: false,
         showPlanes: false,
         showWorldOrigin: false,
-        handleTaps: false,
+        handleTaps: true,
         showAnimatedGuide: false);
     this.arObjectManager.onInitialize();
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       this.arSessionManager.onPlaneOrPointTap = onPlaneOrPointTapped;
+      this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
     } else {
       this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
     }
@@ -366,6 +367,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   void onTapHandler(String name) {
+    print("먀먀먀먀ㅑ먐갹먁ㅁ갸!!!!"+name);
     checked == true ? checked = false : checked = true;
     setState(() {});
   }
