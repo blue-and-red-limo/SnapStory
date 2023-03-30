@@ -32,14 +32,24 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: snapstory401
       TZ: "Asia/Seoul"
-  ai:
-    container_name: fastapi
+
+  image-classifier:
+    container_name: image_classifier_container
     build:
       context: ./ai/clip
       dockerfile: Dockerfile
     restart: on-failure
     ports:
       - 8788:80
+
+  doodle-recognizer:
+    container_name: doodle-recognizer_container
+    build:
+      context: ./ai/doodle-recognition-cnn
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - 8938:80
 
   # frontend:
   #   build:

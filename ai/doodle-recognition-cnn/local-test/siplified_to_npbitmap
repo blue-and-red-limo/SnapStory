@@ -1,0 +1,59 @@
+import numpy as np
+from PIL import Image
+import cairocffi as cairo
+
+def vector_to_raster(vector_images, side=28, line_diameter=16, padding=16, bg_color=(0,0,0), fg_color=(1,1,1)):
+    """
+    padding and line_diameter are relative to the original 256x256 image.
+    """
+    
+    original_side = 256.
+    
+    surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, side, side)
+    ctx = cairo.Context(surface)
+    ctx.set_antialias(cairo.ANTIALIAS_BEST)
+    ctx.set_line_cap(cairo.LINE_CAP_ROUND)
+    ctx.set_line_join(cairo.LINE_JOIN_ROUND)
+    ctx.set_line_width(line_diameter)
+
+    # scale to match the new size
+    # add padding at the edges for the line_diameter
+    # and add additional padding to account for antialiasing
+    total_padding = padding * 2. + line_diameter
+    new_scale = float(side) / float(original_side + total_padding)
+    ctx.scale(new_scale, new_scale)
+    ctx.translate(total_padding / 2., total_padding / 2.)
+
+    raster_images = []
+    for vector_image in vector_images:
+        # clear background
+        ctx.set_source_rgb(*bg_color)
+        ctx.paint()
+        
+        bbox = np.hstack(vector_image).max(axis=1)
+        offset = ((original_side, original_side) - bbox) / 2.
+        offset = offset.reshape(-1,1)
+        centered = [stroke + offset for stroke in vector_image]
+
+        # draw strokes, this is the most cpu-intensive part
+        ctx.set_source_rgb(*fg_color)        
+        for xv, yv in centered:
+            ctx.move_to(xv[0], yv[0])
+            for x, y in zip(xv, yv):
+                ctx.line_to(x, y)
+            ctx.stroke()
+
+        data = surface.get_data()
+        raster_image = np.copy(np.asarray(data)[::4])
+        raster_images.append(raster_image)
+    
+    return raster_images
+
+strokes = [[[[111, 107, 95, 85, 79, 73, 66, 65, 61, 57, 51, 49, 47, 44, 43, 43, 43, 43, 43, 43, 43, 44, 46, 47, 51, 55, 64, 67, 74, 79, 84, 90, 99, 103, 116, 124, 136, 141, 145, 149, 150, 152, 153, 155, 159, 161, 165, 175, 187, 195, 206, 213, 222, 225, 226, 227, 227, 227, 227, 227, 227, 227, 227, 227, 226, 225, 224, 222, 219, 217, 215, 211, 208, 203, 200, 197, 194, 191, 188, 186, 183, 180, 176, 171, 167, 160, 156, 153, 149, 144, 139, 133, 130, 126, 123, 118, 115, 112, 110, 108, 103, 101, 100, 98, 97, 96, 93, 91, 89, 87, 84, 83], [45, 45, 46, 49, 51, 52, 54, 55, 56, 57, 64, 69, 72, 81, 89, 95, 101, 108, 114, 118, 124, 126, 133, 137, 142, 145, 155, 159, 164, 168, 171, 175, 179, 182, 189, 193, 197, 198, 199, 199, 199, 199, 199, 199, 199, 199, 198, 195, 190, 189, 186, 185, 182, 179, 177, 174, 173, 171, 168, 167, 163, 159, 156, 152, 147, 145, 140, 131, 128, 122, 117, 110, 106, 99, 96, 91, 88, 84, 81, 80, 78, 75, 73, 72, 70, 68, 67, 65, 64, 63, 62, 60, 59, 57, 56, 55, 53, 52, 51, 51, 48, 48, 48, 48, 48, 48, 48, 47, 47, 47, 47, 47]], [[83, 81, 80, 80, 79, 79, 79, 79, 79, 80, 83, 89, 96, 104, 112, 123, 130, 135, 138, 141, 144, 145, 146, 146, 146], [46, 49, 52, 55, 60, 62, 65, 68, 69, 71, 72, 75, 79, 81, 82, 83, 86, 86, 86, 86, 86, 86, 84, 83, 82]], [[123, 123, 123, 123, 124, 134, 137, 144, 161, 165, 171, 173], [75, 74, 73, 71, 67, 51, 46, 41, 25, 22, 19, 17]]]]
+output = vector_to_raster(strokes)
+print(output[0].shape)
+print(output[0].reshape((28,28)))
+image = output[0].reshape((28,28))
+img = Image.fromarray(np.uint8(image))
+img.show()
+# print(output)
