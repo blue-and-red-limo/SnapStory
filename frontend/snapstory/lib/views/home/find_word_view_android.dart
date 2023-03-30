@@ -95,8 +95,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     return await flutterTts.speak(text);
   }
   // Vector3(-0.01, -0.01, -0.1)
-  Vector3 addVecter(Vector3 vector3){
-    print('addVecter !!!!!!!');
+  Vector3 addVector(Vector3 vector3){
+    print('addVector !!!!!!!');
     Vector3 addVector = Vector3(0, -0.05, -0.2);
     vector3.add(addVector);
     return vector3;
@@ -242,7 +242,10 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                   topLeft: Radius.circular(23),
                   topRight: Radius.circular(23),
                 ),
-                color: Color(0xFFFFB628),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/main/bg-bar.png'),
+                ),
               ),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.1,
@@ -372,7 +375,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       uri:
           "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
       scale: Vector3(0.1, 0.1, 0.5),
-      position: await arSessionManager.getCameraPose().then((value) => addVecter(value!.getTranslation())),
+      position: await arSessionManager.getCameraPose().then((value) => addVector(value!.getTranslation())),
 
       transformation: await arSessionManager.getCameraPose().then((value) => value!),
       // position: await arSessionManager.getCameraPose().then((value) => (value?.getTranslation())),
