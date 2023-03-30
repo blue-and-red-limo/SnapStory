@@ -13,11 +13,11 @@ app = FastAPI()
 class Strokes(BaseModel):
     data: list[list[list[int]]]
 
-@app.get("/")
-def home():
-    return {"server connected"}
+# @app.get("/")
+# def home():
+#     return {"server connected"}
 
-@app.post("/ai/predictions/doodles")
+@app.post("/recognize/doodles")
 async def predict_doodles(strokes: Strokes):
     data=strokes.data
     print(data)
@@ -28,7 +28,7 @@ async def predict_doodles(strokes: Strokes):
     # predict
     pred=_model.predict(preprocessd_data)[0]
     index = (-pred).argsort()[:1]
-    probability = str(pred[index[0]]*100) +'%'
+    probability = pred[index[0]]*100
     prediction=_classes[index[0]]
 
     return {'prediction':prediction,'probability':probability}
