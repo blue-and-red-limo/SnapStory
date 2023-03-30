@@ -1,3 +1,5 @@
-pillow
+pillow==9.4.0
 numpy==1.22.4
-tensorflow==2.11.0
+tensorflow==2.10.0
+shapely==1.8.1
+cairocffi==1.4.0

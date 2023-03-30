@@ -70,7 +70,7 @@ print("len(rdp_simplified_data)",len(rdp_simplified_data))
 # 5. simplified image to numpy bitmaps format
 numpy_bitmaps_data = vector_to_raster([rdp_simplified_data])[0]
 print("numpy_bitmaps_data.shape",numpy_bitmaps_data.shape)
-show_image_28_28(numpy_bitmaps_data)
+# show_image_28_28(numpy_bitmaps_data)
 
 # 6. Reshape and normalize
 # float 타입으로 바꾸는 이유는 continuous data가 필요하기 때문에.
@@ -90,10 +90,16 @@ f= open(os.getcwd()+"/app/model/class_names.txt","r")
 classes = f.readlines()
 f.close()
 _classes = [c.replace('\n','').replace(' ','_') for c in classes]
+print(_classes)
 
 # 8. predict
 pred=model.predict(np.expand_dims(reshaped_data,axis=0))[0]
-print(pred)
 ind = (-pred).argsort()[:5]
+topIdx = (-pred).argsort()[:1]
+topProbability=pred[topIdx]
+topClass=_classes[topIdx[0]]
+print(topIdx)
+print(topProbability)
+print(topClass)
 latex = [_classes[x]for x in ind]
 print(latex)
