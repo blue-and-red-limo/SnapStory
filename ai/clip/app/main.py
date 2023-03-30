@@ -57,7 +57,7 @@ async def predictions_objects(file: UploadFile = File(...)):
     # 저장하지 않고 진행.
     image = io.BytesIO(contents)
 
-    return {'prediction':predict(image,"objects"),'probability':100}
+    return {'prediction':predict(image,"objects"),'probability':99.9}
 
 # # CLIP 손그림 이미지 분류
 # @app.post("/ai/predictions/drawings")
