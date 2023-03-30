@@ -49,6 +49,8 @@
 		<true/>
 		<key>NSLocationWhenInUseUsageDescription</key>
         <string>안녕하세요 ?</string>
+        <key>NSCameraUsageDescription</key>
+        <string>카메라 접근을 허용하시겠습니까?!</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
 		<string>Take pretty screenshots and save it to the PhotoLibrary.</string>
 		<key>UIStatusBarHidden</key>

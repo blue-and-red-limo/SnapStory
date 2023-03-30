@@ -8,6 +8,7 @@ import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
 import 'package:ar_flutter_plugin/models/ar_anchor.dart';
+import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:ar_flutter_plugin/widgets/ar_view.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
@@ -248,10 +249,6 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               child: const Icon(Icons.camera, color: Color(0xFFFFB628), size: 37),
               // Provide an onPressed callback.
               onPressed: () async {
-                // 초기화
-                setState(() {
-                  isLoading = true;
-                });
                 arObjectManager.onInitialize();
                 // arAnchorManager.initGoogleCloudAnchorMode();
                 onWebObjectAtButtonPressed();
@@ -280,7 +277,11 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
         handleTaps: false,
         showAnimatedGuide: false);
     this.arObjectManager.onInitialize();
-    this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      this.arSessionManager.onPlaneOrPointTap = onPlaneOrPointTapped;
+    } else {
+      this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
+    }
     this.arLocationManager.startLocationUpdates();
   }
 
@@ -302,10 +303,16 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
           await imagePath.writeAsBytes(image);
         }
       });
+      setState(() {
+        isLoading = true;
+      });
       wordName = await _araiService.postPictureAndGetWord(
           path: '$directory/$fileName'!);
     } else {
       String? path = await NativeScreenshot.takeScreenshot();
+      setState(() {
+        isLoading = true;
+      });
       wordName = await _araiService.postPictureAndGetWord(path: path!);
     }
 
@@ -344,7 +351,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       name: wordName,
       type: NodeType.webGLB,
       uri:
-          "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
+          "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}_ios.glb",
       scale: Vector3(0.1, 0.1, 0.5),
       transformation: pos,
 
@@ -362,7 +369,16 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     checked == true ? checked = false : checked = true;
     setState(() {});
   }
+
+  Future<void> onPlaneOrPointTapped(
+      List<ARHitTestResult> hitTestResults) async {
+    if (webObjectNode != null) {
+      onTapHandler(word);
+    }
+  }
 }
+
+
 
 class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
