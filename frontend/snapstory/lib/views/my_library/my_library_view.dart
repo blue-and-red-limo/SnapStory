@@ -115,7 +115,7 @@ class _MyLibraryState extends State<MyLibrary> {
                             GestureDetector(
                               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => QuizTaleView(e.first),)),
                               child: Image.asset(
-                                'assets/library/btn-library-${e.last['title'].replaceAll(' ' ,'').toLowerCase()}.png',
+                                'assets/library/btn-library-${e.first['title'].replaceAll(' ' ,'').toLowerCase()}.png',
                                 width: MediaQuery.of(context).size.width * 0.3,
                               ),
                             ),
