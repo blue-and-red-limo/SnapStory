@@ -34,7 +34,8 @@ class _MyLibraryState extends State<MyLibrary> {
       http.Response response = await http.get(
           Uri.parse('https://j8a401.p.ssafy.io/api/v1/quiz-tales/complete'),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
-      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      Map<String, dynamic> jsonResponse =
+          jsonDecode(utf8.decode(response.bodyBytes));
       setState(() {
         quizTaleList = jsonResponse['result'];
       });

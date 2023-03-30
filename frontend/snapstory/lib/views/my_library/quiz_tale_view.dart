@@ -58,18 +58,28 @@ class _QuizTaleViewState extends State<QuizTaleView> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              OutlinedText(
-                                  text: Text(title,
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 40)),
-                                  strokes: [
-                                    OutlinedTextStroke(
-                                        color: Color(0xffffb628), width: 10),
-                                  ]),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.height *
+                                        0.15),
+                                child: OutlinedText(
+                                    text: Text(title,
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 40)),
+                                    strokes: [
+                                      OutlinedTextStroke(
+                                          color: Color(0xffffb628), width: 10),
+                                    ]),
+                              ),
                               Container(
                                 child: player,
                                 margin: EdgeInsets.all(20),
                               ),
+                              Image.asset(
+                                'assets/library/snappy_watching.png',
+                                height:
+                                    MediaQuery.of(context).size.height * 0.2,
+                              )
                             ],
                           ),
                         ),
