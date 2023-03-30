@@ -430,168 +430,177 @@ class _DrawingViewState extends State<DrawingView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          children: [
-            // 나가기
-            Container(
-              margin: EdgeInsets.fromLTRB(
-                  0, MediaQuery.of(context).padding.top, 20, 0),
-              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                TextButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(drawingTaleListRoute);
-                  },
-                  icon: const Icon(
-                    Icons.cancel_rounded,
-                    color: Color(0xffffb628),
-                    size: 30,
-                  ),
-                  label: const Text(
-                    '나가기',
-                    style: TextStyle(color: Color(0xffffb628), fontSize: 20),
-                  ),
-                ),
-              ]),
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.cover,
+              image: AssetImage('assets/main/bg-main2.png'),
             ),
+          ),
+          child: Column(
+            children: [
+              // 상단 버튼
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                // 도움말 - 튜토리얼
+                IconButton(
+                    iconSize: MediaQuery.of(context).size.width * 0.25,
+                    onPressed: () {},
+                    icon: Image.asset(
+                      'assets/main/btn-help.png',
+                    )),
+                // 나가기
+                IconButton(
+                    iconSize: MediaQuery.of(context).size.width * 0.25,
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(drawingTaleListRoute);
+                    },
+                    icon: Image.asset(
+                      'assets/main/btn-quit.png',
+                    )),
+              ]),
 
-            // 동화 아이템
-            Container(
-              height: MediaQuery.of(context).size.height * 0.35,
-              width: MediaQuery.of(context).size.width * 0.9,
-              margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-              decoration: const BoxDecoration(color: Color(0xffd9d9d9)),
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    FittedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
+              // 동화 아이템
+              Container(
+                height: MediaQuery.of(context).size.height * 0.35,
+                width: MediaQuery.of(context).size.width * 0.9,
+                margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                decoration: const BoxDecoration(color: Color(0xffd9d9d9)),
+                child: FittedBox(
+                  fit: BoxFit.contain,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      FittedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 20),
+                                child: Image.asset(
+                                  items[0],
+                                  width: 120,
+                                )),
+                            Container(
                               margin: const EdgeInsets.symmetric(
                                   horizontal: 30, vertical: 20),
                               child: Image.asset(
-                                items[0],
+                                items[1],
                                 width: 120,
-                              )),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
                           Container(
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 30, vertical: 20),
                             child: Image.asset(
-                              items[1],
+                              items[2],
                               width: 120,
                             ),
-                          )
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 20),
+                            child: Image.asset(
+                              items[3],
+                              width: 120,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // 툴 + 그림 그리는 부분
+              Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 1)),
+                  child: Column(children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0xffffb628),
+                      ),
+                      // 툴바
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          // 다 지우기
+                          IconButton(
+                              icon: const Icon(Icons.refresh),
+                              tooltip: 'Clear',
+                              onPressed: () {
+                                setState(() {
+                                  path = [];
+                                  _points = [];
+                                });
+                              })
                         ],
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 20),
-                          child: Image.asset(
-                            items[2],
-                            width: 120,
-                          ),
+                    // 그림 그리는 부분
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black, width: 1)),
+                      height: 250,
+                      width: 250,
+                      child: GestureDetector(
+                        child: CustomPaint(
+                          painter: DrawingPainter(_points),
+                          size: Size(250, 250),
                         ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 30, vertical: 20),
-                          child: Image.asset(
-                            items[3],
-                            width: 120,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // 툴 + 그림 그리는 부분
-            Container(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black, width: 1)),
-                child: Column(children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: Color(0xffffb628),
-                    ),
-                    // 툴바
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        // 다 지우기
-                        IconButton(
-                            icon: const Icon(Icons.refresh),
-                            tooltip: 'Clear',
-                            onPressed: () {
-                              setState(() {
-                                path = [];
-                                _points = [];
-                              });
-                            })
-                      ],
-                    ),
-                  ),
-                  // 그림 그리는 부분
-                  Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black, width: 1)),
-                    height: 250,
-                    width: 250,
-                    child: GestureDetector(
-                      child: CustomPaint(
-                        painter: DrawingPainter(_points),
-                        size: Size(250, 250),
+                        onPanStart: (details) {
+                          setState(() {
+                            _points.add([details.localPosition]);
+                            path.add([
+                              [details.localPosition.dx.toInt()],
+                              [details.localPosition.dy.toInt()]
+                            ]);
+                          });
+                        },
+                        onPanUpdate: (details) {
+                          setState(() {
+                            // 범위에서 벗어나면 리스트에 추가X
+                            if (details.localPosition.dx > 0 &&
+                                details.localPosition.dx < 250 &&
+                                details.localPosition.dy > 0 &&
+                                details.localPosition.dy < 250) {
+                              _points.last.add(details.localPosition);
+                              path.last[0]
+                                  .add(details.localPosition.dx.toInt());
+                              path.last[1]
+                                  .add(details.localPosition.dy.toInt());
+                            }
+                          });
+                        },
                       ),
-                      onPanStart: (details) {
-                        setState(() {
-                          _points.add([details.localPosition]);
-                          path.add([
-                            [details.localPosition.dx.toInt()],
-                            [details.localPosition.dy.toInt()]
-                          ]);
-                        });
-                      },
-                      onPanUpdate: (details) {
-                        setState(() {
-                          // 범위에서 벗어나면 리스트에 추가X
-                          if (details.localPosition.dx > 0 &&
-                              details.localPosition.dx < 250 &&
-                              details.localPosition.dy > 0 &&
-                              details.localPosition.dy < 250) {
-                            _points.last.add(details.localPosition);
-                            path.last[0].add(details.localPosition.dx.toInt());
-                            path.last[1].add(details.localPosition.dy.toInt());
-                          }
-                        });
-                      },
-                    ),
-                  )
-                ])),
+                    )
+                  ])),
 
-            // 정답 확인 버튼
-            ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffffb628)),
-                onPressed: () {
-                  // 정답 확인 함수 실행
-                  // isCorrect();
-                  check();
-                },
-                child: const Text('정답 확인',
-                    style: TextStyle(
-                      color: Colors.white,
-                    )))
-          ],
+              // 정답 확인 버튼
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffffb628)),
+                  onPressed: () {
+                    // 정답 확인 함수 실행
+                    // isCorrect();
+                    check();
+                  },
+                  child: const Text('정답 확인',
+                      style: TextStyle(
+                        color: Colors.white,
+                      )))
+            ],
+          ),
         ),
       ),
     );
@@ -604,25 +613,24 @@ class _DrawingViewState extends State<DrawingView> {
   List<List<List<int>>> path = [];
 
   check() async {
-    // try {
-    //   http.Response response = await http.post(
-    //       Uri.parse('https://j8a401.p.ssafy.io/ai/predictions/drawings'),
-    //       headers: {'Content-Type': "application/json"},
-    //       body: jsonEncode(
-    //           <String, List<List<List<double>>>>{"base64_file": path}));
-    //   // logDev.log(base64Encode(a));
-    //   var jsonResponse = jsonDecode(response.body);
-    //   answer = await jsonResponse;
-    // } catch (e) {
-    //   print('$e 이미지 확인 에러');
-    // }
-    // setState(() {
-    //   _points = [];
-    //   path = [];
-    // });
-    print(path);
-    logDev.log(path.toString());
-    // print(_points);
+    try {
+      http.Response response = await http.post(
+          Uri.parse('https://j8a401.p.ssafy.io/recognize/doodles'),
+          headers: {'Content-Type': "application/json"},
+          body: jsonEncode(<String, List<List<List<int>>>>{"data": path}));
+      var jsonResponse = jsonDecode(response.body);
+
+      if (jsonResponse['probability'] >= 70) {
+        answer = jsonResponse['prediction'];
+      }
+      print(answer);
+    } catch (e) {
+      print('$e 이미지 확인 에러');
+    }
+    setState(() {
+      _points = [];
+      path = [];
+    });
   }
 }
 

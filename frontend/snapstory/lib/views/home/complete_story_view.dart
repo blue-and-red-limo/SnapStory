@@ -13,7 +13,7 @@ import 'package:snapstory/views/main_view.dart';
 import 'package:http/http.dart' as http;
 import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
-import 'package:simplytranslate/simplytranslate.dart';
+import 'package:learning_translate/learning_translate.dart';
 
 class CompleteStory extends StatefulWidget {
   const CompleteStory({Key? key, required this.id}) : super(key: key);
@@ -29,11 +29,11 @@ class _CompleteStoryState extends State<CompleteStory> {
   late FairyTale ft;
   late bool isEng = true;
   late String wordKor;
-  bool isSearch = false;
-  final gt = SimplyTranslator(EngineType.google);
+  Translator translator = Translator(from: ENGLISH, to: KOREAN);
   final searchController = TextEditingController();
-  String searchWord = '';
-  String result = '';
+  String translate = '';
+  bool isSearching = false;
+  bool counterShow = false;
 
   Future<int> makeSound({required String text}) async {
     return await flutterTts.speak(text);
@@ -85,98 +85,109 @@ class _CompleteStoryState extends State<CompleteStory> {
     super.initState();
   }
 
-  // 검색 모달창
-  searchModal() async {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('search'),
-            content: Column(
-              children: [
-                TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      searchWord = value;
-                    });
-                  },
-                  controller: searchController,
-                ),
-                Text(result),
-              ],
-            ),
-            actions: <Widget>[
-              MaterialButton(
-                color: Colors.green,
-                textColor: Colors.white,
-                child: Text('OK'),
-                onPressed: () {
-                  search();
-                },
-              ),
-            ],
-          );
-        });
+  // 검색 모델 설치 여부 확인
+  isModelInstalled() async {
+    bool isDownloaded = await TranslationModelManager.check(KOREAN);
 
-    // if (isSearch) {
-    // return showDialog(
-    //     barrierColor: Colors.transparent,
-    //     context: context,
-    //     builder: (BuildContext context) {
-    //       return Container(
-    //         // height: MediaQuery.of(context).size.height * 0.3,
-    //         margin: EdgeInsets.fromLTRB(
-    //             MediaQuery.of(context).size.width * 0.15,
-    //             MediaQuery.of(context).size.height * 0.55,
-    //             MediaQuery.of(context).size.width * 0.15,
-    //             MediaQuery.of(context).size.height * 0.15),
-    //         decoration: BoxDecoration(
-    //           color: Colors.white,
-    //           borderRadius: BorderRadius.circular(30),
-    //           border: Border.all(
-    //             color: Color(0xffffb628),
-    //             width: 5,
-    //           ),
-    //           boxShadow: [
-    //             BoxShadow(
-    //               color: Color(0x3f000000),
-    //               blurRadius: 4,
-    //               offset: Offset(0, 4),
-    //             ),
-    //           ],
-    //         ),
-    //         child: Column(
-    //           children: [
-    //             TextField(
-    //               onChanged: (value) {},
-    //               controller: searchController,
-    //               decoration: InputDecoration(hintText: "Text Field in Dialog"),
-    //             ),
-    //             // IconButton(
-    //             //   onPressed: () {
-    //             //     setState(() async {
-    //             //       searchWord = searchController.text;
-    //             //       result = await gt.trSimply((searchWord), "en", 'ko');
-    //             //     });
-    //             //   },
-    //             //   icon: Icon(Icons.search_off_rounded),
-    //             //   iconSize: 20,
-    //             // ),
-    //             Container(
-    //               child: Text(result),
-    //             ),
-    //           ],
-    //         ),
-    //       );
-    //     });
-    // }
+    // 모델 미설치 시 설치
+    if (!isDownloaded) {
+      await TranslationModelManager.download(KOREAN);
+    }
   }
 
-  // 검색
-  search() async {
-    result = await gt.trSimply((searchWord), "en", 'ko');
-    setState(() {});
-    print(result);
+  // 검색 모달창
+  searchModal() async {
+    // 검색 모델 미설치 시 설치
+    isModelInstalled();
+
+    return showDialog(
+        barrierColor: Colors.transparent,
+        context: context,
+        builder: (context) {
+          // 모달 켰을 때, 데이터 초기화
+          searchController.text = '';
+          translate = '';
+          counterShow = false;
+
+          return AlertDialog(
+            backgroundColor: Colors.transparent,
+            contentPadding: const EdgeInsets.all(0),
+            content: StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                padding: const EdgeInsets.all(10),
+                alignment: Alignment.bottomCenter,
+                height: MediaQuery.of(context).size.height * 0.2,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                    color: const Color(0xffffb628),
+                    width: 5,
+                  ),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      // 검색창
+                      child: TextField(
+                          // 글자수 30자로 제한
+                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                          maxLength: 30,
+                          controller: searchController,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 24),
+                          cursorColor: Colors.white,
+                          autofocus: true,
+                          // 글자수가 30보다 크면 counterText 뜨게
+                          onChanged: (text) {
+                            if (text.length >= 30) {
+                              setState(() {
+                                counterShow = true;
+                              });
+                            }
+                          },
+                          decoration: InputDecoration(
+                              counterText:
+                                  (counterShow) ? '30자 이내로 입력해주세요' : '',
+                              contentPadding: const EdgeInsets.all(15),
+                              filled: true,
+                              suffixIcon: IconButton(
+                                  padding: const EdgeInsets.all(0),
+                                  onPressed: () async {
+                                    setState(() {
+                                      isSearching = true;
+                                    });
+                                    String result = await translator
+                                        .translate(searchController.text);
+                                    setState(() {
+                                      translate = result;
+                                      isSearching = false;
+                                    });
+                                  },
+                                  icon: const Icon(Icons.search_rounded,
+                                      color: Colors.white, size: 40)),
+                              fillColor: const Color(0xffffb628),
+                              border: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30))))),
+                    ),
+                    // 결과 나오는 부분
+                    Container(
+                        margin: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.height * 0.03),
+                        child: (isSearching)
+                            ? const CircularProgressIndicator()
+                            : Text(
+                                translate,
+                                style: const TextStyle(fontSize: 30),
+                              ))
+                  ],
+                ),
+              );
+            }),
+          );
+        });
   }
 
   @override
@@ -231,7 +242,7 @@ class _CompleteStoryState extends State<CompleteStory> {
                                       MediaQuery.of(context).size.height * 0.15,
                                 ),
                                 Image(
-                                    image: AssetImage(
+                                    image: const AssetImage(
                                         "assets/aiTale/box-aitale-title.png"),
                                     width: MediaQuery.of(context).size.width *
                                         0.85),
@@ -243,16 +254,16 @@ class _CompleteStoryState extends State<CompleteStory> {
                                     Text(
                                       isEng ? "Story about " : wordKor,
                                       style: isEng
-                                          ? TextStyle(fontSize: 22)
-                                          : TextStyle(
+                                          ? const TextStyle(fontSize: 22)
+                                          : const TextStyle(
                                               fontSize: 22, color: Colors.red),
                                     ),
                                     Text(
                                       isEng ? ft.wordEng : " 이야기",
                                       style: isEng
-                                          ? TextStyle(
+                                          ? const TextStyle(
                                               fontSize: 22, color: Colors.red)
-                                          : TextStyle(fontSize: 22),
+                                          : const TextStyle(fontSize: 22),
                                     )
                                   ],
                                 )),
@@ -322,7 +333,6 @@ class _CompleteStoryState extends State<CompleteStory> {
               ),
             ),
           ),
-          // Positioned(child: searchModal()),
           Positioned(
             bottom: 1,
             left: MediaQuery.of(context).size.width * 0.2,
@@ -341,11 +351,11 @@ class _CompleteStoryState extends State<CompleteStory> {
                         fit: BoxFit.cover,
                         image:
                             AssetImage('assets/aiTale/btn-aitale-search.png'),
-                        // 배경 이미지
                       ),
                     ),
                   ),
                   onTap: () {
+                    // 검색창 띄우기
                     searchModal();
                   },
                 ),
