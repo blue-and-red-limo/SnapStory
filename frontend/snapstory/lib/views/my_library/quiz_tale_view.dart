@@ -87,7 +87,7 @@ class _QuizTaleViewState extends State<QuizTaleView> {
                             topRight: Radius.circular(32)),
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: AssetImage('assets/aiTale/bottom_bar.png'),
+                          image: AssetImage('assets/main/bg-bar.png'),
                         ),
                       ),
                     ),

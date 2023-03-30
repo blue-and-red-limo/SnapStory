@@ -95,8 +95,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   // Vector3(-0.01, -0.01, -0.1)
-  Vector3 addVecter(Vector3 vector3) {
-    print('addVecter !!!!!!!');
+
+  Vector3 addVector(Vector3 vector3){
+    print('addVector !!!!!!!');
     Vector3 addVector = Vector3(0, -0.05, -0.2);
     vector3.add(addVector);
     return vector3;
@@ -163,7 +164,10 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                   topLeft: Radius.circular(23),
                   topRight: Radius.circular(23),
                 ),
-                color: Color(0xFFFFB628),
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/main/bg-bar.png'),
+                ),
               ),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.1,
@@ -281,6 +285,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   Future<void> onWebObjectAtButtonPressed() async {
+    Matrix4 pos = await arSessionManager.getCameraPose().then((value) => value!);
     String wordName;
     if (defaultTargetPlatform == TargetPlatform.android) {
       final directory = (await getApplicationDocumentsDirectory())
@@ -335,25 +340,15 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     // final forward = arLocationManager.currentLocation;
     // print("cfcfcfcfcfcffcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfc:" + cameraPosition.toString() + forward.toString());
     // final nodePosition = cameraPosition + (forward * -1.0);
-    Matrix3 matrix3 = await arSessionManager
-        .getCameraPose()
-        .then((value) => value!.getRotation());
-    var newNode = ARNode(
+    var newNode = ARNode (
       name: wordName,
       type: NodeType.webGLB,
       uri:
           "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
       scale: Vector3(0.1, 0.1, 0.5),
-      position: await arSessionManager
-          .getCameraPose()
-          .then((value) => addVecter(value!.getTranslation())),
+      transformation: pos,
 
-      transformation:
-          await arSessionManager.getCameraPose().then((value) => value!),
-      // position: await arSessionManager.getCameraPose().then((value) => (value?.getTranslation())),
     );
-
-    // newNode.rotation(matrix3);
     bool? didAddWebNode = await arObjectManager.addNode(newNode);
     print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee" +
         didAddWebNode.toString());
