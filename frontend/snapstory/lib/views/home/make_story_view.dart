@@ -145,93 +145,65 @@ class _MakeStoryState extends State<MakeStory> {
       );
 
       // show the dialog
-      await showDialog(
+      await showDialog(barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
       return alert;
       },
       );
+    } else if(jsonDecode(utf8.decode(res.bodyBytes))['result']['errorCode'] == "WORD_LIST_NOT_FOUND"){  // 단어로 만든 동화가 없으면 진행
+      String obj = widget.word; // 인식한 사물 이름 넣기
+      String data =
+      await _araiService.generateStoryandImage(obj); // 동화와 이미지 문장 만들기
+
+      List<String> str = data.split("Image:");
+
+      String fairytale = str[0]; // 동화 저장
+      story = fairytale;
+      String imgStr = str[1]; // 달리한테 보내줄 이미지 설명 저장
+      String fairytaleKor =
+      await _araiService.translateText(fairytale); // 동화 번역하기
+      String? imgPath = await askToDalle(imgStr); // 달리로 이미지 경로 생성
+
+      // 확인
+      print("동화:" + fairytale);
+      print("동화 해석:" + fairytaleKor);
+      print("이미지 설명:" + imgStr);
+      // print("이미지 경로:" + imgPath);
+
+      // 동화 객체 만들기
+      FairyTale ft = FairyTale(fairytale, fairytaleKor, "", widget.word);
+
+
+
+      // 이미지 없는 동화 먼저 저장
+      final response = await http.post(
+        Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode({
+          "contentEng": ft.contentEng,
+          "contentKor": ft.contentKor,
+          "image": ft.image,
+          "word": ft.wordEng
+        }),
+      );
+
+      print(response.body.toString());
+      print(jsonDecode(utf8.decode(response.bodyBytes))['result']['errorCode']);
+      // if(jsonDecode(utf8.decode(response.bodyBytes))['result']['errorCode'] == "AI_TALE_DUPLICATE"){ // 중복 알림창 띄우기
+      //
+      // }
+      aiTaleId = jsonDecode(utf8.decode(response.bodyBytes))['result']['aiTaleId'] as int;// 결과 확인하고 ai tale id 뽑아쓰기
+
+      return [fairytale, imgPath];
     }
 
-    // 단어로 만든 동화가 없으면 진행
+    return ["fairytale", "imgPath"]; // null 반환 방지용
 
-
-
-
-    String obj = widget.word; // 인식한 사물 이름 넣기
-    String data =
-        await _araiService.generateStoryandImage(obj); // 동화와 이미지 문장 만들기
-
-    List<String> str = data.split("Image:");
-
-    String fairytale = str[0]; // 동화 저장
-    story = fairytale;
-    String imgStr = str[1]; // 달리한테 보내줄 이미지 설명 저장
-    String fairytaleKor =
-        await _araiService.translateText(fairytale); // 동화 번역하기
-    String? imgPath = await askToDalle(imgStr); // 달리로 이미지 경로 생성
-
-    // 확인
-    print("동화:" + fairytale);
-    print("동화 해석:" + fairytaleKor);
-    print("이미지 설명:" + imgStr);
-    // print("이미지 경로:" + imgPath);
-
-    // 동화 객체 만들기
-    FairyTale ft = FairyTale(fairytale, fairytaleKor, "", widget.word);
-
-
-
-    // 이미지 없는 동화 먼저 저장
-    final response = await http.post(
-      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales"),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token'
-      },
-      body: jsonEncode({
-        "contentEng": ft.contentEng,
-        "contentKor": ft.contentKor,
-        "image": ft.image,
-        "word": ft.wordEng
-      }),
-    );
-
-    print(response.body.toString());
-    print(jsonDecode(utf8.decode(response.bodyBytes))['result']['errorCode']);
-    if(jsonDecode(utf8.decode(response.bodyBytes))['result']['errorCode'] == "AI_TALE_DUPLICATE"){ // 중복 알림창 띄우기
-
-      // // set up the button
-      // Widget okButton = TextButton(
-      //   child: const Text("확인"),
-      //   onPressed: () {
-      //     int count = 0;
-      //     Navigator.of(context).popUntil((_) => count++ >= 2);
-      //   },
-      // );
-      //
-      // // set up the AlertDialog
-      // AlertDialog alert = AlertDialog(
-      //   title: const Text("중복된 동화가 있습니다."),
-      //   content: const Text("새로운 동화를 만들고 싶다면\n동화 화면에서 기존 동화를 삭제해주세요."),
-      //   actions: [
-      //     okButton,
-      //   ],
-      // );
-      //
-      // // show the dialog
-      // showDialog(
-      //   context: context,
-      //   builder: (BuildContext context) {
-      //     return alert;
-      //   },
-      // );
-
-
-    }
-    aiTaleId = jsonDecode(utf8.decode(response.bodyBytes))['result']['aiTaleId'] as int;// 결과 확인하고 ai tale id 뽑아쓰기
-
-    return [fairytale, imgPath]; // 동화를 반환
+    // 동화를 반환
   }
 
 
