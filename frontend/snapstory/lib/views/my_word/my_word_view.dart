@@ -92,8 +92,8 @@ class _MyWordState extends State<MyWord> {
                                                         BorderRadius.circular(15),
                                                     image: const DecorationImage(
                                                         image: AssetImage(
-                                                            'assets/library/word-card.png'),
-                                                        fit: BoxFit.fill),
+                                                            'assets/wordList/box-wordlist.png'),
+                                                        fit: BoxFit.contain),
                                                   ),
                                                   child: Column(
                                                     mainAxisAlignment:
@@ -240,6 +240,22 @@ class _MyWordState extends State<MyWord> {
                                           MainAxisAlignment.center,
                                       children: [
                                         GestureDetector(
+                                        child: Image.asset(
+                                          'assets/aiTale/btn-ai-word.png',
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.25,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.25,
+                                        ),
+                                        onTap: () => makeSound(
+                                            text: wordList[_current]['word']
+                                            ['wordEng']),
+                                      ),
+                                        GestureDetector(
                                           child: Image.asset(
                                             'assets/aiTale/btn-ai-example.png',
                                             height: MediaQuery.of(context)
@@ -254,22 +270,6 @@ class _MyWordState extends State<MyWord> {
                                           onTap: () => makeSound(
                                               text: wordList[_current]
                                                   ['wordExampleEng']),
-                                        ),
-                                        GestureDetector(
-                                          child: Image.asset(
-                                            'assets/aiTale/btn-ai-word.png',
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.25,
-                                          ),
-                                          onTap: () => makeSound(
-                                              text: wordList[_current]['word']
-                                                  ['wordEng']),
                                         ),
                                         GestureDetector(
                                           child: Image.asset(

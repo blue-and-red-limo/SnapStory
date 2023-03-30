@@ -163,8 +163,8 @@ class _MainViewState extends State<MainView> {
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/main/appbar_img.png'),
-                fit: BoxFit.fill,
+                image: AssetImage('assets/main/bg-bar.png'),
+                fit: BoxFit.fitWidth,
               ),
             ),
           ),
@@ -196,7 +196,7 @@ class _MainViewState extends State<MainView> {
                 accountEmail: Text(userEmail),
                 decoration: const BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage('assets/main/drawer.png'),
+                        image: AssetImage('assets/main/bg-bar.png'),
                         fit: BoxFit.fill),
                     color: Color.fromARGB(255, 255, 182, 40),
                     borderRadius: BorderRadius.only(
