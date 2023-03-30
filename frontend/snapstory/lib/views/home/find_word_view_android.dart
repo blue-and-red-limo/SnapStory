@@ -286,11 +286,48 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
 
   Future<void> onWebObjectAtButtonPressed() async {
     Matrix4 pos = await arSessionManager.getCameraPose().then((value) => value!);
-    String wordName;
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      final directory = (await getApplicationDocumentsDirectory())
-          .path; //from path_provide package
-      String fileName = '${DateTime.now().microsecondsSinceEpoch}.png';
+    String wordName="glasses";
+    // if (defaultTargetPlatform == TargetPlatform.android) {
+    //   final directory = (await getApplicationDocumentsDirectory())
+    //       .path; //from path_provide package
+    //   String fileName = '${DateTime.now().microsecondsSinceEpoch}.png';
+    //
+    //   print(directory + fileName);
+    //
+    //   await screenshotController
+    //       .capture(delay: const Duration(milliseconds: 10))
+    //       .then((image) async {
+    //     if (image != null) {
+    //       final imagePath = await File('$directory/$fileName').create();
+    //       await imagePath.writeAsBytes(image);
+    //     }
+    //   });
+    //   wordName = await _araiService.postPictureAndGetWord(
+    //       path: '$directory/$fileName'!);
+    // } else {
+    //   String? path = await NativeScreenshot.takeScreenshot();
+    //   wordName = await _araiService.postPictureAndGetWord(path: path!);
+    // }
+    //
+    // // await screenshotController.captureAndSave(
+    // //     '$directory', //set path where screenshot will be saved
+    // //     delay: Duration(milliseconds: 100),
+    // //     fileName: fileName,
+    // //     pixelRatio: 1.0
+    // // );
+    // // ai 서버에서 정보 받아오기
+    // // String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
+    // wordName = wordName.substring(1, wordName.length - 1);
+    // print('wordname: $wordName');
+    // word = wordName;
+    //
+    // var map = await _araiService.generateText(
+    //     obj: wordName,
+    //     token: await FirebaseAuth.instance.currentUser!.getIdToken());
+    // setState(() {
+    //   wordMap = map;
+    // });
+    // print(wordMap.toString());
 
       print(directory + fileName);
 
