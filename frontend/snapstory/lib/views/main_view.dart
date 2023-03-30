@@ -149,7 +149,7 @@ class _MainViewState extends State<MainView> {
         image: DecorationImage(
             fit: BoxFit.cover,
             image: selectedPos != 0
-                ? AssetImage('assets/main/bg-main${selectedPos + 1}.png')
+                ? const AssetImage('assets/main/bg-main3.png')
                 : const AssetImage('assets/main/bg-main.png') // 배경 이미지
             ),
       ),
