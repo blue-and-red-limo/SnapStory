@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
+import 'package:snapstory/views/home/make_story_view.dart';
 
 import '../../utilities/loading_dialog.dart';
 
@@ -59,68 +60,64 @@ class _MyWordState extends State<MyWord> {
                             if (isCarousel)
                               Stack(children: [
                                 Center(
-                                  child: CarouselSlider(
-                                    options: CarouselOptions(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.6,
-                                        aspectRatio: 1.61803398875,
-                                        enlargeCenterPage: true,
-                                        enableInfiniteScroll: true,
-                                        initialPage: _current,
-                                        autoPlay: false,
-                                        onPageChanged: (index, reason) {
-                                          setState(() {
-                                            _current = index;
-                                            isEng = true;
-                                          });
-                                        }),
-                                    items: wordList
-                                        .map((e) => GestureDetector(
-                                              onTap: () => setState(() {
-                                                isEng = !isEng;
-                                              }),
-                                              child: Card(
-                                                  elevation: 5.0,
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              23)),
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height*0.1),
+                                    child: CarouselSlider(
+                                      options: CarouselOptions(
+                                          height:
+                                              MediaQuery.of(context).size.height *
+                                                  0.6,
+                                          aspectRatio: 1.61803398875,
+                                          enlargeCenterPage: true,
+                                          enableInfiniteScroll: true,
+                                          initialPage: _current,
+                                          autoPlay: false,
+                                          onPageChanged: (index, reason) {
+                                            setState(() {
+                                              _current = index;
+                                              isEng = true;
+                                            });
+                                          }),
+                                      items: wordList
+                                          .map((e) => GestureDetector(
+                                                onTap: () => setState(() {
+                                                  isEng = !isEng;
+                                                }),
+                                                child: Container(
+                                                  width: MediaQuery.of(context).size.width,
+                                                  height: MediaQuery.of(context).size.height,
+                                                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width*0.1, right: MediaQuery.of(context).size.width*0.1, top: MediaQuery.of(context).size.width*0.15),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(15),
+                                                    image: const DecorationImage(
+                                                        image: AssetImage(
+                                                            'assets/library/word-card.png'),
+                                                        fit: BoxFit.fill),
+                                                  ),
                                                   child: Column(
                                                     mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
+                                                        MainAxisAlignment.center,
                                                     children: [
-
-                                                      Padding(
-                                                        padding:EdgeInsets
-                                                                .all(MediaQuery.of(context).size.width*0.05),
-                                                        child: Image.asset(
-                                                          e['word']['image']
-                                                              .toString(),
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.6,
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.6,
-                                                        ),
+                                                      Image.asset(
+                                                        e['word']['image']
+                                                            .toString(),
+                                                        height:
+                                                            MediaQuery.of(context)
+                                                                    .size
+                                                                    .width *
+                                                                0.5,
+                                                        width:
+                                                            MediaQuery.of(context)
+                                                                    .size
+                                                                    .width *
+                                                                0.5,
                                                       ),
-                                                      Padding(
-                                                        padding:
-                                                             EdgeInsets
-                                                                .all(MediaQuery.of(context).size.width*0.0125),
+                                                      Container(
+                                                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.025),
                                                         child: Text(
                                                           isEng
-                                                              ? e['word']
-                                                                  ['wordEng']
+                                                              ? e['word']['wordEng']
                                                               : e['word']
                                                                   ['wordKor'],
                                                           style: TextStyle(
@@ -131,35 +128,128 @@ class _MyWordState extends State<MyWord> {
                                                                   0.1),
                                                         ),
                                                       ),
-                                                      Padding(
-                                                        padding:EdgeInsets
-                                                                .all(MediaQuery.of(context).size.width*0.0125),
+                                                      Container(
+                                                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.05),
                                                         child: Text(
                                                           isEng
                                                               ? e['wordExampleEng']
                                                               : e['wordExampleKor'],
                                                           textAlign:
                                                               TextAlign.center,
+                                                          style: TextStyle(
+                                                              fontSize: MediaQuery.of(
+                                                                  context)
+                                                                  .size
+                                                                  .width *
+                                                                  0.05),
                                                         ),
                                                       ),
                                                     ],
-                                                  )),
-                                            ))
-                                        .toList(),
+                                                  ),
+
+                                                  // child: Card(
+                                                  //   color: Colors.transparent,
+                                                  //   elevation: 5.0,
+                                                  //   shape: RoundedRectangleBorder(
+                                                  //       borderRadius:
+                                                  //           BorderRadius.circular(
+                                                  //               23)),
+                                                  //   child: Column(
+                                                  //     mainAxisAlignment:
+                                                  //         MainAxisAlignment
+                                                  //             .center,
+                                                  //     crossAxisAlignment:
+                                                  //         CrossAxisAlignment
+                                                  //             .center,
+                                                  //     children: [
+                                                  //       Padding(
+                                                  //         padding: EdgeInsets.all(
+                                                  //             MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .width *
+                                                  //                 0.05),
+                                                  //         child: Image.asset(
+                                                  //           e['word']['image']
+                                                  //               .toString(),
+                                                  //           height: MediaQuery.of(
+                                                  //                       context)
+                                                  //                   .size
+                                                  //                   .width *
+                                                  //               0.6,
+                                                  //           width: MediaQuery.of(
+                                                  //                       context)
+                                                  //                   .size
+                                                  //                   .width *
+                                                  //               0.6,
+                                                  //         ),
+                                                  //       ),
+                                                  //       Padding(
+                                                  //         padding: EdgeInsets.all(
+                                                  //             MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .width *
+                                                  //                 0.0125),
+                                                  //         child: Text(
+                                                  //           isEng
+                                                  //               ? e['word']
+                                                  //                   ['wordEng']
+                                                  //               : e['word']
+                                                  //                   ['wordKor'],
+                                                  //           style: TextStyle(
+                                                  //               fontSize: MediaQuery.of(
+                                                  //                           context)
+                                                  //                       .size
+                                                  //                       .width *
+                                                  //                   0.1),
+                                                  //         ),
+                                                  //       ),
+                                                  //       Padding(
+                                                  //         padding: EdgeInsets.all(
+                                                  //             MediaQuery.of(
+                                                  //                         context)
+                                                  //                     .size
+                                                  //                     .width *
+                                                  //                 0.0125),
+                                                  //         child: Text(
+                                                  //           isEng
+                                                  //               ? e['wordExampleEng']
+                                                  //               : e['wordExampleKor'],
+                                                  //           textAlign:
+                                                  //               TextAlign.center,
+                                                  //         ),
+                                                  //       ),
+                                                  //     ],
+                                                  //   ),
+                                                  // ),
+                                                ),
+                                              ))
+                                          .toList(),
+                                    ),
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.04),
+                                  padding: EdgeInsets.all(
+                                      MediaQuery.of(context).size.height *
+                                          0.04),
                                   child: Align(
                                     alignment: Alignment.bottomCenter,
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         GestureDetector(
                                           child: Image.asset(
                                             'assets/aiTale/btn-ai-example.png',
-                                            height: MediaQuery.of(context).size.width*0.25,
-                                            width: MediaQuery.of(context).size.width*0.25,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
                                           ),
                                           onTap: () => makeSound(
                                               text: wordList[_current]
@@ -168,18 +258,34 @@ class _MyWordState extends State<MyWord> {
                                         GestureDetector(
                                           child: Image.asset(
                                             'assets/aiTale/btn-ai-word.png',
-                                            height: MediaQuery.of(context).size.width*0.25,
-                                            width: MediaQuery.of(context).size.width*0.25,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
                                           ),
                                           onTap: () => makeSound(
                                               text: wordList[_current]['word']
                                                   ['wordEng']),
                                         ),
-                                        Image.asset(
-                                          'assets/aiTale/btn-ai-story.png',
-                                          height: MediaQuery.of(context).size.width*0.25,
-                                          width: MediaQuery.of(context).size.width*0.25,
-                                        )
+                                        GestureDetector(
+                                          child: Image.asset(
+                                            'assets/aiTale/btn-ai-story.png',
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
+                                          ),
+                                          onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                              builder: (context) => MakeStory(word: wordList[_current]['word']['wordEng']))
+                                        )),
                                       ],
                                     ),
                                   ),
@@ -188,14 +294,19 @@ class _MyWordState extends State<MyWord> {
                             if (!isCarousel)
                               GridView.count(
                                   padding: EdgeInsets.only(
-                                      top: MediaQuery.of(context).size.height * 0.06,
-                                      bottom: MediaQuery.of(context).size.height * 0.01),
+                                      top: MediaQuery.of(context).size.height *
+                                          0.06,
+                                      bottom:
+                                          MediaQuery.of(context).size.height *
+                                              0.01),
                                   crossAxisCount: 2,
                                   children: wordList
                                       .map((e) => Container(
-                                    margin: const EdgeInsets.all(23),
-                                    decoration: const ShapeDecoration(shape: CircleBorder(), color: Colors.white70),
-                                        child: GestureDetector(
+                                            margin: const EdgeInsets.all(23),
+                                            decoration: const ShapeDecoration(
+                                                shape: CircleBorder(),
+                                                color: Colors.white70),
+                                            child: GestureDetector(
                                               onTap: () {
                                                 for (int i = 0;
                                                     i < wordList.length;
@@ -210,7 +321,11 @@ class _MyWordState extends State<MyWord> {
                                                 }
                                               },
                                               child: Padding(
-                                                padding: EdgeInsets.all(MediaQuery.of(context).size.height*0.03),
+                                                padding: EdgeInsets.all(
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .height *
+                                                        0.03),
                                                 child: Image.asset(
                                                   e['word']['image'],
                                                   height: MediaQuery.of(context)
@@ -224,7 +339,7 @@ class _MyWordState extends State<MyWord> {
                                                 ),
                                               ),
                                             ),
-                                      ))
+                                          ))
                                       .toList()),
                           ]),
                         if (_selected[1])
@@ -241,18 +356,28 @@ class _MyWordState extends State<MyWord> {
                                   });
                                 },
                                 child: Container(
-                                  decoration: ShapeDecoration(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(23)),color: Colors.white70),
+                                  decoration: ShapeDecoration(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(23)),
+                                      color: Colors.white70),
                                   child: Row(
                                     children: [
                                       SizedBox(
-                                        width: MediaQuery.of(context).size.width *
-                                            0.3,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
                                         child: Column(
                                           children: [
                                             Padding(
-                                              padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.01),
+                                              padding: EdgeInsets.all(
+                                                  MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.01),
                                               child: Image.asset(
-                                                wordList[index]['word']['image'],
+                                                wordList[index]['word']
+                                                    ['image'],
                                                 height: MediaQuery.of(context)
                                                         .size
                                                         .width *
@@ -270,27 +395,32 @@ class _MyWordState extends State<MyWord> {
                                                   : wordList[index]['word']
                                                       ['wordKor'],
                                               style: TextStyle(
-                                                  fontSize: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.04),
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.04),
                                             ),
                                           ],
                                         ),
                                       ),
                                       SizedBox(
-                                        width: MediaQuery.of(context).size.width *
-                                            0.55,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.55,
                                         child: Text(
                                           isEng
-                                              ? wordList[index]['wordExampleEng']
-                                              : wordList[index]['wordExampleKor'],
+                                              ? wordList[index]
+                                                  ['wordExampleEng']
+                                              : wordList[index]
+                                                  ['wordExampleKor'],
                                           textAlign: TextAlign.center,
                                         ),
                                       ),
                                       SizedBox(
-                                        width: MediaQuery.of(context).size.width *
-                                            0.15,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.15,
                                         child: IconButton(
                                           onPressed: () async {
                                             final shouldDelete =
