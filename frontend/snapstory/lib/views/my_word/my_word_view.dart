@@ -20,8 +20,7 @@ class _MyWordState extends State<MyWord> {
   late FlutterTts flutterTts;
   late int _current = 0;
   late bool isEng = true;
-  late bool isCarousel = false;
-  final List<bool> _selected = <bool>[true, false];
+  final List<bool> _selected = <bool>[true, false, false];
 
   @override
   void initState() {
@@ -55,9 +54,8 @@ class _MyWordState extends State<MyWord> {
                   if (wordList.isNotEmpty) {
                     return Stack(
                       children: [
-                        if (_selected[0])
                           Stack(children: [
-                            if (isCarousel)
+                            if (_selected[1])
                               Stack(children: [
                                 Center(
                                   child: Container(
@@ -214,7 +212,7 @@ class _MyWordState extends State<MyWord> {
                                   ),
                                 ),
                               ]),
-                            if (!isCarousel)
+                            if (_selected[0])
                               GridView.count(
                                   padding: EdgeInsets.only(
                                       top: MediaQuery.of(context).size.height *
@@ -238,7 +236,9 @@ class _MyWordState extends State<MyWord> {
                                                       e['word']) {
                                                     setState(() {
                                                       _current = i;
-                                                      isCarousel = !isCarousel;
+                                                      for (int i = 0; i < _selected.length; i++) {
+                                                        _selected[i] = i == 1;
+                                                      }
                                                     });
                                                   }
                                                 }
@@ -265,10 +265,10 @@ class _MyWordState extends State<MyWord> {
                                           ))
                                       .toList()),
                           ]),
-                        if (_selected[1])
+                        if (_selected[2])
                           ListView.separated(
                             padding: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.height * 0.05,
+                                top: MediaQuery.of(context).size.height * 0.1,
                                 bottom:
                                     MediaQuery.of(context).size.height * 0.04),
                             itemBuilder: (context, index) {
@@ -376,7 +376,7 @@ class _MyWordState extends State<MyWord> {
                           ),
                         Positioned(
                           top: MediaQuery.of(context).size.height * 0.02,
-                          left: MediaQuery.of(context).size.width * 0.75,
+                          left: MediaQuery.of(context).size.width * 0.65,
                           child: ToggleButtons(
                             direction: Axis.horizontal,
                             onPressed: (int index) {
@@ -385,7 +385,8 @@ class _MyWordState extends State<MyWord> {
                                 for (int i = 0; i < _selected.length; i++) {
                                   _selected[i] = i == index;
                                 }
-                                isCarousel = false;
+                                print(_selected.toString());
+                                _current = 0;
                               });
                             },
                             borderRadius:
@@ -403,6 +404,7 @@ class _MyWordState extends State<MyWord> {
                             isSelected: _selected,
                             children: const [
                               Icon(Icons.grid_view_rounded),
+                              Icon(Icons.view_carousel_rounded),
                               Icon(Icons.list_alt_rounded),
                             ],
                           ),

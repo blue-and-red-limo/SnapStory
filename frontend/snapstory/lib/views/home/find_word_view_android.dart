@@ -317,7 +317,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     // );
     // ai 서버에서 정보 받아오기
     // String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
-    wordName = wordName.substring(1, wordName.length - 1);
+    // wordName = wordName.substring(1, wordName.length - 1);
     print('wordname: $wordName');
     word = wordName;
 
