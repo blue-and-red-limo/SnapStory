@@ -113,7 +113,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             controller: screenshotController,
             child: ARView(
               onARViewCreated: onARViewCreated,
-              planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
+              planeDetectionConfig: PlaneDetectionConfig.none,
             ),
           ),
           if (!checked && !isLoading)
