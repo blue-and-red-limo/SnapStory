@@ -3,18 +3,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ARAIService {
-  final String aiBase = 'https://j8a401.p.ssafy.io/ai';
+  final String aiBase = 'https://j8a401.p.ssafy.io';
   final String springBase = 'https://j8a401.p.ssafy.io/api/v1';
   final String apiKey = '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';
   final String apiUrl = 'https://api.openai.com/v1/completions';
 
-  Future<String> postPictureAndGetWord({required String path}) async {
+  Future postPictureAndGetWord({required String path}) async {
     var request =
-        http.MultipartRequest('POST', Uri.parse('$aiBase/predictions/objects'))
+        http.MultipartRequest('POST', Uri.parse('$aiBase/classify/images'))
           ..files.add(await http.MultipartFile.fromPath('file', path));
     var response = await request.send();
-    if (response.statusCode == 200) {
-      return response.stream.bytesToString();
+    Map newres = jsonDecode(utf8.decode(await response.stream.toBytes()));
+    print(newres.toString());
+    if (response.statusCode == 200 && newres['probability'] as double > 50.0) {
+      return newres['prediction'].toString();
     } else {
       return 'CANNOT GET WORD';
     }
