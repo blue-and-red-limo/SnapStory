@@ -162,6 +162,7 @@ class _MainViewState extends State<MainView> {
           centerTitle: true,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30),bottomRight: Radius.circular(30)),
               image: DecorationImage(
                 image: AssetImage('assets/main/bg-bar.png'),
                 fit: BoxFit.fitWidth,

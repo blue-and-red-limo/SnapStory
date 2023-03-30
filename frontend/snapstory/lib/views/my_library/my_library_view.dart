@@ -90,7 +90,7 @@ class _MyLibraryState extends State<MyLibrary> {
                         ),
                         strokes: [
                           OutlinedTextStroke(
-                              color: Color(0xff1A8200), width: 10),
+                              color: Color(0xff1A8200), width: 5),
                         ]),
                   ],
                 ),
@@ -101,8 +101,8 @@ class _MyLibraryState extends State<MyLibrary> {
               height: MediaQuery.of(context).size.height * 0.3,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/main/bg-library 1.png'),
-                  // fit: BoxFit.fill,
+                  image: AssetImage('assets/library/box-library-bar.png'),
+                  fit: BoxFit.fill,
                 ),
               ),
               child: CarouselSlider(
@@ -115,14 +115,14 @@ class _MyLibraryState extends State<MyLibrary> {
                             GestureDetector(
                               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => QuizTaleView(e.first),)),
                               child: Image.asset(
-                                'assets/library/btn-library-${e.first['title'].toLowerCase()}.png',
+                                'assets/library/btn-library-${e.first['title'].replaceAll(' ' ,'').toLowerCase()}.png',
                                 width: MediaQuery.of(context).size.width * 0.3,
                               ),
                             ),
                             GestureDetector(
                               onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => QuizTaleView(e.last),)),
                               child: Image.asset(
-                                'assets/library/btn-library-${e.last['title'].toLowerCase()}.png',
+                                'assets/library/btn-library-${e.last['title'].replaceAll(' ' ,'').toLowerCase()}.png',
                                 width: MediaQuery.of(context).size.width * 0.3,
                               ),
                             )
@@ -149,7 +149,7 @@ class _MyLibraryState extends State<MyLibrary> {
                         ),
                         strokes: [
                           OutlinedTextStroke(
-                              color: Color(0xffffb628), width: 10),
+                              color: Color(0xffffb628), width: 5),
                         ])
                   ],
                 ),
@@ -164,7 +164,7 @@ class _MyLibraryState extends State<MyLibrary> {
                         MediaQuery.of(context).size.width / 1.521105336544556,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/main/bg-library 1.png'),
+                        image: AssetImage('assets/library/box-library-bar.png'),
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -205,7 +205,7 @@ class _MyLibraryState extends State<MyLibrary> {
                                 OutlinedText(
                                     text: Text(
                                       e.first['wordEng'],
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(color: Colors.white, fontSize: 30),
                                     ),
                                     strokes: [
                                       OutlinedTextStroke(
@@ -249,7 +249,7 @@ class _MyLibraryState extends State<MyLibrary> {
                                 OutlinedText(
                                     text: Text(
                                       e.last['wordEng'],
-                                      style: TextStyle(color: Colors.white),
+                                      style: TextStyle(color: Colors.white, fontSize: 30),
                                     ),
                                     strokes: [
                                       OutlinedTextStroke(

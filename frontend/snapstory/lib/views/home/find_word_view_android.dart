@@ -82,9 +82,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     flutterTts = FlutterTts();
     _araiService = ARAIService();
     flutterTts.setLanguage("en-US");
-    flutterTts.setSpeechRate(0.5); //speed of speech
+    flutterTts.setSpeechRate(0.25); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
-    flutterTts.setPitch(1); //pitc of sound
+    flutterTts.setPitch(1.35); //pitc of sound
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       flutterTts.setSharedInstance(true);
     }
@@ -324,7 +324,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     // );
     // ai 서버에서 정보 받아오기
     // String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
-    wordName = wordName.substring(1, wordName.length - 1);
+    // wordName = wordName.substring(1, wordName.length - 1);
     print('wordname: $wordName');
     word = wordName;
 
