@@ -316,6 +316,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   Future<void> onWebObjectAtButtonPressed() async {
+    Matrix4 pos = await arSessionManager.getCameraPose().then((value) => value!);
     String wordName;
     if(defaultTargetPlatform == TargetPlatform.android){
       final directory = (await getApplicationDocumentsDirectory())
@@ -374,7 +375,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       uri:
           "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
       scale: Vector3(0.1, 0.1, 0.5),
-      transformation: await arSessionManager.getCameraPose().then((value) => value!),
+      transformation: pos,
     );
     bool? didAddWebNode = await arObjectManager.addNode(newNode);
     print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee"+didAddWebNode.toString());
