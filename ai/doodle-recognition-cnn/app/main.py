@@ -72,7 +72,7 @@ def load_model():
     model.add(layers.Dense(15,activation='softmax'))
 
     # build the model's variables
-    model.build(input_shape=(1,28, 28, 1))  
+    model.build(input_shape=(1,28, 28, 1))
 
     # Load model weights
     model.load_weights(CNNDIR+'keras_weights.h5')
