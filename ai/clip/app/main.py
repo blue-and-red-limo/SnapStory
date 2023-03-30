@@ -37,12 +37,12 @@ class Base64Request(BaseModel):
 IMAGEDIR=os.getcwd()+"/app/images/"
 
 
-@app.get("/ai")
-def home():
-    return "서버 접속 성공!!"
+# @app.get("/ai")
+# def home():
+#     return "서버 접속 성공!!"
 
 # 사진 이미지 분류
-@app.post("/ai/predictions/objects")
+@app.post("/classify/images")
 async def predictions_objects(file: UploadFile = File(...)):
     # 파일 이름 유니크하게 설정
     file.filename = f"{uuid.uuid4()}.jpg"
@@ -57,27 +57,27 @@ async def predictions_objects(file: UploadFile = File(...)):
     # 저장하지 않고 진행.
     image = io.BytesIO(contents)
 
-    return predict(image,"objects")
+    return {'prediction':predict(image,"objects"),'probability':100}
 
-# CLIP 손그림 이미지 분류
-@app.post("/ai/predictions/drawings")
-async def predictions_drawings(request: Base64Request):
-    file_content = request.base64_file
+# # CLIP 손그림 이미지 분류
+# @app.post("/ai/predictions/drawings")
+# async def predictions_drawings(request: Base64Request):
+#     file_content = request.base64_file
 
-    # 빈 file 생성
-    # file = File(...)
+#     # 빈 file 생성
+#     # file = File(...)
 
-    # 파일 이름 유니크하게 설정
-    # file.filename = f"{uuid.uuid4()}.jpg"
+#     # 파일 이름 유니크하게 설정
+#     # file.filename = f"{uuid.uuid4()}.jpg"
 
-    # image decoding
-    contents = base64.b64decode(file_content)
+#     # image decoding
+#     contents = base64.b64decode(file_content)
 
-    # 사진 저장
-    # with open(f"{IMAGEDIR}{file.filename}","wb") as f:
-    #     f.write(contents)
+#     # 사진 저장
+#     # with open(f"{IMAGEDIR}{file.filename}","wb") as f:
+#     #     f.write(contents)
 
-    # 저장하지 않고 진행.
-    image = io.BytesIO(contents)
+#     # 저장하지 않고 진행.
+#     image = io.BytesIO(contents)
 
-    return predict(image,"drawings")
+#     return predict(image,"drawings")
