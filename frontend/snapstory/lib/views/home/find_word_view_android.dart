@@ -114,7 +114,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             controller: screenshotController,
             child: ARView(
               onARViewCreated: onARViewCreated,
-              planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
+              planeDetectionConfig: PlaneDetectionConfig.none,
             ),
           ),
           if (!checked && !isLoading)
@@ -293,7 +293,6 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       final directory = (await getApplicationDocumentsDirectory())
           .path; //from path_provide package
       String fileName = '${DateTime.now().microsecondsSinceEpoch}.png';
-
       print(directory + fileName);
 
       await screenshotController
@@ -316,13 +315,6 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       });
       wordName = await _araiService.postPictureAndGetWord(path: path!);
     }
-
-    // await screenshotController.captureAndSave(
-    //     '$directory', //set path where screenshot will be saved
-    //     delay: Duration(milliseconds: 100),
-    //     fileName: fileName,
-    //     pixelRatio: 1.0
-    // );
     // ai 서버에서 정보 받아오기
     // String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
     // wordName = wordName.substring(1, wordName.length - 1);
