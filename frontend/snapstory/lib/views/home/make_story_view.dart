@@ -1,6 +1,3 @@
-import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -10,15 +7,10 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:openai_client/openai_client.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
-import 'dart:io' as io;
 
 import 'complete_story_view.dart';
 
-const apiKey = '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';
-const apiUrl = 'https://api.openai.com/v1/completions';
 
 // dalle가 만든 이미지 리스트
 final List<String> imgList = [];
@@ -61,31 +53,6 @@ final List<Widget> imageSliders = imgList
         ))
     .toList();
 
-Future<void> saveImg() async {
-  String imageURL =
-      "https://blog.kakaocdn.net/dn/VIxFi/btqZqqf3QFS/n2otuLtHQo8TQVOwMAmmbk/img.png";
-
-  try {
-    // generate random number.
-    var rng = new Random();
-// get temporary directory of device.
-    io.Directory tempDir = await getTemporaryDirectory();
-// get temporary path from temporary directory.
-    String tempPath = tempDir.path;
-// create a new file in temporary path with random file name.
-    io.File file =
-        io.File('$tempPath' + (rng.nextInt(100)).toString() + '.png');
-// call http.get method and pass imageUrl into it to get response.
-    http.Response response = await http.get(imageURL as Uri);
-// write bodyBytes received in response to file.
-    await file.writeAsBytes(response.bodyBytes);
-// now return the file which is created with random name in
-// temporary directory and image bytes from response is written to // that file.
-  } catch (e) {
-    print(e);
-  }
-}
-
 class MakeStory extends StatefulWidget {
   const MakeStory({Key? key, required this.word}) : super(key: key);
 
@@ -109,8 +76,8 @@ class _MakeStoryState extends State<MakeStory> {
   Future<String> askToDalle(String imgStr) async {
     // Create a new client.
     final client = OpenAIClient(
-      configuration: const OpenAIConfiguration(
-        apiKey: apiKey,
+      configuration: OpenAIConfiguration(
+        apiKey: _araiService.apiKey,
       ),
     );
 
@@ -139,52 +106,107 @@ class _MakeStoryState extends State<MakeStory> {
   }
 
   // GPT 사용하기 (동화텍스트와 동화 이미지 경로를 반환)
-  Future<List<String>> askToGpt() async {
-    String obj = widget.word; // 인식한 사물 이름 넣기
-    String data =
-        await _araiService.generateStoryandImage(obj); // 동화와 이미지 문장 만들기
-
-    List<String> str = data.split("Image:");
-
-    String fairytale = str[0]; // 동화 저장
-    story = fairytale;
-    String imgStr = str[1]; // 달리한테 보내줄 이미지 설명 저장
-    String fairytaleKor =
-        await _araiService.translateText(fairytale); // 동화 번역하기
-    String? imgPath = await askToDalle(imgStr); // 달리로 이미지 경로 생성
-
-    // 확인
-    print("동화:" + fairytale);
-    print("동화 해석:" + fairytaleKor);
-    print("이미지 설명:" + imgStr);
-    // print("이미지 경로:" + imgPath);
-
-    // 동화 객체 만들기
-    FairyTale ft = FairyTale(fairytale, fairytaleKor, "", widget.word);
+  Future<List<String>> askToGpt(BuildContext context) async {
 
     // 토큰 뽑기
     String? token = await FirebaseAuth.instance.currentUser?.getIdToken();
 
-    // 이미지 없는 동화 먼저 저장
-    final response = await http.post(
-      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales"),
+    final res = await http.get(
+      Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales/word/${widget.word}"),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token'
       },
-      body: jsonEncode({
-        "contentEng": ft.contentEng,
-        "contentKor": ft.contentKor,
-        "image": ft.image,
-        "word": ft.wordEng
-      }),
+
     );
 
-    print(response.body.toString());
-    aiTaleId = jsonDecode(utf8.decode(response.bodyBytes))['result']['aiTaleId'] as int;// 결과 확인하고 ai tale id 뽑아쓰기
+    print("단어로 동화 조회 결과");
 
-    return [fairytale, imgPath]; // 동화를 반환
+
+    if(jsonDecode(utf8.decode(res.bodyBytes))['resultCode'] == "SUCCESS"){ // 단어로 만든 동화가 있으면
+      // 중복된 단어 있다고 알림 띄우기
+      // set up the button
+      Widget okButton = TextButton(
+      child: const Text("확인"),
+      onPressed: () {
+      int count = 0;
+      Navigator.of(context).popUntil((_) => count++ >= 2);
+        // Navigator.of(context).pop();
+      },
+      );
+
+      // set up the AlertDialog
+      AlertDialog alert = AlertDialog(
+      title: const Text("중복된 동화가 있습니다."),
+      content: const Text("새로운 동화를 만들고 싶다면\n동화 화면에서 기존 동화를 삭제해주세요."),
+      actions: [
+      okButton,
+      ],
+      );
+
+      // show the dialog
+      await showDialog(barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+      return alert;
+      },
+      );
+    } else if(jsonDecode(utf8.decode(res.bodyBytes))['result']['errorCode'] == "WORD_LIST_NOT_FOUND"){  // 단어로 만든 동화가 없으면 진행
+      String obj = widget.word; // 인식한 사물 이름 넣기
+      String data =
+      await _araiService.generateStoryandImage(obj); // 동화와 이미지 문장 만들기
+
+      List<String> str = data.split("Image:");
+
+      String fairytale = str[0]; // 동화 저장
+      story = fairytale;
+      String imgStr = str[1]; // 달리한테 보내줄 이미지 설명 저장
+      String fairytaleKor =
+      await _araiService.translateText(fairytale); // 동화 번역하기
+      String? imgPath = await askToDalle(imgStr); // 달리로 이미지 경로 생성
+
+      // 확인
+      print("동화:" + fairytale);
+      print("동화 해석:" + fairytaleKor);
+      print("이미지 설명:" + imgStr);
+      // print("이미지 경로:" + imgPath);
+
+      // 동화 객체 만들기
+      FairyTale ft = FairyTale(fairytale, fairytaleKor, "", widget.word);
+
+
+
+      // 이미지 없는 동화 먼저 저장
+      final response = await http.post(
+        Uri.parse("https://j8a401.p.ssafy.io/api/v1/ai-tales"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
+        },
+        body: jsonEncode({
+          "contentEng": ft.contentEng,
+          "contentKor": ft.contentKor,
+          "image": ft.image,
+          "word": ft.wordEng
+        }),
+      );
+
+      print(response.body.toString());
+      print(jsonDecode(utf8.decode(response.bodyBytes))['result']['errorCode']);
+      // if(jsonDecode(utf8.decode(response.bodyBytes))['result']['errorCode'] == "AI_TALE_DUPLICATE"){ // 중복 알림창 띄우기
+      //
+      // }
+      aiTaleId = jsonDecode(utf8.decode(response.bodyBytes))['result']['aiTaleId'] as int;// 결과 확인하고 ai tale id 뽑아쓰기
+
+      return [fairytale, imgPath];
+    }
+
+    return ["fairytale", "imgPath"]; // null 반환 방지용
+
+    // 동화를 반환
   }
+
+
 
   Future<bool> putImage(String url) async {
     // 토큰 뽑기
@@ -212,32 +234,26 @@ class _MakeStoryState extends State<MakeStory> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        // borderRadius: BorderRadius.circular(23),
-        // color: const Color(0xffffdb1f),
         image: DecorationImage(
           fit: BoxFit.cover,
-          image: AssetImage('assets/bg/bg-main3.png'), // 배경 이미지
+          image: AssetImage('assets/main/bg-main3.png'), // 배경 이미지
         ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
           body: Center(
         child: FutureBuilder(
-            future: askToGpt(),
+            future: askToGpt(context),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               //error가 발생하게 될 경우 반환하게 되는 부분
               if (snapshot.hasError) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'Error: ${snapshot.error}',
-                    style: const TextStyle(fontSize: 50),
-                  ),
+                return Center(
+                  child: Text("에러가 발생했습니다. 앱을 다시 실행해주세요. ${snapshot.error}"),
                 );
               }
               //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
               else if (snapshot.hasData == false) {
-                return const CircularProgressIndicator();
+                return Container(child: Column(children: [const CircularProgressIndicator(), Text("동화를 만들고 있어요!")],));
               }
               // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
               else {
@@ -261,7 +277,7 @@ class _MakeStoryState extends State<MakeStory> {
 
                         ],
                       ),
-                      Text(
+                      const Text(
                         "완성되었습니다!",
                         style: TextStyle(fontSize: 30),
                       ),
@@ -303,7 +319,6 @@ class _MakeStoryState extends State<MakeStory> {
                           print(_current);
                           selectedImg = imgList[_current];
                           await putImage(selectedImg); // put
-                          saveImg();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -314,22 +329,6 @@ class _MakeStoryState extends State<MakeStory> {
                         },
                           child: const Text("이 표지로 결정", style: TextStyle(color: Colors.white),)
                       ),
-                      // OutlinedButton(
-                      //     onPressed: () async {
-                      //       // 표지 선택 누르면 put 요청 보냄 (만들어진 동화에 이미지 추가)
-                      //
-                      //       print(_current);
-                      //       selectedImg = imgList[_current];
-                      //       await putImage(selectedImg); // put
-                      //       saveImg();
-                      //       Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //           builder: (context) => CompleteStory(id: aiTaleId),
-                      //         ),
-                      //       );
-                      //     },
-                      //     child: const Text("이 표지로 결정", style: TextStyle(color: Colors.white),))
                     ],
                   ),
                 );

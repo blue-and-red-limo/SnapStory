@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
+import 'package:snapstory/views/home/make_story_view.dart';
 
 import '../../utilities/loading_dialog.dart';
 
@@ -91,8 +92,8 @@ class _MyWordState extends State<MyWord> {
                                                         BorderRadius.circular(15),
                                                     image: const DecorationImage(
                                                         image: AssetImage(
-                                                            'assets/library/word-card.png'),
-                                                        fit: BoxFit.fill),
+                                                            'assets/wordList/box-wordlist.png'),
+                                                        fit: BoxFit.contain),
                                                   ),
                                                   child: Column(
                                                     mainAxisAlignment:
@@ -162,6 +163,22 @@ class _MyWordState extends State<MyWord> {
                                           MainAxisAlignment.center,
                                       children: [
                                         GestureDetector(
+                                        child: Image.asset(
+                                          'assets/aiTale/btn-ai-word.png',
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.25,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.25,
+                                        ),
+                                        onTap: () => makeSound(
+                                            text: wordList[_current]['word']
+                                            ['wordEng']),
+                                      ),
+                                        GestureDetector(
                                           child: Image.asset(
                                             'assets/aiTale/btn-ai-example.png',
                                             height: MediaQuery.of(context)
@@ -179,7 +196,7 @@ class _MyWordState extends State<MyWord> {
                                         ),
                                         GestureDetector(
                                           child: Image.asset(
-                                            'assets/aiTale/btn-ai-word.png',
+                                            'assets/aiTale/btn-ai-story.png',
                                             height: MediaQuery.of(context)
                                                     .size
                                                     .width *
@@ -189,21 +206,9 @@ class _MyWordState extends State<MyWord> {
                                                     .width *
                                                 0.25,
                                           ),
-                                          onTap: () => makeSound(
-                                              text: wordList[_current]['word']
-                                                  ['wordEng']),
-                                        ),
-                                        Image.asset(
-                                          'assets/aiTale/btn-ai-story.png',
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                        )
+                                          onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                              builder: (context) => MakeStory(word: wordList[_current]['word']['wordEng']))
+                                        )),
                                       ],
                                     ),
                                   ),

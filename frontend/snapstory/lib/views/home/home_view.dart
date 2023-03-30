@@ -22,15 +22,15 @@ class Home extends StatelessWidget {
               },
               child: Container(
 
-                  width: 277,
-                  height: 253,
-                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, MediaQuery.of(context).size.height * 0.03),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(23),
-                    color: const Color(0xffffdb1f),
+                    borderRadius: BorderRadius.circular(45),
+                    // color: const Color(0xffffdb1f),
                     image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/find_word_btn.png'), // 배경 이미지
+                      fit: BoxFit.contain,
+                      image: AssetImage('assets/main/btn-main-ai.png'), // 배경 이미지
                     ),
                   ),
                   child: const Center(child: Text(""))
@@ -41,14 +41,14 @@ class Home extends StatelessWidget {
                 Navigator.of(context).pushNamed(drawingTaleListRoute);
               },
               child: Container(
-                  width: 277,
-                  height: 253,
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.3,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(23),
-                    color: const Color(0xff86EC62),
+                    borderRadius: BorderRadius.circular(45),
+                    // color: const Color(0xff86EC62),
                     image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/draw_quiz_btn.png'), // 배경 이미지
+                      fit: BoxFit.contain,
+                      image: AssetImage('assets/main/btn-main-quiz.png'), // 배경 이미지
                     ),
                   ),
                   child: const Center(child: Text(""))),
