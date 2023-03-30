@@ -23,13 +23,13 @@ class Home extends StatelessWidget {
               child: Container(
 
                   width: MediaQuery.of(context).size.width * 0.9,
-                  height: MediaQuery.of(context).size.height * 0.35,
+                  height: MediaQuery.of(context).size.height * 0.3,
                   margin: EdgeInsets.fromLTRB(0, 0, 0, MediaQuery.of(context).size.height * 0.03),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(45),
-                    color: const Color(0xffffdb1f),
+                    // color: const Color(0xffffdb1f),
                     image: DecorationImage(
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       image: AssetImage('assets/main/btn-main-ai.png'), // 배경 이미지
                     ),
                   ),
@@ -42,12 +42,12 @@ class Home extends StatelessWidget {
               },
               child: Container(
                   width: MediaQuery.of(context).size.width * 0.9,
-                  height: MediaQuery.of(context).size.height * 0.35,
+                  height: MediaQuery.of(context).size.height * 0.3,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(45),
-                    color: const Color(0xff86EC62),
+                    // color: const Color(0xff86EC62),
                     image: DecorationImage(
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       image: AssetImage('assets/main/btn-main-quiz.png'), // 배경 이미지
                     ),
                   ),
