@@ -77,5 +77,6 @@ services:
       - 443:443
     depends_on:
       - backend
-      - ai
+      - image-classifier
+      - doodle-recognizer
       # - frontend
