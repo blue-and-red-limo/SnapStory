@@ -15,7 +15,7 @@ class ARAIService {
     var response = await request.send();
     Map newres = jsonDecode(utf8.decode(await response.stream.toBytes()));
     print(newres.toString());
-    if (response.statusCode == 200 && newres['probability'] as double > 50.0) {
+    if (response.statusCode == 200 && newres['probability'] as double > 0.5) {
       return newres['prediction'].toString();
     } else {
       return 'CANNOT GET WORD';
@@ -48,8 +48,8 @@ class ARAIService {
     print("zzzzzzzzzzzzzzzzzzzzzzzz: "+ str.toString());
     Map<String, String> result = {
       'word': obj,
-      'wordExampleKor': str[3].split(":")[1].substring(1),
-      'wordExampleEng': str[2].split(":")[1].substring(1)
+      'wordExampleKor': str[2].split("Kor: ")[1],
+      'wordExampleEng': str[2].split("Kor: ")[0].substring(5)
     };
     print(result.toString());
 

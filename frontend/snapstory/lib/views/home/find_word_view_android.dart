@@ -180,7 +180,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               height: MediaQuery.of(context).size.height * 0.1,
             ),
           ),
-          if (exBtnTap)
+          if (exBtnTap && checked)
             GestureDetector(
               onTap: () => {
                 exContainerTap = !exContainerTap,
@@ -191,7 +191,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               child: Positioned.fill(
                   // top: MediaQuery.of(context).size.height * 0.3,
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.2, 0, 0),
+                    margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.23, 0, 0),
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: Container(
@@ -204,13 +204,13 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                         //     topRight: Radius.circular(23),
                         //   ),
                         // ),
-                        height: MediaQuery.of(context).size.height * 0.2,
+                        height: MediaQuery.of(context).size.height * 0.1,
                         width: MediaQuery.of(context).size.width * 0.8,
                         // color: Colors.white,
                         child: Padding(
                           padding: EdgeInsets.all(15),
                           child: Center(
-                            child: exContainerTap ? Text(wordMap['wordExplanationEng'], style: TextStyle(fontSize: 20),) : Text(wordMap['wordExplanationKor'], style: TextStyle(fontSize: 20),),
+                            child: exContainerTap ? Text(wordMap['wordExampleKor'], style: TextStyle(fontSize: 20),) :Text(wordMap['wordExampleEng'], style: TextStyle(fontSize: 20),),
                           ),
                         ),
                       ),
@@ -242,7 +242,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                       GestureDetector(
                           onTap: () => {
                                 makeSound(
-                                    text: wordMap['wordExplanationEng']
+                                    text: wordMap['wordExampleEng']
                                         .toString()),
                                 exBtnTap = !exBtnTap,
                                 setState(() {}),
@@ -411,11 +411,11 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee" +
           didAddWebNode.toString());
       webObjectNode = (didAddWebNode!) ? newNode : null;
+
+    }
       setState(() {
         isLoading = false;
       });
-
-    }
 
   }
 
