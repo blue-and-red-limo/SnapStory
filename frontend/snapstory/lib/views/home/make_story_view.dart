@@ -121,9 +121,10 @@ class _MakeStoryState extends State<MakeStory> {
     );
 
     print("단어로 동화 조회 결과");
+    print(jsonDecode(utf8.decode(res.bodyBytes)));
 
 
-    if(jsonDecode(utf8.decode(res.bodyBytes))['resultCode'] == "SUCCESS"){ // 단어로 만든 동화가 있으면
+    if(res.statusCode == 200){ // 단어로 만든 동화가 있으면
       // 중복된 단어 있다고 알림 띄우기
       // set up the button
       Widget okButton = TextButton(
@@ -151,7 +152,9 @@ class _MakeStoryState extends State<MakeStory> {
       return alert;
       },
       );
-    } else if(jsonDecode(utf8.decode(res.bodyBytes))['result']['errorCode'] == "WORD_LIST_NOT_FOUND"){  // 단어로 만든 동화가 없으면 진행
+    } else if(res.statusCode != 200){  // 단어로 만든 동화가 없으면 진행
+      print("================================[result][errorCode]=====================================");
+      print(jsonDecode(utf8.decode(res.bodyBytes))['result']['errorCode'] );
       String obj = widget.word; // 인식한 사물 이름 넣기
       String data =
       await _araiService.generateStoryandImage(obj); // 동화와 이미지 문장 만들기
