@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:ar_flutter_plugin/datatypes/config_planedetection.dart';
@@ -65,6 +66,10 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   late String word;
   late Map wordMap;
 
+  late bool exBtnTap = false;
+  late bool exContainerTap = false;
+
+
   void showDialog() {
     setState(() {
       isLoading = true;
@@ -97,7 +102,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
 
   // Vector3(-0.01, -0.01, -0.1)
 
-  Vector3 addVector(Vector3 vector3){
+  Vector3 addVector(Vector3 vector3) {
     print('addVector !!!!!!!');
     Vector3 addVector = Vector3(0, -0.05, -0.2);
     vector3.add(addVector);
@@ -157,7 +162,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                 ],
               ),
             ),
-          Positioned( // 하단바
+          Positioned(
+            // 하단바
             top: MediaQuery.of(context).size.height * 0.9,
             child: Container(
               decoration: const BoxDecoration(
@@ -174,6 +180,34 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               height: MediaQuery.of(context).size.height * 0.1,
             ),
           ),
+          if (exBtnTap)
+            GestureDetector(
+              onTap: () => {
+                exContainerTap = !exContainerTap
+              },
+              child: Positioned.fill(
+                  top: MediaQuery.of(context).size.height * 0.2,
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
+                      // decoration: const BoxDecoration(
+                      //   borderRadius: BorderRadius.only(
+                      //     topLeft: Radius.circular(23),
+                      //     topRight: Radius.circular(23),
+                      //   ),
+                      // ),
+                      height: MediaQuery.of(context).size.height * 0.13,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      // color: Colors.white,
+                      child: Center(
+                        child: Text(wordMap['wordExplanationEng']),
+                      ),
+                    ),
+                  )),
+            ),
           if (checked && !isLoading)
             Positioned(
               top: MediaQuery.of(context).size.height * 0.8,
@@ -187,31 +221,44 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                   Row(
                     children: [
                       GestureDetector(
-                        onTap: () async =>
-                            await makeSound(text: wordMap['word']),
-                        child: Image.asset("assets/aiTale/btn-ai-word.png", width: MediaQuery.of(context).size.width * 0.3,),
-                      ),
-                      GestureDetector(
-                          onTap: () => makeSound(
-                              text: wordMap['wordExplanationEng'].toString()),
-                          child: Image.asset("assets/aiTale/btn-ai-example.png", width: MediaQuery.of(context).size.width * 0.3,)
+                        onTap: () async => {
+                          await makeSound(text: wordMap['word']),
+                          print(wordMap['word']),
+                        },
+                        child: Image.asset(
+                          "assets/aiTale/btn-ai-word.png",
+                          width: MediaQuery.of(context).size.width * 0.3,
+                        ),
                       ),
                       GestureDetector(
                           onTap: () => {
-                            Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(
-                              builder: (context) => MakeStory(word: word),
-                            )),
-                          },
-                          child: Image.asset("assets/aiTale/btn-ai-story.png", width: MediaQuery.of(context).size.width * 0.3,)
-                      ),
+                                makeSound(
+                                    text: wordMap['wordExplanationEng']
+                                        .toString()),
+                                exBtnTap = !exBtnTap,
+                                setState(() {}),
+                                print(exBtnTap),
+                              },
+                          child: Image.asset(
+                            "assets/aiTale/btn-ai-example.png",
+                            width: MediaQuery.of(context).size.width * 0.3,
+                          )),
+                      GestureDetector(
+                          onTap: () => {
+                                Navigator.of(context)
+                                    .pushReplacement(MaterialPageRoute(
+                                  builder: (context) => MakeStory(word: word),
+                                )),
+                              },
+                          child: Image.asset(
+                            "assets/aiTale/btn-ai-story.png",
+                            width: MediaQuery.of(context).size.width * 0.3,
+                          )),
                     ],
                   ),
-
                 ],
               ),
             ),
-
           Positioned(
               top: MediaQuery.of(context).size.height * 0.05,
               left: MediaQuery.of(context).size.width * 0.07,
@@ -223,7 +270,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               top: MediaQuery.of(context).size.height * 0.05,
               right: MediaQuery.of(context).size.width * 0.07,
               child: GestureDetector(
-                onTap: ()=> Navigator.of(context).pop(),
+                onTap: () => Navigator.of(context).pop(),
                 child: Image(
                   image: AssetImage("assets/main/btn-quit.png"),
                   width: MediaQuery.of(context).size.width * 0.17,
@@ -231,8 +278,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               )),
           if (isLoading) const Center(child: LoadingDialog()),
         ],
-      )                                                                                                                                        ,
-
+      ),
       floatingActionButton: Visibility(
         visible: !checked,
         child: Container(
@@ -246,7 +292,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               backgroundColor: const Color(0xFFFFFFFF),
               splashColor: const Color(0xffFFF0BB),
 
-              child: const Icon(Icons.camera, color: Color(0xFFFFB628), size: 37),
+              child:
+                  const Icon(Icons.camera, color: Color(0xFFFFB628), size: 37),
               // Provide an onPressed callback.
               onPressed: () async {
                 arObjectManager.onInitialize();
@@ -287,7 +334,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   Future<void> onWebObjectAtButtonPressed() async {
-    Matrix4 pos = await arSessionManager.getCameraPose().then((value) => value!);
+    Matrix4 pos =
+        await arSessionManager.getCameraPose().then((value) => value!);
     String wordName;
     if (defaultTargetPlatform == TargetPlatform.android) {
       final directory = (await getApplicationDocumentsDirectory())
@@ -340,14 +388,19 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     // final forward = arLocationManager.currentLocation;
     // print("cfcfcfcfcfcffcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfc:" + cameraPosition.toString() + forward.toString());
     // final nodePosition = cameraPosition + (forward * -1.0);
-    var newNode = ARNode (
+
+    String nodeUrl =
+        "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}.glb";
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      nodeUrl =
+          "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}_ios.glb";
+    }
+    var newNode = ARNode(
       name: wordName,
       type: NodeType.webGLB,
-      uri:
-          "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}_ios.glb",
+      uri: nodeUrl,
       scale: Vector3(0.1, 0.1, 0.5),
       transformation: pos,
-
     );
     bool? didAddWebNode = await arObjectManager.addNode(newNode);
     print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee" +
@@ -359,7 +412,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   void onTapHandler(String name) {
-    print("먀먀먀먀ㅑ먐갹먁ㅁ갸!!!!"+name);
+    print("먀먀먀먀ㅑ먐갹먁ㅁ갸!!!!" + name);
     checked == true ? checked = false : checked = true;
     setState(() {});
   }
@@ -371,8 +424,6 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     }
   }
 }
-
-
 
 class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
