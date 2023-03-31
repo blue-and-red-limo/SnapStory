@@ -45,7 +45,7 @@ IMAGEDIR=os.getcwd()+"/app/images/"
 @app.post("/classify/images")
 async def predictions_objects(file: UploadFile = File(...)):
     # 파일 이름 유니크하게 설정
-    file.filename = f"{uuid.uuid4()}.jpg"
+    # file.filename = f"{uuid.uuid4()}.jpg"
 
     # 사진 읽어오기.
     contents = await file.read()
@@ -57,7 +57,7 @@ async def predictions_objects(file: UploadFile = File(...)):
     # 저장하지 않고 진행.
     image = io.BytesIO(contents)
 
-    return {'prediction':predict(image,"objects"),'probability':99.9}
+    return predict(image)
 
 # # CLIP 손그림 이미지 분류
 # @app.post("/ai/predictions/drawings")
