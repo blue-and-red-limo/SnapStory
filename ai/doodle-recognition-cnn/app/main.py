@@ -20,7 +20,7 @@ class Strokes(BaseModel):
 @app.post("/recognize/doodles")
 async def predict_doodles(strokes: Strokes):
     data=strokes.data
-    print(data)
+    # print(data)
 
     # 데이터 전처리
     preprocessd_data=preprocess(data)
