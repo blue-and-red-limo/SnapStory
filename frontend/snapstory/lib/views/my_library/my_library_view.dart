@@ -39,7 +39,8 @@ class _MyLibraryState extends State<MyLibrary> {
       http.Response response = await http.get(
           Uri.parse('https://j8a401.p.ssafy.io/api/v1/quiz-tales/complete'),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
-      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      Map<String, dynamic> jsonResponse =
+          jsonDecode(utf8.decode(response.bodyBytes));
       AITaleList = await _araiService.getAITaleList(token: token);
       print(AITaleList.length);
       for (int i = 0; i < AITaleList.length; i++) {
@@ -113,16 +114,26 @@ class _MyLibraryState extends State<MyLibrary> {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             GestureDetector(
-                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => QuizTaleView(e.first),)),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => QuizTaleView(e.first),
+                                  )),
                               child: Image.asset(
-                                'assets/library/btn-library-${e.first['title'].replaceAll(' ' ,'').toLowerCase()}.png',
+                                // 'assets/library/btn-library-${e.first['title'].replaceAll(' ', '').toLowerCase()}.png',
+                                'assets/library/btn-library-${e.first['quizTaleId']}.png',
                                 width: MediaQuery.of(context).size.width * 0.3,
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => QuizTaleView(e.last),)),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => QuizTaleView(e.last),
+                                  )),
                               child: Image.asset(
-                                'assets/library/btn-library-${e.last['title'].replaceAll(' ' ,'').toLowerCase()}.png',
+                                'assets/library/btn-library-${e.last['quizTaleId']}.png',
+                                // 'assets/library/btn-library-${e.last['title'].replaceAll(' ', '').toLowerCase()}.png',
                                 width: MediaQuery.of(context).size.width * 0.3,
                               ),
                             )
@@ -182,7 +193,11 @@ class _MyLibraryState extends State<MyLibrary> {
                             ),
                           ),
                           child: GestureDetector(
-                            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => CompleteStory(id: e.first['aiTaleId']),)),
+                            onTap: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  CompleteStory(id: e.first['aiTaleId']),
+                            )),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -205,7 +220,8 @@ class _MyLibraryState extends State<MyLibrary> {
                                 OutlinedText(
                                     text: Text(
                                       e.first['wordEng'],
-                                      style: TextStyle(color: Colors.white, fontSize: 30),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 30),
                                     ),
                                     strokes: [
                                       OutlinedTextStroke(
@@ -226,7 +242,11 @@ class _MyLibraryState extends State<MyLibrary> {
                             ),
                           ),
                           child: GestureDetector(
-                            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (context) => CompleteStory(id: e.last['aiTaleId']),)),
+                            onTap: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  CompleteStory(id: e.last['aiTaleId']),
+                            )),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -249,7 +269,8 @@ class _MyLibraryState extends State<MyLibrary> {
                                 OutlinedText(
                                     text: Text(
                                       e.last['wordEng'],
-                                      style: TextStyle(color: Colors.white, fontSize: 30),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 30),
                                     ),
                                     strokes: [
                                       OutlinedTextStroke(
