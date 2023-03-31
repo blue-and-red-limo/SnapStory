@@ -170,4 +170,19 @@ class ARAIService {
     }
     return false;
   }
+
+  Future<bool> deleteAITale ({required int id, required String token}) async {
+    var res = await http.delete(
+      Uri.parse('$springBase/ai-tales/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    print(res.body);
+    if (res.statusCode==200) {
+      return true;
+    }
+    return false;
+  }
 }
