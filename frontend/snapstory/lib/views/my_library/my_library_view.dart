@@ -80,7 +80,9 @@ class _MyLibraryState extends State<MyLibrary> {
           children: [
             if (quizTaleList.isNotEmpty)
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.0375,
+                    bottom: MediaQuery.of(context).size.height * 0.0125),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -99,7 +101,7 @@ class _MyLibraryState extends State<MyLibrary> {
             // QUIZ TALE
             Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.3,
+              height: MediaQuery.of(context).size.width / 1.521105336544556,
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/library/box-library-bar.png'),
@@ -111,7 +113,7 @@ class _MyLibraryState extends State<MyLibrary> {
                     .map(
                       (e) => Center(
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             GestureDetector(
                               onTap: () => Navigator.push(
@@ -119,10 +121,12 @@ class _MyLibraryState extends State<MyLibrary> {
                                   MaterialPageRoute(
                                     builder: (context) => QuizTaleView(e.first),
                                   )),
-                              child: Image.asset(
-                                // 'assets/library/btn-library-${e.first['title'].replaceAll(' ', '').toLowerCase()}.png',
-                                'assets/library/btn-library-${e.first['quizTaleId']}.png',
-                                width: MediaQuery.of(context).size.width * 0.3,
+                              child: Padding(
+                                padding: EdgeInsets.only(right: MediaQuery.of(context).size.width * 0.02),
+                                child: Image.asset(
+                                  'assets/library/btn-library-${e.first['quizTaleId']}.png',
+                                  width: MediaQuery.of(context).size.width * 0.35,
+                                ),
                               ),
                             ),
                             GestureDetector(
@@ -131,10 +135,12 @@ class _MyLibraryState extends State<MyLibrary> {
                                   MaterialPageRoute(
                                     builder: (context) => QuizTaleView(e.last),
                                   )),
-                              child: Image.asset(
-                                'assets/library/btn-library-${e.last['quizTaleId']}.png',
-                                // 'assets/library/btn-library-${e.last['title'].replaceAll(' ', '').toLowerCase()}.png',
-                                width: MediaQuery.of(context).size.width * 0.3,
+                              child: Padding(
+                                padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02),
+                                child: Image.asset(
+                                  'assets/library/btn-library-${e.last['quizTaleId']}.png',
+                                  width: MediaQuery.of(context).size.width * 0.35,
+                                ),
                               ),
                             )
                           ],
@@ -143,13 +149,16 @@ class _MyLibraryState extends State<MyLibrary> {
                     )
                     .toList(),
                 options: CarouselOptions(
-                  autoPlay: true,
+                  autoPlay: false,
+                  enableInfiniteScroll: false,
                 ),
               ),
             ),
             if (AITaleList.isNotEmpty)
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.025,
+                    bottom: MediaQuery.of(context).size.height * 0.0125),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -184,7 +193,7 @@ class _MyLibraryState extends State<MyLibrary> {
                       children: [
                         Container(
                           margin: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * 0.025),
+                              MediaQuery.of(context).size.width * 0.0125),
                           decoration: const BoxDecoration(
                             image: DecorationImage(
                               image: AssetImage(
@@ -202,31 +211,60 @@ class _MyLibraryState extends State<MyLibrary> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.all(
-                                      MediaQuery.of(context).size.height *
-                                          0.03),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(23),
-                                    child: Image.network(
-                                      e.first['image'],
-                                      height:
+                                  padding: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.width *
+                                          0.075,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05,
+                                      right: MediaQuery.of(context).size.width *
+                                          0.05,
+                                      bottom:
                                           MediaQuery.of(context).size.width *
-                                              0.23,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.23,
+                                              0.025),
+                                  child: Material(
+                                    borderRadius: BorderRadius.circular(23),
+                                    elevation: 7.5,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(23),
+                                      child: Image.network(
+                                        e.first['image'],
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.25,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.25,
+                                      ),
                                     ),
                                   ),
                                 ),
-                                OutlinedText(
-                                    text: Text(
-                                      e.first['wordEng'],
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 30),
-                                    ),
-                                    strokes: [
-                                      OutlinedTextStroke(
-                                          color: Color(0xffffb628), width: 5),
-                                    ]),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom:
+                                          MediaQuery.of(context).size.height *
+                                              0.025),
+                                  child: OutlinedText(
+                                      text: Text(
+                                        e.first['wordEng'],
+                                        style: TextStyle(
+                                            shadows: [
+                                              Shadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.3),
+                                                  offset: const Offset(2, 2),
+                                                  blurRadius: 11),
+                                            ],
+                                            color: Colors.white,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.05),
+                                      ),
+                                      strokes: [
+                                        OutlinedTextStroke(
+                                            color: Color(0xffffb628), width: 5),
+                                      ]),
+                                ),
                               ],
                             ),
                           ),
@@ -251,31 +289,62 @@ class _MyLibraryState extends State<MyLibrary> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Padding(
-                                  padding: EdgeInsets.all(
-                                      MediaQuery.of(context).size.height *
-                                          0.03),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(23),
-                                    child: Image.network(
-                                      e.last['image'],
-                                      height:
+                                  padding: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.width *
+                                          0.075,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05,
+                                      right: MediaQuery.of(context).size.width *
+                                          0.05,
+                                      bottom:
                                           MediaQuery.of(context).size.width *
-                                              0.23,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.23,
+                                              0.025),
+                                  // padding: EdgeInsets.all(
+                                  //     MediaQuery.of(context).size.width * 0.05),
+                                  child: Material(
+                                    elevation: 7.5,
+                                    borderRadius: BorderRadius.circular(23),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(23),
+                                      child: Image.network(
+                                        e.last['image'],
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                0.25,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.25,
+                                      ),
                                     ),
                                   ),
                                 ),
-                                OutlinedText(
-                                    text: Text(
-                                      e.last['wordEng'],
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 30),
-                                    ),
-                                    strokes: [
-                                      OutlinedTextStroke(
-                                          color: Color(0xffffb628), width: 5),
-                                    ]),
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      bottom:
+                                          MediaQuery.of(context).size.height *
+                                              0.025),
+                                  child: OutlinedText(
+                                      text: Text(
+                                        e.last['wordEng'],
+                                        style: TextStyle(
+                                            shadows: [
+                                              Shadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.3),
+                                                  offset: const Offset(2, 2),
+                                                  blurRadius: 11),
+                                            ],
+                                            color: Colors.white,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.05),
+                                      ),
+                                      strokes: [
+                                        OutlinedTextStroke(
+                                            color: Color(0xffffb628), width: 5),
+                                      ]),
+                                ),
                               ],
                             ),
                           ),
