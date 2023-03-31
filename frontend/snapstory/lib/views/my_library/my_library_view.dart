@@ -261,6 +261,16 @@ class _MyLibraryState extends State<MyLibrary> {
                                                   .size
                                                   .width *
                                               0.25,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Image.asset('assets/snappy_crying.png',height: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.25,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  0.25,);
+                                          },
                                         ),
                                       ),
                                     ),
@@ -357,6 +367,16 @@ class _MyLibraryState extends State<MyLibrary> {
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.25,
+                                        errorBuilder: (context, error, stackTrace) {
+                                          return Image.asset('assets/snappy_crying.png',height: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.25,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.25,);
+                                        },
                                       ),
                                     ),
                                   ),
@@ -454,6 +474,16 @@ class _MyLibraryState extends State<MyLibrary> {
                                                   .size
                                                   .width *
                                               0.25,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Image.asset('assets/snappy_crying.png',height: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                                0.25,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  0.25,);
+                                          },
                                         ),
                                       ),
                                     ),
