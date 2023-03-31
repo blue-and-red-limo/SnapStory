@@ -33,7 +33,7 @@ class ARAIService {
       body: jsonEncode({
         "model": "text-davinci-003",
         'prompt':
-            'give me one simple sentence about $obj and translation of that in korean too by using this templete: "eng: your answer1 kor: your answer2"',
+            'give me one simple sentence(limit 40 letters) for kids under 5 about $obj and translation of that in korean too by using this templete: "eng: your answer1 kor: your answer2"',
         'max_tokens': 1000,
         'temperature': 0,
         'top_p': 1,
@@ -48,8 +48,8 @@ class ARAIService {
     print("zzzzzzzzzzzzzzzzzzzzzzzz: "+ str.toString());
     Map<String, String> result = {
       'word': obj,
-      'wordExampleKor': str[3].split(":")[1].substring(1),
-      'wordExampleEng': str[2].split(":")[1].substring(1)
+      'wordExampleKor': str[2].split("Kor: ")[1],
+      'wordExampleEng': str[2].split("Kor: ")[0].substring(5)
     };
     print(result.toString());
 
