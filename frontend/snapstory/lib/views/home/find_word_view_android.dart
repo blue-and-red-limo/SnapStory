@@ -183,27 +183,36 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
           if (exBtnTap)
             GestureDetector(
               onTap: () => {
-                exContainerTap = !exContainerTap
+                exContainerTap = !exContainerTap,
+                print(exContainerTap),
+                setState(() {})
               },
+
               child: Positioned.fill(
-                  top: MediaQuery.of(context).size.height * 0.2,
-                  child: Align(
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      // decoration: const BoxDecoration(
-                      //   borderRadius: BorderRadius.only(
-                      //     topLeft: Radius.circular(23),
-                      //     topRight: Radius.circular(23),
-                      //   ),
-                      // ),
-                      height: MediaQuery.of(context).size.height * 0.13,
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      // color: Colors.white,
-                      child: Center(
-                        child: Text(wordMap['wordExplanationEng']),
+                  // top: MediaQuery.of(context).size.height * 0.3,
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.2, 0, 0),
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(20))),
+                        // decoration: const BoxDecoration(
+                        //   borderRadius: BorderRadius.only(
+                        //     topLeft: Radius.circular(23),
+                        //     topRight: Radius.circular(23),
+                        //   ),
+                        // ),
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        // color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Center(
+                            child: exContainerTap ? Text(wordMap['wordExplanationEng'], style: TextStyle(fontSize: 20),) : Text(wordMap['wordExplanationKor'], style: TextStyle(fontSize: 20),),
+                          ),
+                        ),
                       ),
                     ),
                   )),
@@ -264,7 +273,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               left: MediaQuery.of(context).size.width * 0.07,
               child: Image(
                 image: AssetImage("assets/main/btn-help.png"),
-                width: MediaQuery.of(context).size.width * 0.17,
+                width: MediaQuery.of(context).size.width * 0.25,
               )),
           Positioned(
               top: MediaQuery.of(context).size.height * 0.05,
@@ -273,7 +282,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                 onTap: () => Navigator.of(context).pop(),
                 child: Image(
                   image: AssetImage("assets/main/btn-quit.png"),
-                  width: MediaQuery.of(context).size.width * 0.17,
+                  width: MediaQuery.of(context).size.width * 0.25,
                 ),
               )),
           if (isLoading) const Center(child: LoadingDialog()),
@@ -369,46 +378,45 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     print('wordname: $wordName');
     word = wordName;
 
-    var map = await _araiService.generateText(
-        obj: wordName,
-        token: await FirebaseAuth.instance.currentUser!.getIdToken());
-    setState(() {
-      wordMap = map;
-    });
-    print(wordMap.toString());
+    if(wordName == "CANNOT GET WORD"){
+      print("errrrrrrorooorrrrr!!!!!!!!!!!!!!!!!!!!!!");
+    } else {
+      var map = await _araiService.generateText(
+          obj: wordName,
+          token: await FirebaseAuth.instance.currentUser!.getIdToken());
+      setState(() {
+        wordMap = map;
+      });
+      print(wordMap.toString());
 
-    if (webObjectNode != null) {
-      arObjectManager.removeNode(webObjectNode!);
-      webObjectNode = null;
+      if (webObjectNode != null) {
+        arObjectManager.removeNode(webObjectNode!);
+        webObjectNode = null;
+      }
+
+      String nodeUrl =
+          "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}.glb";
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        nodeUrl =
+        "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}_ios.glb";
+      }
+      var newNode = ARNode(
+        name: wordName,
+        type: NodeType.webGLB,
+        uri: nodeUrl,
+        scale: Vector3(0.1, 0.1, 0.5),
+        transformation: pos,
+      );
+      bool? didAddWebNode = await arObjectManager.addNode(newNode);
+      print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee" +
+          didAddWebNode.toString());
+      webObjectNode = (didAddWebNode!) ? newNode : null;
+      setState(() {
+        isLoading = false;
+      });
+
     }
 
-    // var newAnchor = ARPlaneAnchor(transformation: );
-
-    // final cameraPosition = arLocationManager.currentLocation;
-    // final forward = arLocationManager.currentLocation;
-    // print("cfcfcfcfcfcffcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfc:" + cameraPosition.toString() + forward.toString());
-    // final nodePosition = cameraPosition + (forward * -1.0);
-
-    String nodeUrl =
-        "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}.glb";
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      nodeUrl =
-          "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}_ios.glb";
-    }
-    var newNode = ARNode(
-      name: wordName,
-      type: NodeType.webGLB,
-      uri: nodeUrl,
-      scale: Vector3(0.1, 0.1, 0.5),
-      transformation: pos,
-    );
-    bool? didAddWebNode = await arObjectManager.addNode(newNode);
-    print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee" +
-        didAddWebNode.toString());
-    webObjectNode = (didAddWebNode!) ? newNode : null;
-    setState(() {
-      isLoading = false;
-    });
   }
 
   void onTapHandler(String name) {
