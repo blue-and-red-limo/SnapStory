@@ -17,7 +17,7 @@ import numpy as np
 
 ############################################################
 
-def predict(image_file,type):
+def predict(image_file):
     # debug
     print("predict in")
 
@@ -40,81 +40,56 @@ def predict(image_file,type):
     # image_resized = PILImage.open(IMAGEDIR+filename+'_resized.jpg')
 
     # Define the new feature structure
-    if type=="objects":
-        features=datasets.Features(
-                        {
-                            "image": datasets.Image(),
-                            "label": datasets.ClassLabel(
-                                names=[
-                                    "airplane",
-                                    "apple",
-                                    "ball",
-                                    "banana",
-                                    "bicycle",
-                                    "book",
-                                    "broccoli",
-                                    "burger",
-                                    "bus",
-                                    "cake",
-                                    "candy",
-                                    "cap",
-                                    "cat",
-                                    "chair",
-                                    "chopsticks",
-                                    "cookie",
-                                    "crayon",
-                                    "cup",
-                                    "dinosaur",
-                                    "dog",
-                                    "duck",
-                                    "eraser",
-                                    "firetruck",
-                                    "flower",
-                                    "fork",
-                                    "glasses",
-                                    "grape",
-                                    "icecream",
-                                    "milk",
-                                    "orange",
-                                    "pencil",
-                                    "penguin",
-                                    "piano",
-                                    "pizza",
-                                    "policecar",
-                                    "scissors",
-                                    "socks",
-                                    "spoon",
-                                    "strawberry",
-                                    "table",
-                                    "tiger",
-                                    "toothbrush",
-                                    "tree",
-                                    "television",
-                                    "window"]
-                            ),
-                        }
-                    )
-    elif type=="drawings":
-        features=datasets.Features(
+    features=datasets.Features(
                     {
                         "image": datasets.Image(),
                         "label": datasets.ClassLabel(
                             names=[
-                                "shoe",
-                                "crown",
-                                "clock",
-                                "dog",
+                                "airplane",
                                 "apple",
+                                "ball",
+                                "banana",
+                                "bicycle",
+                                "book",
+                                "broccoli",
+                                "burger",
+                                "bus",
+                                "cake",
+                                "candy",
+                                "cap",
+                                "cat",
+                                "chair",
+                                "chopsticks",
+                                "cookie",
+                                "crayon",
+                                "cup",
+                                "dinosaur",
+                                "dog",
+                                "duck",
+                                "eraser",
+                                "firetruck",
                                 "flower",
-                                "horse",
-                                "sword",
-                                "bird",
+                                "fork",
+                                "glasses",
+                                "grape",
+                                "icecream",
+                                "milk",
+                                "orange",
+                                "pencil",
+                                "penguin",
+                                "piano",
+                                "pizza",
+                                "policecar",
+                                "scissors",
+                                "socks",
+                                "spoon",
+                                "strawberry",
+                                "table",
+                                "tiger",
+                                "toothbrush",
                                 "tree",
-                                "snowflake",
-                                "castle",
-                                "lion",
-                                "rainbow",
-                                "lollipop"]
+                                "television",
+                                "window"]
                         ),
                     }
                 )
@@ -186,17 +161,21 @@ def predict(image_file,type):
     img_emb = img_emb.detach().cpu().numpy()
 
     scores = np.dot(img_emb, label_emb.T)
-
-    # print(scores)
-    sum = np.sum(scores)
-    scores=scores/sum
-    # print(scores)
+    print(scores)
+    exp_scores = np.exp(scores)
+    probabilities = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
+    print(probabilities)
 
     # get index of highest score
-    pred = np.argmax(scores)
+    pred=np.argmax(probabilities)
+    print("pred",pred)
 
-    # debug
-    print("prediction:",labels[pred],"score:",scores.max()*100,"%")
+    print("prediction:",labels[pred],"probability:",probabilities[0][pred])
+    prediction = labels[pred]
+
+    # predict 함수에서 반환 후, 그대로 response로 전달하면 np.float32은 "TypeError("'numpy.float32' object is not iterable""가 발생하여,
+    # float으로 변환.
+    probability = float(probabilities[0][pred])
 
     # find text label with highest score
-    return labels[pred]
+    return {'prediction':prediction, 'probability':probability}
