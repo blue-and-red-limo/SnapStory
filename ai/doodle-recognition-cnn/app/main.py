@@ -28,7 +28,7 @@ async def predict_doodles(strokes: Strokes):
     # predict
     pred=_model.predict(preprocessd_data)[0]
     index = (-pred).argsort()[:1]
-    probability = pred[index[0]]*100
+    probability = float(pred[index[0]])
     prediction=_classes[index[0]]
 
     return {'prediction':prediction,'probability':probability}
