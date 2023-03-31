@@ -460,7 +460,7 @@ class _MyWordState extends State<MyWord> {
       builder: (context) {
         return AlertDialog(
           title: const Text('단어삭제'),
-          content: const Text('단어장에서 삭제하시겠습니끼 ?'),
+          content: const Text('단어장에서 삭제하시겠습니까 ?'),
           actions: [
             TextButton(
               onPressed: () {
