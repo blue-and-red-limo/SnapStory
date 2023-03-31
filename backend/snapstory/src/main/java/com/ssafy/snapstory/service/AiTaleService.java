@@ -138,7 +138,9 @@ public class AiTaleService {
         if (aiTale.getWordList().getUser().getUserId() != userId)
             throw new BadAccessException();
         //동화 이미지가 있다면, 이미지 먼저 삭제
-        if (aiTale.getImage() != null) {
+        System.out.println(aiTale.getImage());
+        System.out.println(aiTale.getImage().length());
+        if (aiTale.getImage().length()>0) {
             String []temp = aiTale.getImage().split("/");
             String imageName = temp[temp.length-1];
             awsS3Service.deleteImage(imageName);
