@@ -5,20 +5,17 @@ class LoadingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(23),
-          border: Border.all(
-              width: 5, color: const Color(0xffFFCA10)),
-          color: const Color(0xffFFF0BB),),
-      height: MediaQuery.of(context).size.width * 0.8,
-      width: MediaQuery.of(context).size.width * 0.8,
-      child: Column(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center,children: [Image.asset('assets/snappy.png')]),
-        Row(mainAxisAlignment: MainAxisAlignment.center,
-          children: [Text('잠시만 기다려주세요~', style: TextStyle(fontSize:  30),)],
-        )
-      ]),
-    );
+    return Column(mainAxisAlignment: MainAxisAlignment.center,children: [
+      Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children:
+          [
+            Image.asset('assets/snappee-waiting.gif', fit: BoxFit.fill,width: MediaQuery.of(context).size.width * 0.8, height: MediaQuery.of(context).size.width * 0.8,)
+          ],
+      ),
+      const Row(mainAxisAlignment: MainAxisAlignment.center,
+        children: [Text('잠시만 기다려주세요~', style: TextStyle(fontSize:  30),)],
+      )
+    ]);
   }
 }
