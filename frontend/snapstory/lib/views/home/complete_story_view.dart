@@ -34,8 +34,11 @@ class _CompleteStoryState extends State<CompleteStory> {
   String translate = '';
   bool isSearching = false;
   bool counterShow = false;
+  bool isPlaying = false;
 
   Future<int> makeSound({required String text}) async {
+    isEng ? flutterTts.setLanguage("en-US") : flutterTts.setLanguage("ko-KR");
+
     return await flutterTts.speak(text);
   }
 
@@ -60,7 +63,7 @@ class _CompleteStoryState extends State<CompleteStory> {
     // String? wordEng = jsonDecode(utf8.decode(response.bodyBytes))["result"]["wordEng"];
 
     Map<String, dynamic> result = jsonDecode(utf8.decode(response.bodyBytes));
-    makeSound(text: result["result"]["contentEng"]);
+    // makeSound(text: result["result"]["contentEng"]);
 
     // print("----------스토리 정보------------");
     // print(jsonDecode(utf8.decode(response.bodyBytes)));
@@ -190,6 +193,29 @@ class _CompleteStoryState extends State<CompleteStory> {
         });
   }
 
+  // 듣기 or 정지
+  playingStop(text) async {
+    // 듣는 중이면 tts stop & isPlaying false
+    if (isPlaying) {
+      await flutterTts.stop();
+      setState(() {
+        isPlaying = false;
+      });
+    } else {
+      // 아니면 tts 실행하는 동안 isPlaying true
+      setState(() {
+        isPlaying = true;
+      });
+      await makeSound(text: text);
+
+      flutterTts.setCompletionHandler(() {
+        setState(() {
+          isPlaying = false;
+        });
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -204,7 +230,7 @@ class _CompleteStoryState extends State<CompleteStory> {
 
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage('assets/home_background.png'), // 배경 이미지
+                image: AssetImage('assets/main/bg-main.png'), // 배경 이미지
               ),
             ),
             child: SingleChildScrollView(
@@ -327,7 +353,7 @@ class _CompleteStoryState extends State<CompleteStory> {
                     topRight: Radius.circular(32)),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/aiTale/bottom_bar.png'),
+                  image: AssetImage('assets/main/bg-bar.png'),
                   // 배경 이미지
                 ),
               ),
@@ -335,11 +361,33 @@ class _CompleteStoryState extends State<CompleteStory> {
           ),
           Positioned(
             bottom: 1,
-            left: MediaQuery.of(context).size.width * 0.2,
+            left: MediaQuery.of(context).size.width * 0.05,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                GestureDetector(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    height: MediaQuery.of(context).size.width * 0.3,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(23),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: (isPlaying)
+                            // 듣는 중이면 일시정지, 아니면 듣기
+                            ? AssetImage('assets/aiTale/btn-ai-word.png')
+                            : AssetImage('assets/aiTale/btn-aitale-sound.png'),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    String text = isEng
+                        ? ft.contentEng.split("\"")[1].split("\n")[2] // "" 빼기
+                        : ft.contentKor;
+                    playingStop(text);
+                  },
+                ),
                 GestureDetector(
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.3,
