@@ -155,6 +155,8 @@ class _DrawingViewState extends State<DrawingView> {
           body: jsonEncode(<String, List<List<List<int>>>>{"data": path}));
       var jsonResponse = jsonDecode(response.body);
 
+      print("============jon Response ==============");
+      print(jsonResponse);
       if (jsonResponse['probability'] >= 0.7) {
         answer = jsonResponse['prediction'];
       }
