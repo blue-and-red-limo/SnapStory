@@ -13,27 +13,32 @@ class OnBoardingPage extends StatelessWidget {
         PageViewModel(
             title: '',
             body: 'tutorial 1',
-            image: Image.asset('assets/mainImage.png'),
+            image: Image.asset('assets/tuto/(1)intro.gif'),
             decoration: getPageDecoration()
         ),
         PageViewModel(
             title: '',
             body: 'tutorial 2',
-            image: Image.asset('assets/mainImage.png'),
+            image: Image.asset('assets/tuto/(2)aitale.gif'),
             decoration: getPageDecoration()
         ), PageViewModel(
             title: '',
             body: 'tutorial 3',
-            image: Image.asset('assets/mainImage.png'),
+            image: Image.asset('assets/tuto/(3)aitale.gif'),
             decoration: getPageDecoration()
         ),
         PageViewModel(
             title: '',
             body: 'tutorial 4',
-            image: Image.asset('assets/mainImage.png'),
+            image: Image.asset('assets/tuto/(4)quiztale.gif'),
             decoration: getPageDecoration()
         ),
-
+        PageViewModel(
+            title: '',
+            body: 'tutorial 5',
+            image: Image.asset('assets/tuto/(5)my.gif'),
+            decoration: getPageDecoration()
+        ),
 
       ],
       done: const Text('done'),
@@ -48,7 +53,7 @@ class OnBoardingPage extends StatelessWidget {
       skip: const Text('skip'),
       dotsDecorator: DotsDecorator(
           color: Colors.grey,
-          size: const Size(10, 10),
+          size: const Size(6.5, 10),
           activeSize: const Size(22, 10),
           activeShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24)
