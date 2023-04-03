@@ -20,15 +20,19 @@ class Strokes(BaseModel):
 @app.post("/recognize/doodles")
 async def predict_doodles(strokes: Strokes):
     data=strokes.data
-    # print(data)
 
-    # 데이터 전처리
-    preprocessd_data=preprocess(data)
+    # 빈 데이터 예외처리
+    if len(data)==0:
+        return {'prediction':'empty input','probability':-1.0}        
+    else:
+        # 데이터 전처리
+        preprocessd_data=preprocess(data)
 
-    # predict
-    pred=_model.predict(preprocessd_data)[0]
-    index = (-pred).argsort()[:1]
-    probability = float(pred[index[0]])
-    prediction=_classes[index[0]]
+        # predict
+        pred=_model.predict(preprocessd_data)[0]
+        index = (-pred).argsort()[:1]
+        probability = float(pred[index[0]])
+        prediction=_classes[index[0]]
 
-    return {'prediction':prediction,'probability':probability}
+        return {'prediction':prediction,'probability':probability}
+    
