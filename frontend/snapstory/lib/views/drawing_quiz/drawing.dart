@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:snapstory/constants/routes.dart';
+import 'package:snapstory/views/main_view.dart';
 import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:flutter/material.dart';
 // import 'package:painter/painter.dart';
@@ -340,7 +341,7 @@ class _DrawingViewState extends State<DrawingView> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const MyLibrary()));
+                              builder: (context) => const MainView(selectedPage: 1)));
                     },
                     style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.all(
