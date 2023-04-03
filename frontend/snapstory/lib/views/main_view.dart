@@ -244,17 +244,19 @@ class _MainViewState extends State<MainView> {
             ],
           ),
         ),
-        body: Stack(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(bottom: bottomNavBarHeight),
-              child: bodyContainer(),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: bottomNav(),
-            )
-          ],
+        body: SafeArea(
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: bottomNavBarHeight),
+                child: bodyContainer(),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: bottomNav(),
+              )
+            ],
+          ),
         ),
       ),
     );
