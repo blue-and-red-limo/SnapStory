@@ -2,12 +2,13 @@ import 'dart:typed_data';
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:flutter/material.dart';
-import 'package:painter/painter.dart';
+// import 'package:painter/painter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'package:confetti/confetti.dart';
+import 'package:outlined_text/outlined_text.dart';
 import 'dart:developer' as logDev;
 
 class DrawingView extends StatefulWidget {
@@ -38,9 +39,28 @@ class _DrawingViewState extends State<DrawingView> {
     "assets/empty.png",
     "assets/empty.png",
   ];
+  List title = ['신데렐라', '백설공주', '잠자는 숲속의 공주', '라푼젤', '미녀와 야수'];
+  // 캔버스에 그림 그리기 위해 담는 리스트
+  List<List<Offset>> _points = [];
+  // AI쪽에 보낼 정보를 담는 리스트
+  List<List<List<int>>> path = [];
 
-  PainterController _controller = _newController();
   late ConfettiController _controllerTopCenter;
+
+  @override
+  void initState() {
+    getInfo();
+    _controllerTopCenter =
+        ConfettiController(duration: const Duration(seconds: 10));
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controllerTopCenter.dispose();
+    super.dispose();
+  }
 
   getInfo() async {
     id = widget.id;
@@ -96,7 +116,7 @@ class _DrawingViewState extends State<DrawingView> {
   // 정답 확인 함수
   void isCorrect() async {
     // 이미지 보내기
-    await img();
+    await check();
     print(answer);
 
     // 정답인지 확인
@@ -125,28 +145,28 @@ class _DrawingViewState extends State<DrawingView> {
     modal();
   }
 
-  // 이미지 string으로 보내기
-  img() async {
-    PictureDetails picture = _controller.finish();
-    Uint8List a = await picture.toPNG();
-
+  // 정답 확인 - AI 서버
+  check() async {
     try {
       http.Response response = await http.post(
-          Uri.parse('https://j8a401.p.ssafy.io/ai/predictions/drawings'),
+          Uri.parse('https://j8a401.p.ssafy.io/recognize/doodles'),
           headers: {'Content-Type': "application/json"},
-          body: jsonEncode(<String, String>{"base64_file": base64Encode(a)}));
-      // logDev.log(base64Encode(a));
+          body: jsonEncode(<String, List<List<List<int>>>>{"data": path}));
       var jsonResponse = jsonDecode(response.body);
-      answer = await jsonResponse;
+
+      if (jsonResponse['probability'] >= 0.7) {
+        answer = jsonResponse['prediction'];
+      }
     } catch (e) {
       print('$e 이미지 확인 에러');
     }
     setState(() {
-      _controller = _newController();
+      _points = [];
+      path = [];
     });
   }
 
-  // 정답 or 오답 모달
+// 정답 or 오답 모달
   modal() {
     return showDialog(
         context: context,
@@ -156,131 +176,94 @@ class _DrawingViewState extends State<DrawingView> {
               children: [
                 Center(
                     child: Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  margin: const EdgeInsets.only(
-                    left: 30,
-                    right: 30,
-                    bottom: 200,
-                    top: 200,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: const Color(0xffffb628),
-                      width: 6,
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Color(0x3f000000),
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                    color: Colors.white,
-                  ),
-                  child: (_correct)
-                      ?
-                      // 정답일 경우
-                      Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                              const Text(
-                                "정답입니다!",
-                                textAlign: TextAlign.center,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        padding: EdgeInsets.symmetric(
+                            vertical:
+                                MediaQuery.of(context).size.height * 0.05),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width * 0.1,
+                            vertical:
+                                MediaQuery.of(context).size.height * 0.25),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: const Color(0xffffb628),
+                            width: 6,
+                          ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x3f000000),
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // 정답일 경우 정답입니다, 아닐 경우 오답입니다
+                              Text(
+                                (_correct) ? "정답입니다!" : "오답입니다",
                                 style: TextStyle(
-                                  color: Color(0xffffb628),
-                                  fontSize: 30,
-                                ),
+                                    fontFamily: 'ONE Mobile POP',
+                                    color: Color(0xffffb628),
+                                    fontSize: 35,
+                                    fontWeight: FontWeight.bold),
                               ),
-                              const SizedBox(height: 50),
-                              FittedBox(
-                                fit: BoxFit.contain,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 30),
-                                  child: Text(
-                                    answer,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      // fontSize: 60,
+                              (_correct)
+                                  ? FittedBox(
+                                      fit: BoxFit.contain,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 30),
+                                        child: Text(
+                                          answer,
+                                          style: const TextStyle(
+                                            fontFamily: 'ONE Mobile POP',
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : Image.asset(
+                                      'assets/snappy_crying.png',
+                                      // height: 180,
                                     ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  fixedSize: Size.fromHeight(
+                                      MediaQuery.of(context).size.height *
+                                          0.06),
+                                  backgroundColor: Color(0xffffb628),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(13),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 50),
-                              Container(
-                                  width: 115,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(13),
-                                    color: const Color(0xffffb628),
-                                  ),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      _confirm();
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xffffb628)),
-                                    child: const Text(
-                                      "확인",
+                                onPressed: () {
+                                  _confirm();
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      (_correct) ? "확인  " : "다시하기  ",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                      ),
+                                          color: Colors.white, fontSize: 24),
                                     ),
-                                  )),
-                            ])
-                      :
-                      // 오답일 경우
-                      Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: const Text(
-                                "오답입니다",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Color(0xffffb628), fontSize: 30),
-                              ),
-                            ),
-                            Image.asset(
-                              'assets/snappy_crying.png',
-                              height: 180,
-                            ),
-                            Container(
-                                width: 150,
-                                height: 50,
-                                margin: EdgeInsets.symmetric(vertical: 10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(13),
-                                  // color: Color(0xffffb628),
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    _confirm();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xffffb628)),
-                                  child: const Text(
-                                    "다시 그려보기",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
+                                    Icon(
+                                      (_correct)
+                                          ? Icons.check_rounded
+                                          : Icons.refresh_rounded,
                                       color: Colors.white,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                )),
-                          ],
-                        ),
-                )),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ]))),
 
                 // confetti
                 Align(
@@ -300,337 +283,397 @@ class _DrawingViewState extends State<DrawingView> {
             ));
   }
 
-  // 정답 후 확인 or 다시 풀기 클릭시
+// 정답 후 확인 or 다시 풀기 클릭시
   _confirm() async {
     Navigator.of(context).pop();
     await getItems();
 
     // complete가 true, 각 item이 false면 동화 확인 창 띄우고 도서관으로 이동
     if (isComplete && !_1 && !_2 && !_3 && !_4) {
-      showDialog(
-          context: context, builder: (BuildContext context) => complete());
-    } else {
-      setState(() {
-        _controller = _newController();
-      });
+      complete();
     }
   }
 
-  // 완성 후 도서관 이동
+// 완성 후 도서관 이동
   complete() {
-    return Container(
-        margin: const EdgeInsets.only(
-          left: 30,
-          right: 30,
-          bottom: 250,
-          top: 250,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: const Color(0xffffb628),
-            width: 6,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x3f000000),
-              blurRadius: 4,
-              offset: Offset(0, 4),
-            ),
-          ],
-          color: Colors.white,
-        ),
-        child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                "동화가 완성되었어요!",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Color(0xffffb628),
-                  fontSize: 28,
-                ),
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) => Container(
+            padding: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.height * 0.05),
+            margin: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.05,
+                vertical: MediaQuery.of(context).size.height * 0.25),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: const Color(0xffffb628),
+                width: 6,
               ),
-              const SizedBox(height: 50),
-              Container(
-                  width: 250,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(13),
-                    color: const Color(0xffffb628),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x3f000000),
+                  blurRadius: 4,
+                  offset: Offset(0, 4),
+                ),
+              ],
+              color: Colors.white,
+            ),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.height * 0.05),
+                    child: const Text(
+                      "동화가 완성되었어요!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xffffb628),
+                        fontFamily: 'ONE Mobile POP',
+                        fontSize: 35,
+                      ),
+                    ),
                   ),
-                  child: ElevatedButton(
+                  ElevatedButton(
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => MyLibrary()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MyLibrary()));
                     },
                     style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.05),
                         backgroundColor: const Color(0xffffb628)),
                     child: const Text(
                       "도서관으로 이동하기",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 24,
                       ),
                     ),
-                  )),
-              SizedBox(height: 15),
-              Container(
-                  width: 250,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(13),
-                    color: const Color(0xffffb628),
                   ),
-                  child: ElevatedButton(
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pushNamed(drawingTaleListRoute);
                     },
                     style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * 0.05),
                         backgroundColor: const Color(0xffffb628)),
                     child: const Text(
                       "다른 그림 퀴즈 풀어보기",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 24,
                       ),
                     ),
-                  )),
-            ]));
-  }
-
-  @override
-  void initState() {
-    getInfo();
-    _controllerTopCenter =
-        ConfettiController(duration: const Duration(seconds: 10));
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controllerTopCenter.dispose();
-    super.dispose();
-  }
-
-  // 그림 그리는 부분
-  static PainterController _newController() {
-    PainterController controller = PainterController();
-    controller.thickness = 5.0;
-    // controller.backgroundColor = Colors.amber;
-    return controller;
+                  ),
+                ])));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/main/bg-main2.png'),
-            ),
-          ),
-          child: Column(
-            children: [
-              // 상단 버튼
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                // 도움말 - 튜토리얼
-                IconButton(
-                    iconSize: MediaQuery.of(context).size.width * 0.25,
-                    onPressed: () {},
-                    icon: Image.asset(
-                      'assets/main/btn-help.png',
-                    )),
-                // 나가기
-                IconButton(
-                    iconSize: MediaQuery.of(context).size.width * 0.25,
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(drawingTaleListRoute);
-                    },
-                    icon: Image.asset(
-                      'assets/main/btn-quit.png',
-                    )),
-              ]),
+        child: Stack(
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/main/bg-main2.png'),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // 상단바
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // 도움말 - 튜토리얼
+                        IconButton(
+                            iconSize: MediaQuery.of(context).size.width * 0.25,
+                            onPressed: () {},
+                            icon: Image.asset(
+                              'assets/main/btn-help.png',
+                            )),
+                        // 동화 제목
+                        OutlinedText(
+                            text: Text(title[id - 1],
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 40)),
+                            strokes: [
+                              OutlinedTextStroke(
+                                  color: const Color(0xff198100), width: 10),
+                            ]),
+                        // 나가기
+                        IconButton(
+                            iconSize: MediaQuery.of(context).size.width * 0.25,
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed(drawingTaleListRoute);
+                            },
+                            icon: Image.asset(
+                              'assets/main/btn-quit.png',
+                            )),
+                      ]),
 
-              // 동화 아이템
-              Container(
-                height: MediaQuery.of(context).size.height * 0.35,
-                width: MediaQuery.of(context).size.width * 0.9,
-                margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                decoration: const BoxDecoration(color: Color(0xffd9d9d9)),
-                child: FittedBox(
-                  fit: BoxFit.contain,
-                  child: Column(
+                  // 동화 아이템
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      FittedBox(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 30, vertical: 20),
-                                child: Image.asset(
-                                  items[0],
-                                  width: 120,
-                                )),
-                            Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 20),
-                              child: Image.asset(
-                                items[1],
-                                width: 120,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(
+                                    color: const Color(0xffffb628), width: 4),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(18)),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x3f000000),
+                                    blurRadius: 4,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
                               ),
-                            )
-                          ],
-                        ),
+                              padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * 0.02),
+                              margin: EdgeInsets.symmetric(
+                                  vertical:
+                                      MediaQuery.of(context).size.width * 0.02,
+                                  horizontal:
+                                      MediaQuery.of(context).size.width * 0.05),
+                              child: Image.asset(
+                                items[0],
+                                width: MediaQuery.of(context).size.width * 0.25,
+                              )),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: const Color(0xff198100), width: 4),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(18)),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x3f000000),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * 0.02),
+                            margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.width * 0.02,
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.05),
+                            child: Image.asset(
+                              items[1],
+                              width: MediaQuery.of(context).size.width * 0.25,
+                            ),
+                          )
+                        ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: const Color(0xffff0080), width: 4),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(18)),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x3f000000),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * 0.02),
+                            margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.width * 0.02,
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.05),
                             child: Image.asset(
                               items[2],
-                              width: 120,
+                              width: MediaQuery.of(context).size.width * 0.25,
                             ),
                           ),
                           Container(
-                            margin: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: const Color(0xff0060c4), width: 4),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(18)),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x3f000000),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * 0.02),
+                            margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.width * 0.02,
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.05),
                             child: Image.asset(
                               items[3],
-                              width: 120,
+                              width: MediaQuery.of(context).size.width * 0.25,
                             ),
                           ),
                         ],
                       ),
                     ],
                   ),
+
+                  // 클리어 버튼 + 그림 그리는 부분
+                  Container(
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage(
+                              'assets/quizTaleList/box-quiz-board.png'),
+                        ),
+                      ),
+                      child: Stack(children: [
+                        // 그림 그리는 부분
+                        Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.width * 0.05,
+                              MediaQuery.of(context).size.height * 0.05,
+                              MediaQuery.of(context).size.width * 0.05,
+                              MediaQuery.of(context).size.height * 0.01),
+                          child: GestureDetector(
+                            child: CustomPaint(
+                              painter: DrawingPainter(_points),
+                              size: Size(
+                                  MediaQuery.of(context).size.width * 0.9,
+                                  MediaQuery.of(context).size.height * 0.3),
+                            ),
+                            onPanStart: (details) {
+                              setState(() {
+                                _points.add([details.localPosition]);
+                                path.add([
+                                  [details.localPosition.dx.toInt()],
+                                  [details.localPosition.dy.toInt()]
+                                ]);
+                              });
+                            },
+                            onPanUpdate: (details) {
+                              setState(() {
+                                // 범위에서 벗어나면 리스트에 추가X
+                                if (details.localPosition.dx > 0 &&
+                                    details.localPosition.dx <
+                                        MediaQuery.of(context).size.width *
+                                            0.8 &&
+                                    details.localPosition.dy > 0 &&
+                                    details.localPosition.dy <
+                                        MediaQuery.of(context).size.height *
+                                            0.24) {
+                                  _points.last.add(details.localPosition);
+                                  path.last[0]
+                                      .add(details.localPosition.dx.toInt());
+                                  path.last[1]
+                                      .add(details.localPosition.dy.toInt());
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.width * 0.15,
+                              right: MediaQuery.of(context).size.width * 0.05),
+                          // 다시 그리기 버튼
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                                icon: const Icon(
+                                  Icons.refresh,
+                                  color: Color(0xffffb628),
+                                ),
+                                iconSize:
+                                    MediaQuery.of(context).size.width * 0.1,
+                                tooltip: 'Clear',
+                                onPressed: () {
+                                  setState(() {
+                                    path = [];
+                                    _points = [];
+                                  });
+                                }),
+                          ),
+                        ),
+                      ])),
+                ],
+              ),
+            ),
+            // 하단 바
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.1,
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32)),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/main/bg-bar.png'),
+                  ),
                 ),
               ),
-
-              // 툴 + 그림 그리는 부분
-              Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1)),
-                  child: Column(children: [
-                    Container(
-                      decoration: const BoxDecoration(
-                        color: Color(0xffffb628),
-                      ),
-                      // 툴바
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          // 다 지우기
-                          IconButton(
-                              icon: const Icon(Icons.refresh),
-                              tooltip: 'Clear',
-                              onPressed: () {
-                                setState(() {
-                                  path = [];
-                                  _points = [];
-                                });
-                              })
-                        ],
-                      ),
-                    ),
-                    // 그림 그리는 부분
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 1)),
-                      height: 250,
-                      width: 250,
-                      child: GestureDetector(
-                        child: CustomPaint(
-                          painter: DrawingPainter(_points),
-                          size: Size(250, 250),
-                        ),
-                        onPanStart: (details) {
-                          setState(() {
-                            _points.add([details.localPosition]);
-                            path.add([
-                              [details.localPosition.dx.toInt()],
-                              [details.localPosition.dy.toInt()]
-                            ]);
-                          });
-                        },
-                        onPanUpdate: (details) {
-                          setState(() {
-                            // 범위에서 벗어나면 리스트에 추가X
-                            if (details.localPosition.dx > 0 &&
-                                details.localPosition.dx < 250 &&
-                                details.localPosition.dy > 0 &&
-                                details.localPosition.dy < 250) {
-                              _points.last.add(details.localPosition);
-                              path.last[0]
-                                  .add(details.localPosition.dx.toInt());
-                              path.last[1]
-                                  .add(details.localPosition.dy.toInt());
-                            }
-                          });
-                        },
-                      ),
-                    )
-                  ])),
-
-              // 정답 확인 버튼
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xffffb628)),
+            ),
+            Positioned(
+              width: MediaQuery.of(context).size.width,
+              bottom: MediaQuery.of(context).size.height * 0.05,
+              child: Container(
+                height: MediaQuery.of(context).size.width * 0.2,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white),
+                // 정답 확인 버튼
+                child: IconButton(
                   onPressed: () {
-                    // 정답 확인 함수 실행
-                    // isCorrect();
-                    check();
+                    isCorrect();
                   },
-                  child: const Text('정답 확인',
-                      style: TextStyle(
-                        color: Colors.white,
-                      )))
-            ],
-          ),
+                  icon: Icon(
+                    Icons.check_rounded,
+                    size: MediaQuery.of(context).size.width * 0.15,
+                  ),
+                  color: const Color(0xffffb628),
+                  // iconSize: ,
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
-  }
-
-  // 캔버스에 그림 그리기 위해 담는 리스트
-  List<List<Offset>> _points = [];
-
-  // AI쪽에 보낼 정보를 담는 리스트
-  List<List<List<int>>> path = [];
-
-  check() async {
-    try {
-      http.Response response = await http.post(
-          Uri.parse('https://j8a401.p.ssafy.io/recognize/doodles'),
-          headers: {'Content-Type': "application/json"},
-          body: jsonEncode(<String, List<List<List<int>>>>{"data": path}));
-      var jsonResponse = jsonDecode(response.body);
-
-      if (jsonResponse['probability'] >= 70) {
-        answer = jsonResponse['prediction'];
-      }
-      print(answer);
-    } catch (e) {
-      print('$e 이미지 확인 에러');
-    }
-    setState(() {
-      _points = [];
-      path = [];
-    });
   }
 }
 

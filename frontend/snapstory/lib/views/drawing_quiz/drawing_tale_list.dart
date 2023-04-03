@@ -19,7 +19,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
           Container(
             padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).size.height * 0.2,
-                top: MediaQuery.of(context).size.width * 0.3),
+                top: MediaQuery.of(context).size.width * 0.4),
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -28,9 +28,12 @@ class DrawingTaleListState extends State<DrawingTaleList> {
               ),
             ),
             child: ListView(
+              padding: EdgeInsets.only(top: 0),
               children: [
+                // 신데렐라
                 IconButton(
-                  padding: EdgeInsets.all(10),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
                   iconSize: MediaQuery.of(context).size.height * 0.2,
                   icon: Image.asset(
                       "assets/quizTaleList/btn-quiz-cinderella.png"),
@@ -41,8 +44,10 @@ class DrawingTaleListState extends State<DrawingTaleList> {
                             builder: (context) => DrawingView(1)));
                   },
                 ),
+                // 백설공주
                 IconButton(
-                  padding: EdgeInsets.all(10),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
                   iconSize: MediaQuery.of(context).size.height * 0.2,
                   icon:
                       Image.asset("assets/quizTaleList/btn-quiz-snowwhite.png"),
@@ -53,8 +58,10 @@ class DrawingTaleListState extends State<DrawingTaleList> {
                             builder: (context) => DrawingView(2)));
                   },
                 ),
+                // 잠자는 숲속의 공주
                 IconButton(
-                  padding: EdgeInsets.all(10),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
                   iconSize: MediaQuery.of(context).size.height * 0.2,
                   icon: Image.asset(
                       "assets/quizTaleList/btn-quiz-sleepingbeauty.png"),
@@ -65,8 +72,10 @@ class DrawingTaleListState extends State<DrawingTaleList> {
                             builder: (context) => DrawingView(3)));
                   },
                 ),
+                // 라푼젤
                 IconButton(
-                  padding: EdgeInsets.all(10),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
                   iconSize: MediaQuery.of(context).size.height * 0.2,
                   icon:
                       Image.asset("assets/quizTaleList/btn-quiz-rapunzel.png"),
@@ -77,8 +86,10 @@ class DrawingTaleListState extends State<DrawingTaleList> {
                             builder: (context) => DrawingView(4)));
                   },
                 ),
+                // 미녀와 야수
                 IconButton(
-                  padding: EdgeInsets.all(10),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.height * 0.01),
                   iconSize: MediaQuery.of(context).size.height * 0.2,
                   icon: Image.asset(
                       "assets/quizTaleList/btn-quiz-beautyandbeast.png"),
@@ -133,7 +144,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
                     topRight: Radius.circular(32)),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/aiTale/bottom_bar.png'),
+                  image: AssetImage('assets/main/bg-bar.png'),
                 ),
               ),
             ),

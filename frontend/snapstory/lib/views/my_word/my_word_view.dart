@@ -114,67 +114,56 @@ class _MyWordState extends State<MyWord> {
                                                             MediaQuery.of(context)
                                                                     .size
                                                                     .width *
-                                                                0.5,
+                                                                0.1),
                                                       ),
-                                                      Container(
-                                                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.025),
-                                                        child: Text(
-                                                          isEng
-                                                              ? e['word']['wordEng']
-                                                              : e['word']
-                                                                  ['wordKor'],
-                                                          style: TextStyle(
-                                                              fontSize: MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width *
-                                                                  0.1),
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.05),
-                                                        child: Text(
-                                                          isEng
-                                                              ? e['wordExampleEng']
-                                                              : e['wordExampleKor'],
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                              fontSize: MediaQuery.of(
-                                                                  context)
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          top: MediaQuery.of(
+                                                                      context)
                                                                   .size
                                                                   .width *
-                                                                  0.05),
-                                                        ),
+                                                              0.05),
+                                                      child: Text(
+                                                        isEng
+                                                            ? e['wordExampleEng']
+                                                            : e['wordExampleKor'],
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            fontSize: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                0.05),
                                                       ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ))
-                                          .toList(),
-                                    ),
+                                              ),
+                                            ))
+                                        .toList(),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.all(
-                                      MediaQuery.of(context).size.height *
-                                          0.04),
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(
+                                    MediaQuery.of(context).size.height * 0.04),
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
                                         child: Image.asset(
                                           'assets/aiTale/btn-ai-word.png',
                                           height: MediaQuery.of(context)
-                                              .size
-                                              .width *
+                                                  .size
+                                                  .width *
                                               0.25,
                                           width: MediaQuery.of(context)
-                                              .size
-                                              .width *
+                                                  .size
+                                                  .width *
                                               0.25,
                                         ),
                                         onTap: () => makeSound(
@@ -199,7 +188,11 @@ class _MyWordState extends State<MyWord> {
                                                   ['wordExampleEng'] : wordList[_current]
                                               ['wordExampleKor']),
                                         ),
-                                        GestureDetector(
+                                        onTap: () => makeSound(
+                                            text: wordList[_current]
+                                                ['wordExampleEng']),
+                                      ),
+                                      GestureDetector(
                                           child: Image.asset(
                                             'assets/aiTale/btn-ai-story.png',
                                             height: MediaQuery.of(context)
@@ -211,43 +204,48 @@ class _MyWordState extends State<MyWord> {
                                                     .width *
                                                 0.25,
                                           ),
-                                          onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(
-                                              builder: (context) => MakeStory(word: wordList[_current]['word']['wordEng']))
-                                        )),
-                                      ],
-                                    ),
+                                          onTap: () => Navigator.of(context)
+                                              .pushReplacement(MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MakeStory(
+                                                          word: wordList[
+                                                                      _current]
+                                                                  ['word']
+                                                              ['wordEng'])))),
+                                    ],
                                   ),
                                 ),
-                              ]),
-                            if (_selected[0])
-                              GridView.count(
-                                  padding: EdgeInsets.only(
-                                      top: MediaQuery.of(context).size.height *
-                                          0.06,
-                                      bottom:
-                                          MediaQuery.of(context).size.height *
-                                              0.01),
-                                  crossAxisCount: 2,
-                                  children: wordList
-                                      .map((e) => Container(
-                                            margin: const EdgeInsets.all(23),
-                                            decoration: const ShapeDecoration(
-                                                shape: CircleBorder(),
-                                                color: Colors.white70),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                for (int i = 0;
-                                                    i < wordList.length;
-                                                    i++) {
-                                                  if (wordList[i]['word'] ==
-                                                      e['word']) {
-                                                    setState(() {
-                                                      _current = i;
-                                                      for (int i = 0; i < _selected.length; i++) {
-                                                        _selected[i] = i == 1;
-                                                      }
-                                                    });
-                                                  }
+                              ),
+                            ]),
+                          if (_selected[0])
+                            GridView.count(
+                                padding: EdgeInsets.only(
+                                    top: MediaQuery.of(context).size.height *
+                                        0.06,
+                                    bottom: MediaQuery.of(context).size.height *
+                                        0.01),
+                                crossAxisCount: 2,
+                                children: wordList
+                                    .map((e) => Container(
+                                          margin: const EdgeInsets.all(23),
+                                          decoration: const ShapeDecoration(
+                                              shape: CircleBorder(),
+                                              color: Colors.white70),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              for (int i = 0;
+                                                  i < wordList.length;
+                                                  i++) {
+                                                if (wordList[i]['word'] ==
+                                                    e['word']) {
+                                                  setState(() {
+                                                    _current = i;
+                                                    for (int i = 0;
+                                                        i < _selected.length;
+                                                        i++) {
+                                                      _selected[i] = i == 1;
+                                                    }
+                                                  });
                                                 }
                                               },
                                               onLongPress: () async {
@@ -286,14 +284,24 @@ class _MyWordState extends State<MyWord> {
                                                       0.2,
                                                   width: MediaQuery.of(context)
                                                           .size
-                                                          .width *
-                                                      0.2,
-                                                ),
+                                                          .height *
+                                                      0.03),
+                                              child: Image.asset(
+                                                e['word']['image'],
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.2,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.2,
                                               ),
                                             ),
-                                          ))
-                                      .toList()),
-                          ]),
+                                          ),
+                                        ))
+                                    .toList()),
+                        ]),
                         if (_selected[2])
                           ListView.separated(
                             padding: EdgeInsets.only(
