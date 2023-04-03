@@ -13,7 +13,7 @@ class LoadingDialog extends StatelessWidget {
             Image.asset('assets/snappee-waiting.gif', fit: BoxFit.fill,width: MediaQuery.of(context).size.width * 0.8, height: MediaQuery.of(context).size.width * 0.8,)
           ],
       ),
-      const Row(mainAxisAlignment: MainAxisAlignment.center,
+      Row(mainAxisAlignment: MainAxisAlignment.center,
         children: [Text('잠시만 기다려주세요~', style: TextStyle(fontSize:  30),)],
       )
     ]);

@@ -381,11 +381,26 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     this.arLocationManager.startLocationUpdates();
   }
 
+  // 촬영 버튼 누르면 호출되는 함수
   Future<void> onWebObjectAtButtonPressed() async {
+
+    if (webObjectNode != null) {
+      arObjectManager.removeNode(webObjectNode!);
+      webObjectNode = null;
+    }
+
+
     Matrix4 pos =
         await arSessionManager.getCameraPose().then((value) => value!);
+
     String wordName;
+
     if (defaultTargetPlatform == TargetPlatform.android) {
+
+      setState(() {
+        isLoading = true;
+      });
+
       final directory = (await getApplicationDocumentsDirectory())
           .path; //from path_provide package
       String fileName = '${DateTime.now().microsecondsSinceEpoch}.png';
@@ -399,12 +414,18 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
           await imagePath.writeAsBytes(image);
         }
       });
-      setState(() {
-        isLoading = true;
-      });
+
+
       wordName = await _araiService.postPictureAndGetWord(
           path: '$directory/$fileName'!);
     } else {
+
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        setState(() {
+          isLoading = true;
+        });
+      });
+
       String? path = await NativeScreenshot.takeScreenshot();
       setState(() {
         isLoading = true;
