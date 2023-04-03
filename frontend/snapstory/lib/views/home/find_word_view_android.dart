@@ -87,9 +87,10 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     flutterTts = FlutterTts();
     _araiService = ARAIService();
     flutterTts.setLanguage("en-US");
-    flutterTts.setSpeechRate(0.25); //speed of speech
+    flutterTts.setSpeechRate(0.5); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
-    flutterTts.setPitch(1.35); //pitc of sound
+    flutterTts.setPitch(1.0); //pitc of sound
+
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       flutterTts.setSharedInstance(true);
     }
@@ -97,6 +98,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   }
 
   Future<int> makeSound({required String text}) async {
+    print("make Sound ${text}");
     return await flutterTts.speak(text);
   }
 
