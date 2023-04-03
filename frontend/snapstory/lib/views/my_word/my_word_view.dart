@@ -80,6 +80,11 @@ class _MyWordState extends State<MyWord> {
                                           .map((e) => GestureDetector(
                                                 onTap: () => setState(() {
                                                   isEng = !isEng;
+                                                  if(!isEng) {
+                                                    flutterTts.setLanguage('ko-KR');
+                                                  } else {
+                                                    flutterTts.setLanguage('en-US');
+                                                  }
                                                 }),
                                                 child: Container(
                                                   width: MediaQuery.of(context).size.width,
@@ -173,8 +178,9 @@ class _MyWordState extends State<MyWord> {
                                               0.25,
                                         ),
                                         onTap: () => makeSound(
-                                            text: wordList[_current]['word']
-                                            ['wordEng']),
+                                            text: isEng ? wordList[_current]['word']
+                                            ['wordEng'] : wordList[_current]['word']
+                                            ['wordKor']),
                                       ),
                                         GestureDetector(
                                           child: Image.asset(
@@ -189,8 +195,9 @@ class _MyWordState extends State<MyWord> {
                                                 0.25,
                                           ),
                                           onTap: () => makeSound(
-                                              text: wordList[_current]
-                                                  ['wordExampleEng']),
+                                              text: isEng ? wordList[_current]
+                                                  ['wordExampleEng'] : wordList[_current]
+                                              ['wordExampleKor']),
                                         ),
                                         GestureDetector(
                                           child: Image.asset(
@@ -243,6 +250,28 @@ class _MyWordState extends State<MyWord> {
                                                   }
                                                 }
                                               },
+                                              onLongPress: () async {
+                                                final shouldDelete =
+                                                await showDeleteDialog(context);
+                                                if (shouldDelete) {
+                                                  for (int i = 0;
+                                                  i < wordList.length;
+                                                  i++) {
+                                                    if (wordList[i]['word'] ==
+                                                        e['word']) {
+                                                      bool result =
+                                                      await _araiService.deleteWord(
+                                                          word: wordList[i]
+                                                          ['word']['wordEng'],
+                                                          token: await FirebaseAuth
+                                                              .instance.currentUser!
+                                                              .getIdToken());
+                                                      if (result) setState(() {});
+                                                    }
+                                                  }
+
+                                                }
+                                              },
                                               child: Padding(
                                                 padding: EdgeInsets.all(
                                                     MediaQuery.of(context)
@@ -276,6 +305,12 @@ class _MyWordState extends State<MyWord> {
                                 onTap: () {
                                   setState(() {
                                     isEng = !isEng;
+                                    if(!isEng) {
+                                      flutterTts.setLanguage('ko-KR');
+                                    } else {
+                                      flutterTts.setLanguage('en-US');
+
+                                    }
                                   });
                                 },
                                 child: Container(
