@@ -324,7 +324,7 @@ class _MakeStoryState extends State<MakeStory> {
                           print(_current);
                           selectedImg = imgList[_current];
                           await putImage(selectedImg); // put
-                          Navigator.push(
+                          Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => CompleteStory(id: aiTaleId),

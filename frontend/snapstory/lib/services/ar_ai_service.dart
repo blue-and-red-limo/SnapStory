@@ -33,7 +33,7 @@ class ARAIService {
       body: jsonEncode({
         "model": "text-davinci-003",
         'prompt':
-            'give me one simple sentence(limit 40 letters) for kids under 5 about $obj and translation of that in korean too by using this templete: "eng: your answer1 kor: your answer2"',
+            'give me one simple sentence(limit 40 letters) for kids under 5 about $obj and translation of that in korean too by using this templete: "eng: [your answer1] kor: [your answer2]" and consider that no space between your answer and : ',
         'max_tokens': 1000,
         'temperature': 0,
         'top_p': 1,
@@ -48,8 +48,8 @@ class ARAIService {
     print("zzzzzzzzzzzzzzzzzzzzzzzz: "+ str.toString());
     Map<String, String> result = {
       'word': obj,
-      'wordExampleKor': str[2].split("Kor: ")[1],
-      'wordExampleEng': str[2].split("Kor: ")[0].substring(5)
+      'wordExampleEng': str[2].substring(str[2].indexOf("Eng:")+4, str[2].indexOf("Kor")),
+      'wordExampleKor': str[2].substring(str[2].indexOf("Kor")+4)
     };
     print(result.toString());
 
@@ -112,7 +112,7 @@ class ARAIService {
       body: jsonEncode({
         "model": "text-davinci-003",
         'prompt':
-        'make a instructive story about $obj in 7 sentence for kids. And give me one sentence about this storys image by using this templete: "image: your answer',
+        'make a instructive story about $obj in 7 sentence for kids and consider that no spaceline or no big quotes. And give me one sentence about this storys image by using this templete: "image: your answer',
         'max_tokens': 1000,
         'temperature': 0,
         'top_p': 1,
@@ -139,7 +139,7 @@ class ARAIService {
       body: jsonEncode({
         "model": "text-davinci-003",
         'prompt':
-        'please translate next sentence in Korean "$story"',
+        'please translate next sentence in Korean with no big quotes and no space. "$story"',
         'max_tokens': 1000,
         'temperature': 0,
         'top_p': 1,
@@ -151,6 +151,9 @@ class ARAIService {
 
     Map<String, dynamic> newresponse =
     jsonDecode(utf8.decode(response.bodyBytes));
+
+    String str = newresponse['choices'][0]['text'];
+    print("해석결과!!! "+ str.toString());
 
     return newresponse['choices'][0]['text'];
   }

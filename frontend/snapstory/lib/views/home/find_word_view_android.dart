@@ -115,214 +115,217 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: Stack(
-        children: [
-          Screenshot(
-            controller: screenshotController,
-            child: ARView(
-              onARViewCreated: onARViewCreated,
-              planeDetectionConfig: PlaneDetectionConfig.none,
-            ),
-          ),
-          if (!checked && !isLoading)
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.3,
-              left: MediaQuery.of(context).size.width * 0.1,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text("화면에 물체를 맞춰주세요!",
-                      style: TextStyle(
-                          fontSize: MediaQuery.of(context).size.height * 0.03,
-                          color: Colors.white)),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
-                  ),
-                  IgnorePointer(
-                    ignoring: true,
-                    child: DottedBorder(
-                      color: const Color.fromARGB(255, 255, 255, 255),
-                      //color of dotted/dash line
-                      borderType: BorderType.RRect,
-                      radius: const Radius.circular(30),
-                      strokeWidth: 4,
-                      //thickness of dash/dots
-                      dashPattern: const [10, 6],
-                      //dash patterns, 10 is dash width, 6 is space width
-                      child: Container(
-                          //inner container
-                          height: MediaQuery.of(context).size.height *
-                              0.4, //height of inner container
-                          width: MediaQuery.of(context).size.width *
-                              0.8, //width to 100% match to parent container.
-                          color: const Color.fromRGBO(
-                              0, 0, 0, 0) //background color of inner container
-                          ),
-                    ),
-                  ),
-                ],
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Screenshot(
+              controller: screenshotController,
+              child: ARView(
+                onARViewCreated: onARViewCreated,
+                planeDetectionConfig: PlaneDetectionConfig.none,
               ),
             ),
-          Positioned(
-            // 하단바
-            top: MediaQuery.of(context).size.height * 0.9,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(23),
-                  topRight: Radius.circular(23),
-                ),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/main/bg-bar.png'),
+            if (!checked && !isLoading)
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.3,
+                left: MediaQuery.of(context).size.width * 0.1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("화면에 물체를 맞춰주세요!",
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.height * 0.03,
+                            color: Colors.white)),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    IgnorePointer(
+                      ignoring: true,
+                      child: DottedBorder(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        //color of dotted/dash line
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(30),
+                        strokeWidth: 4,
+                        //thickness of dash/dots
+                        dashPattern: const [10, 6],
+                        //dash patterns, 10 is dash width, 6 is space width
+                        child: Container(
+                            //inner container
+                            height: MediaQuery.of(context).size.height *
+                                0.4, //height of inner container
+                            width: MediaQuery.of(context).size.width *
+                                0.8, //width to 100% match to parent container.
+                            color: const Color.fromRGBO(
+                                0, 0, 0, 0) //background color of inner container
+                            ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.1,
-            ),
-          ),
-          if (exBtnTap && checked)
-            GestureDetector(
-              onTap: () => {
-                exContainerTap = !exContainerTap,
-                print(exContainerTap),
-                setState(() {}),
-                if (!exContainerTap)
-                  {
-                    makeSound(text: wordMap['wordExampleEng'].toString()),
-                  }
-              },
-              child: Positioned.fill(
-                  // top: MediaQuery.of(context).size.height * 0.3,
-                  child: Container(
-                margin: EdgeInsets.fromLTRB(
-                    0, MediaQuery.of(context).size.height * 0.23, 0, 0),
-                child: Align(
-                  alignment: Alignment.topCenter,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        width: 5,
-                        color: Colors.amber,
-                      ),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(20)),
-                    ),
-                    // decoration: const BoxDecoration(
-                    //   borderRadius: BorderRadius.only(
-                    //     topLeft: Radius.circular(23),
-                    //     topRight: Radius.circular(23),
-                    //   ),
-                    // ),
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    // color: Colors.white,
-                    child: Padding(
-                      padding: EdgeInsets.all(15),
-                      child: Center(
-                        child: exContainerTap
-                            ? Text(
-                                wordMap['wordExampleKor'],
-                                style: TextStyle(fontSize: 20),
-                              )
-                            : Text(
-                                wordMap['wordExampleEng'],
-                                style: TextStyle(fontSize: 20),
-                              ),
-                      ),
-                    ),
+            Positioned(
+              // 하단바
+              top: MediaQuery.of(context).size.height * 0.87,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(23),
+                    topRight: Radius.circular(23),
+                  ),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/main/bg-bar.png'),
                   ),
                 ),
-              )),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.1,
+              ),
             ),
-          if (checked && !isLoading)
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.8,
-              left: MediaQuery.of(context).size.width * 0.05,
-              // width: MediaQuery.of(context).size.width * 0.15,
-
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () async => {
-                          await makeSound(text: wordMap['word']),
-                        },
-                        child: Image.asset(
-                          "assets/aiTale/btn-ai-word.png",
-                          width: MediaQuery.of(context).size.width * 0.3,
+            if (exBtnTap && checked)
+              GestureDetector(
+                onTap: () => {
+                  exContainerTap = !exContainerTap,
+                  print(exContainerTap),
+                  setState(() {}),
+                  if (!exContainerTap)
+                    {
+                      makeSound(text: wordMap['wordExampleEng'].toString()),
+                    }
+                },
+                child: Positioned.fill(
+                    // top: MediaQuery.of(context).size.height * 0.3,
+                    child: Container(
+                  margin: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.height * 0.23, 0, 0),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 5,
+                          color: Colors.amber,
+                        ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      // decoration: const BoxDecoration(
+                      //   borderRadius: BorderRadius.only(
+                      //     topLeft: Radius.circular(23),
+                      //     topRight: Radius.circular(23),
+                      //   ),
+                      // ),
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      // color: Colors.white,
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Center(
+                          child: exContainerTap
+                              ? Text(
+                                  wordMap['wordExampleKor'],
+                                  style: TextStyle(fontSize: 20),
+                                )
+                              : Text(
+                                  wordMap['wordExampleEng'],
+                                  style: TextStyle(fontSize: 20),
+                                ),
                         ),
                       ),
-                      GestureDetector(
-                          onTap: () => {
-                                print("exContainerTap 상황 $exContainerTap"),
-                                if (!exContainerTap && !exBtnTap)
-                                  {
-                                    makeSound(
-                                        text: wordMap['wordExampleEng']
-                                            .toString()),
-                                  },
-                                exBtnTap = !exBtnTap,
-                                setState(() {}),
-                              },
-                          child: Image.asset(
-                            "assets/aiTale/btn-ai-example.png",
-                            width: MediaQuery.of(context).size.width * 0.3,
-                          )),
-                      GestureDetector(
-                          onTap: () => {
-                                Navigator.of(context)
-                                    .pushReplacement(MaterialPageRoute(
-                                  builder: (context) => MakeStory(word: word),
-                                )),
-                              },
-                          child: Image.asset(
-                            "assets/aiTale/btn-ai-story.png",
-                            width: MediaQuery.of(context).size.width * 0.3,
-                          )),
-                    ],
+                    ),
                   ),
-                ],
+                )),
               ),
-            ),
-          Positioned(
-              top: MediaQuery.of(context).size.height * 0.05,
-              left: MediaQuery.of(context).size.width * 0.07,
-              child: Image(
-                image: AssetImage("assets/main/btn-help.png"),
-                width: MediaQuery.of(context).size.width * 0.25,
-              )),
-          Positioned(
-              top: MediaQuery.of(context).size.height * 0.05,
-              right: MediaQuery.of(context).size.width * 0.07,
-              child: GestureDetector(
-                onTap: () => Navigator.of(context).pop(),
-                child: Image(
-                  image: AssetImage("assets/main/btn-quit.png"),
-                  width: MediaQuery.of(context).size.width * 0.25,
+            if (checked && !isLoading)
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.78,
+                left: MediaQuery.of(context).size.width * 0.05,
+                // width: MediaQuery.of(context).size.width * 0.15,
+
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () async => {
+                            await makeSound(text: wordMap['word']),
+                          },
+                          child: Image.asset(
+                            "assets/aiTale/btn-ai-word.png",
+                            width: MediaQuery.of(context).size.width * 0.3,
+                          ),
+                        ),
+                        GestureDetector(
+                            onTap: () => {
+                                  print("exContainerTap 상황 $exContainerTap"),
+                                  if (!exContainerTap && !exBtnTap)
+                                    {
+                                      makeSound(
+                                          text: wordMap['wordExampleEng']
+                                              .toString()),
+                                    },
+                                  exBtnTap = !exBtnTap,
+                                  setState(() {}),
+                                },
+                            child: Image.asset(
+                              "assets/aiTale/btn-ai-example.png",
+                              width: MediaQuery.of(context).size.width * 0.3,
+                            )),
+                        GestureDetector(
+                            onTap: () => {
+                                  Navigator.of(context)
+                                      .pushReplacement(MaterialPageRoute(
+                                    builder: (context) => MakeStory(word: word),
+                                  )),
+                                },
+                            child: Image.asset(
+                              "assets/aiTale/btn-ai-story.png",
+                              width: MediaQuery.of(context).size.width * 0.3,
+                            )),
+                      ],
+                    ),
+                  ],
                 ),
-              )),
-          if (isLoading) const Center(child: LoadingDialog()),
-          if (isInAccurate)
-            Center(
-                child: AlertDialog(
-              title: const Text("찍은 이미지가 정확하지 않습니다."),
-              content: const Text("다시 찍어주세요!"),
-              actions: [
-                TextButton(
-                    onPressed: () => {
-                          setState(() {
-                            isInAccurate = false;
-                          }),
-                        },
-                    child: Text("확인"))
-              ],
-            ))
-        ],
+              ),
+            Positioned(
+                top: MediaQuery.of(context).size.height * 0.05,
+                left: MediaQuery.of(context).size.width * 0.07,
+                child: Image(
+                  image: AssetImage("assets/main/btn-help.png"),
+                  width: MediaQuery.of(context).size.width * 0.25,
+                )),
+            Positioned(
+                top: MediaQuery.of(context).size.height * 0.05,
+                right: MediaQuery.of(context).size.width * 0.07,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Image(
+                    image: AssetImage("assets/main/btn-quit.png"),
+                    width: MediaQuery.of(context).size.width * 0.25,
+                  ),
+                )),
+            if (isLoading) const Center(child: LoadingDialog()),
+            if (isInAccurate)
+              Center(
+                  child: AlertDialog(
+
+                title: const Text("찍은 사진이 정확하지 않습니다."),
+                content: const Text("다시 찍어주세요!"),
+                actions: [
+                  TextButton(
+                      onPressed: () => {
+                            setState(() {
+                              isInAccurate = false;
+                            }),
+                          },
+                      child: Text("확인"))
+                ],
+              ))
+          ],
+        ),
       ),
       floatingActionButton: Visibility(
         visible: !checked,
@@ -378,11 +381,26 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     this.arLocationManager.startLocationUpdates();
   }
 
+  // 촬영 버튼 누르면 호출되는 함수
   Future<void> onWebObjectAtButtonPressed() async {
+
+    if (webObjectNode != null) {
+      arObjectManager.removeNode(webObjectNode!);
+      webObjectNode = null;
+    }
+
+
     Matrix4 pos =
         await arSessionManager.getCameraPose().then((value) => value!);
+
     String wordName;
+
     if (defaultTargetPlatform == TargetPlatform.android) {
+
+      setState(() {
+        isLoading = true;
+      });
+
       final directory = (await getApplicationDocumentsDirectory())
           .path; //from path_provide package
       String fileName = '${DateTime.now().microsecondsSinceEpoch}.png';
@@ -396,12 +414,18 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
           await imagePath.writeAsBytes(image);
         }
       });
-      setState(() {
-        isLoading = true;
-      });
+
+
       wordName = await _araiService.postPictureAndGetWord(
           path: '$directory/$fileName'!);
     } else {
+
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        setState(() {
+          isLoading = true;
+        });
+      });
+
       String? path = await NativeScreenshot.takeScreenshot();
       setState(() {
         isLoading = true;
