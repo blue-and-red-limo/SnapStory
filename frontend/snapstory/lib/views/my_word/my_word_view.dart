@@ -132,6 +132,7 @@ class _MyWordState extends State<MyWord> {
                                                         ),
                                                       ),
                                                       Container(
+                                                        height: MediaQuery.of(context).size.height*0.055,
                                                         margin: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.05),
                                                         child: Text(
                                                           isEng
