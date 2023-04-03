@@ -65,7 +65,7 @@ class _MyLibraryState extends State<MyLibrary> {
         }
       }
       if (quizTaleList.length % 2 == 1) {
-        quizTale2.add([quizTaleList.last, []]);
+        quizTale2.add([quizTaleList.last]);
       }
       setState(() {});
     } catch (e) {
@@ -117,7 +117,8 @@ class _MyLibraryState extends State<MyLibrary> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            GestureDetector(
+                            if (e.length == 2)
+                              GestureDetector(
                               onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -134,7 +135,8 @@ class _MyLibraryState extends State<MyLibrary> {
                                 ),
                               ),
                             ),
-                            GestureDetector(
+                            if (e.length != 1)
+                              GestureDetector(
                               onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -150,7 +152,22 @@ class _MyLibraryState extends State<MyLibrary> {
                                       MediaQuery.of(context).size.width * 0.35,
                                 ),
                               ),
-                            )
+                            ),
+                            if (e.length == 1)
+                              GestureDetector(
+                                onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => QuizTaleView(e.first),
+                                    )),
+                                child: Center(
+                                  child: Image.asset(
+                                    'assets/library/btn-library-${e.first['quizTaleId']}.png',
+                                    width:
+                                    MediaQuery.of(context).size.width * 0.35,
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
