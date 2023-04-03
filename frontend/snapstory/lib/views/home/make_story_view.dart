@@ -13,7 +13,7 @@ import 'complete_story_view.dart';
 
 
 // dalle가 만든 이미지 리스트
-final List<String> imgList = [];
+List<String> imgList = [];
 
 // complete_story_view로 넘어갈 변수 2개
 String story = ""; // chatGpt가 만든 스토리
@@ -31,27 +31,7 @@ class FairyTale {
 }
 
 //
-final List<Widget> imageSliders = imgList
-    .map((item) => Container(
-          margin: const EdgeInsets.all(5.0),
-          child: ClipRRect(
-              borderRadius: const BorderRadius.all(Radius.circular(5.0)),
-              child: Stack(
-                children: <Widget>[
-                  Image.network(item, fit: BoxFit.cover, width: 1000.0),
-                  Positioned(
-                    bottom: 0.0,
-                    left: 0.0,
-                    right: 0.0,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 20.0),
-                    ),
-                  ),
-                ],
-              )),
-        ))
-    .toList();
+// List<Widget> imageSliders
 
 class MakeStory extends StatefulWidget {
   const MakeStory({Key? key, required this.word}) : super(key: key);
@@ -88,13 +68,14 @@ class _MakeStoryState extends State<MakeStory> {
           n: 4, // 원하는 이미지 개수
         )
         .data;
-
+    imgList.clear();
     for (int i = 0; i < 4; i++) {
       // 이미지 리스트에 추가
       imgList
           .add(image.data.toList().elementAt(i).props.elementAt(0).toString());
     }
 
+    print("=================${imgStr}에 대한 imgList 상태===============");
     print(imgList.toString());
 
     return (image.data
@@ -172,6 +153,7 @@ class _MakeStoryState extends State<MakeStory> {
       print("동화:" + fairytale);
       print("동화 해석:" + fairytaleKor);
       print("이미지 설명:" + imgStr);
+      
       // print("이미지 경로:" + imgPath);
 
       // 동화 객체 만들기
@@ -303,7 +285,27 @@ class _MakeStoryState extends State<MakeStory> {
                               _current = index;
                               // });
                             }),
-                        items: imageSliders,
+                        items: imgList
+                            .map((item) => Container(
+                          margin: const EdgeInsets.all(5.0),
+                          child: ClipRRect(
+                              borderRadius: const BorderRadius.all(Radius.circular(5.0)),
+                              child: Stack(
+                                children: <Widget>[
+                                  Image.network(item, fit: BoxFit.cover, width: 1000.0),
+                                  Positioned(
+                                    bottom: 0.0,
+                                    left: 0.0,
+                                    right: 0.0,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 20.0),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ))
+                            .toList(),
                       ),
 
                       SizedBox(

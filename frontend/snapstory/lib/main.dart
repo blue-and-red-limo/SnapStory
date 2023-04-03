@@ -14,28 +14,26 @@ import 'package:flutter/material.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
-    SafeArea(
-      child: MaterialApp(
-        // Remove the debug banner
-        debugShowCheckedModeBanner: false,
-        title: 'SNAP STORY',
-        theme: ThemeData(
-          fontFamily: 'ONE Mobile POP',
-          primarySwatch:
-              ColorService.createMaterialColor(const Color(0xFFFFB628)),
-        ),
-        home: const HomePage(),
-        routes: {
-          loginRoute: (context) => const LoginView(),
-          registerRoute: (context) => const RegisterView(),
-          mainRoute: (context) => const MainView(selectedPage: 0),
-          verifyEmailRoute: (context) => const VerifyEmailView(),
-          iOSRoute: (context) => const ARViewIOS(),
-          androidRoute: (context) => const ARViewAndroid(),
-          homeRoute: (context) => const Home(),
-          drawingTaleListRoute: (context) => const DrawingTaleList(),
-        },
+    MaterialApp(
+      // Remove the debug banner
+      debugShowCheckedModeBanner: false,
+      title: 'SNAP STORY',
+      theme: ThemeData(
+        fontFamily: 'ONE Mobile POP',
+        primarySwatch:
+            ColorService.createMaterialColor(const Color(0xFFFFB628)),
       ),
+      home: const HomePage(),
+      routes: {
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        mainRoute: (context) => const MainView(selectedPage: 0),
+        verifyEmailRoute: (context) => const VerifyEmailView(),
+        iOSRoute: (context) => const ARViewIOS(),
+        androidRoute: (context) => const ARViewAndroid(),
+        homeRoute: (context) => const Home(),
+        drawingTaleListRoute: (context) => const DrawingTaleList(),
+      },
     ),
   );
 }
