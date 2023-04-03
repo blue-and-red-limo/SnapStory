@@ -1,6 +1,5 @@
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
-import 'package:snapstory/services/crud/user_service.dart';
 import 'package:snapstory/views/home/find_word_view_android.dart';
 import 'package:snapstory/views/home/find_word_view_ios.dart';
 import 'package:snapstory/views/home/home_view.dart';
@@ -11,31 +10,32 @@ import 'package:snapstory/views/verify_email_view.dart';
 import 'package:snapstory/views/drawing_quiz/drawing_tale_list.dart';
 import 'package:flutter/material.dart';
 
-import 'views/onboarding.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
-    MaterialApp(
-      // Remove the debug banner
-      debugShowCheckedModeBanner: false,
-      title: 'SNAP STORY',
-      theme: ThemeData(
-        fontFamily: 'ONE Mobile POP',
-        primarySwatch:
-            ColorService.createMaterialColor(const Color(0xFFFFB628)),
+    SafeArea(
+      child: MaterialApp(
+        // Remove the debug banner
+        debugShowCheckedModeBanner: false,
+        title: 'SNAP STORY',
+        theme: ThemeData(
+          fontFamily: 'ONE Mobile POP',
+          primarySwatch:
+              ColorService.createMaterialColor(const Color(0xFFFFB628)),
+        ),
+        home: const HomePage(),
+        routes: {
+          loginRoute: (context) => const LoginView(),
+          registerRoute: (context) => const RegisterView(),
+          mainRoute: (context) => const MainView(selectedPage: 0),
+          verifyEmailRoute: (context) => const VerifyEmailView(),
+          iOSRoute: (context) => const ARViewIOS(),
+          androidRoute: (context) => const ARViewAndroid(),
+          homeRoute: (context) => const Home(),
+          drawingTaleListRoute: (context) => const DrawingTaleList(),
+        },
       ),
-      home: const HomePage(),
-      routes: {
-        loginRoute: (context) => const LoginView(),
-        registerRoute: (context) => const RegisterView(),
-        mainRoute: (context) => const MainView(selectedPage: 0),
-        verifyEmailRoute: (context) => const VerifyEmailView(),
-        iOSRoute: (context) => const ARViewIOS(),
-        androidRoute: (context) => const ARViewAndroid(),
-        homeRoute: (context) => const Home(),
-        drawingTaleListRoute: (context) => const DrawingTaleList(),
-      },
     ),
   );
 }
