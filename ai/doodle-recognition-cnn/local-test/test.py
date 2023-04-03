@@ -36,14 +36,14 @@ data=[[[367, 363, 351, 341, 335, 329, 322, 321, 317, 313, 307, 305, 303, 300, 29
 # show_image(drawing_strokes_test,512,512)
 print("==========================================================================================")
 print("len(drawing_strokes_test)",len(data))
-# show_image(apple,512,512)
+show_image(data,512,512)
 
 # https://github.com/googlecreativelab/quickdraw-dataset#projects-using-the-dataset의 데이터 simplify 과정 진행.
 # 1. Align the drawing to the top-left corner, to have minimum values of 0.
 aligned_strokes = align_top_left(data)
 print("==========================================================================================")
 print("len(aligned_strokes)",len(aligned_strokes))
-# show_image(aligned_strokes,512,512)
+show_image(aligned_strokes,512,512)
 
 
 # 2. Uniformly scale the drawing, to have a maximum value of 255.
@@ -51,13 +51,13 @@ scaled_data = scale(aligned_strokes)
 # print(scaled_data)
 print("==========================================================================================")
 print("len(scaled_data)",len(scaled_data))
-# show_image(scaled_data,256,256)
+show_image(scaled_data,256,256)
 
 # 3. Resample all strokes with a 1 pixel spacing.
 resampled_data = [resample(stroke) for stroke in scaled_data]
 print("==========================================================================================")
 print("len(resampled_data)",len(resampled_data))
-# show_image(resampled_data,256,256)
+show_image(resampled_data,256,256)
 
 # 4. Simplify all strokes using the Ramer–Douglas–Peucker algorithm with an epsilon value of 2.0.
 rdp_simplified_data= rdp_simplify(resampled_data)
@@ -65,12 +65,12 @@ print("=========================================================================
 print("len(rdp_simplified_data)",len(rdp_simplified_data))
 # print("len(rdp_simplified_data)[0][0]",len(rdp_simplified_data[0][0]))
 # print("len(rdp_simplified_data)[1]",len(rdp_simplified_data[1]))
-# show_image(rdp_simplified_data,256,256)
+show_image(rdp_simplified_data,256,256)
 
 # 5. simplified image to numpy bitmaps format
 numpy_bitmaps_data = vector_to_raster([rdp_simplified_data])[0]
 print("numpy_bitmaps_data.shape",numpy_bitmaps_data.shape)
-# show_image_28_28(numpy_bitmaps_data)
+show_image_28_28(numpy_bitmaps_data)
 
 # 6. Reshape and normalize
 # float 타입으로 바꾸는 이유는 continuous data가 필요하기 때문에.

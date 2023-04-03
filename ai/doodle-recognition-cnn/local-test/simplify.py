@@ -22,43 +22,84 @@ def scale(data):
     
     return data
 
-def resample(stroke, spacing=1):
-    # Convert stroke to a list of (x, y) tuples
-    points = [(stroke[0][i], stroke[1][i]) for i in range(len(stroke[0]))]
+import numpy as np
+
+def resample(stroke):
+    # Check if the stroke is valid
+    if len(stroke) < 2:
+        return stroke[0]
+
+    # Convert the stroke to a numpy array
+    stroke = np.array(stroke)
 
     # Calculate the length of the stroke
-    stroke_len = 0
-    for i in range(len(points) - 1):
-        stroke_len += ((points[i + 1][0] - points[i][0]) ** 2 + (points[i + 1][1] - points[i][1]) ** 2) ** 0.5
+    stroke_length = np.sum(np.sqrt(np.sum(np.diff(stroke, axis=1) ** 2, axis=0)))
 
-    # Calculate the number of points to sample
-    num_points = int(round(stroke_len / spacing))
+    # Calculate the number of points needed to resample the stroke at 1 pixel spacing
+    num_points = int(np.round(stroke_length))
 
-    # Sample the stroke
-    resampled_points = []
-    for i in range(num_points):
-        # Calculate the position of the current point along the stroke
-        pos = float(i) / (num_points - 1) * stroke_len
+    if num_points == 0:
+        return stroke[0]
 
-        # Find the two points that bracket the current position
-        j = 0
-        while j < len(points) - 2 and pos > ((points[j + 1][0] - points[j][0]) ** 2 + (points[j + 1][1] - points[j][1]) ** 2) ** 0.5:
-            pos -= ((points[j + 1][0] - points[j][0]) ** 2 + (points[j + 1][1] - points[j][1]) ** 2) ** 0.5
-            j += 1
+    # Resample the stroke using linear interpolation
+    t = np.linspace(0, 1, stroke.shape[1])
+    resampled_t = np.linspace(0, 1, num_points)
 
-        # Interpolate the position of the current point
-        x = points[j][0] + pos / ((points[j + 1][0] - points[j][0]) ** 2 + (points[j + 1][1] - points[j][1]) ** 2) ** 0.5 * (points[j + 1][0] - points[j][0])
-        y = points[j][1] + pos / ((points[j + 1][0] - points[j][0]) ** 2 + (points[j + 1][1] - points[j][1]) ** 2) ** 0.5 * (points[j + 1][1] - points[j][1])
+    if len(resampled_t) == 0:
+        return stroke[0]
 
-        resampled_points.append((x, y))
+    resampled_stroke = np.zeros((2, num_points))
 
-    # Convert resampled points back to original format
-    resampled_stroke = [
-        [resampled_points[i][0] for i in range(num_points)],
-        [resampled_points[i][1] for i in range(num_points)]
-    ]
+    for i in range(2):
+        resampled_stroke[i, :] = np.interp(resampled_t, t, stroke[i, :])
 
-    return resampled_stroke
+    # Round the resampled stroke coordinates to the nearest integer
+    resampled_stroke = np.round(resampled_stroke).astype(int)
+
+    # Clip the resampled stroke coordinates to the range [0, 255]
+    resampled_stroke = np.clip(resampled_stroke, 0, 255)
+
+    return resampled_stroke.tolist()
+
+
+
+# def resample(stroke, spacing=1):
+#     # Convert stroke to a list of (x, y) tuples
+#     points = [(stroke[0][i], stroke[1][i]) for i in range(len(stroke[0]))]
+
+#     # Calculate the length of the stroke
+#     stroke_len = 0
+#     for i in range(len(points) - 1):
+#         stroke_len += ((points[i + 1][0] - points[i][0]) ** 2 + (points[i + 1][1] - points[i][1]) ** 2) ** 0.5
+
+#     # Calculate the number of points to sample
+#     num_points = int(round(stroke_len / spacing))
+
+#     # Sample the stroke
+#     resampled_points = []
+#     for i in range(num_points):
+#         # Calculate the position of the current point along the stroke
+#         pos = float(i) / (num_points - 1) * stroke_len
+
+#         # Find the two points that bracket the current position
+#         j = 0
+#         while j < len(points) - 2 and pos > ((points[j + 1][0] - points[j][0]) ** 2 + (points[j + 1][1] - points[j][1]) ** 2) ** 0.5:
+#             pos -= ((points[j + 1][0] - points[j][0]) ** 2 + (points[j + 1][1] - points[j][1]) ** 2) ** 0.5
+#             j += 1
+
+#         # Interpolate the position of the current point
+#         x = points[j][0] + pos / ((points[j + 1][0] - points[j][0]) ** 2 + (points[j + 1][1] - points[j][1]) ** 2) ** 0.5 * (points[j + 1][0] - points[j][0])
+#         y = points[j][1] + pos / ((points[j + 1][0] - points[j][0]) ** 2 + (points[j + 1][1] - points[j][1]) ** 2) ** 0.5 * (points[j + 1][1] - points[j][1])
+
+#         resampled_points.append((x, y))
+
+#     # Convert resampled points back to original format
+#     resampled_stroke = [
+#         [resampled_points[i][0] for i in range(num_points)],
+#         [resampled_points[i][1] for i in range(num_points)]
+#     ]
+
+#     return resampled_stroke
 
 def rdp_simplify(strokes):
     simplified_data = []
