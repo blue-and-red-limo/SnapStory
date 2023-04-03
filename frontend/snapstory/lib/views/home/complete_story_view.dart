@@ -88,6 +88,12 @@ class _CompleteStoryState extends State<CompleteStory> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    flutterTts.stop();
+    super.dispose();
+  }
+
   // 검색 모델 설치 여부 확인
   isModelInstalled() async {
     bool isDownloaded = await TranslationModelManager.check(KOREAN);
@@ -257,8 +263,8 @@ class _CompleteStoryState extends State<CompleteStory> {
                         ft = snapshot.data! as FairyTale;
                         return Center(
                             child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          // crossAxisAlignment: CrossAxisAlignment.center,
+                          // mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Stack(
                               alignment: Alignment.center,
@@ -272,9 +278,9 @@ class _CompleteStoryState extends State<CompleteStory> {
                                         "assets/aiTale/box-aitale-title.png"),
                                     width: MediaQuery.of(context).size.width *
                                         0.85),
-                                Center(
+                                Align(
+                                    // alignment: AlignmentDirectional(0, ),
                                     child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
@@ -376,7 +382,7 @@ class _CompleteStoryState extends State<CompleteStory> {
                         fit: BoxFit.cover,
                         image: (isPlaying)
                             // 듣는 중이면 일시정지, 아니면 듣기
-                            ? AssetImage('assets/aiTale/btn-ai-word.png')
+                            ? AssetImage('assets/aiTale/btn-aitale-stop.png')
                             : AssetImage('assets/aiTale/btn-aitale-sound.png'),
                       ),
                     ),

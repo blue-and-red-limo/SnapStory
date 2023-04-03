@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +39,8 @@ class _DrawingViewState extends State<DrawingView> {
     "assets/empty.png",
   ];
   List title = ['신데렐라', '백설공주', '잠자는 숲속의 공주', '라푼젤', '미녀와 야수'];
+  double fontS = 10;
+
   // 캔버스에 그림 그리기 위해 담는 리스트
   List<List<Offset>> _points = [];
   // AI쪽에 보낼 정보를 담는 리스트
@@ -64,6 +65,8 @@ class _DrawingViewState extends State<DrawingView> {
 
   getInfo() async {
     id = widget.id;
+    fontS = (30 - title[id - 1].length) as double;
+    print(fontS);
     token = await FirebaseAuth.instance.currentUser?.getIdToken();
     try {
       http.Response response = await http.get(
@@ -119,7 +122,7 @@ class _DrawingViewState extends State<DrawingView> {
     await check();
     print(answer);
 
-    // 정답인지 확인
+    // 정답인지 확인, 답이 해당 동화 단어리스트 안에 있으면 정답
     if (_words[answer].runtimeType == int) {
       _correct = true;
       _controllerTopCenter.play();
@@ -133,6 +136,7 @@ class _DrawingViewState extends State<DrawingView> {
                 },
                 body: jsonEncode(<String, int>{"quizTaleItemListId": itemId}));
         var jsonResponse = jsonDecode(response.body);
+        print(jsonResponse);
 
         // 컴플리트
         isComplete = jsonResponse['result']['complete'];
@@ -152,10 +156,14 @@ class _DrawingViewState extends State<DrawingView> {
           Uri.parse('https://j8a401.p.ssafy.io/recognize/doodles'),
           headers: {'Content-Type': "application/json"},
           body: jsonEncode(<String, List<List<List<int>>>>{"data": path}));
+      // print(response);
       var jsonResponse = jsonDecode(response.body);
 
+      // 정확도 0.7 이상이면 정답으로 인정
       if (jsonResponse['probability'] >= 0.7) {
         answer = jsonResponse['prediction'];
+      } else {
+        answer = 'wrong';
       }
     } catch (e) {
       print('$e 이미지 확인 에러');
@@ -200,70 +208,73 @@ class _DrawingViewState extends State<DrawingView> {
                           ],
                           color: Colors.white,
                         ),
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // 정답일 경우 정답입니다, 아닐 경우 오답입니다
-                              Text(
-                                (_correct) ? "정답입니다!" : "오답입니다",
-                                style: TextStyle(
-                                    fontFamily: 'ONE Mobile POP',
-                                    color: Color(0xffffb628),
-                                    fontSize: 35,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              (_correct)
-                                  ? FittedBox(
-                                      fit: BoxFit.contain,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 30),
-                                        child: Text(
-                                          answer,
-                                          style: const TextStyle(
-                                            fontFamily: 'ONE Mobile POP',
-                                            color: Colors.black,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // 정답일 경우 정답입니다, 아닐 경우 오답입니다
+                                Text(
+                                  (_correct) ? "정답입니다!" : "오답입니다",
+                                  style: const TextStyle(
+                                      fontFamily: 'ONE Mobile POP',
+                                      color: Color(0xffffb628),
+                                      fontSize: 35,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                (_correct)
+                                    ? FittedBox(
+                                        fit: BoxFit.contain,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 30),
+                                          child: Text(
+                                            answer,
+                                            style: const TextStyle(
+                                              fontFamily: 'ONE Mobile POP',
+                                              color: Colors.black,
+                                            ),
                                           ),
                                         ),
+                                      )
+                                    : Image.asset(
+                                        'assets/snappy_crying.png',
+                                        // height: 180,
                                       ),
-                                    )
-                                  : Image.asset(
-                                      'assets/snappy_crying.png',
-                                      // height: 180,
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    fixedSize: Size.fromHeight(
+                                        MediaQuery.of(context).size.height *
+                                            0.06),
+                                    backgroundColor: Color(0xffffb628),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(13),
                                     ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  fixedSize: Size.fromHeight(
-                                      MediaQuery.of(context).size.height *
-                                          0.06),
-                                  backgroundColor: Color(0xffffb628),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(13),
+                                  ),
+                                  onPressed: () {
+                                    _confirm();
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        (_correct) ? "확인  " : "다시하기  ",
+                                        textAlign: TextAlign.center,
+                                        style: const TextStyle(
+                                            color: Colors.white, fontSize: 24),
+                                      ),
+                                      Icon(
+                                        (_correct)
+                                            ? Icons.check_rounded
+                                            : Icons.refresh_rounded,
+                                        color: Colors.white,
+                                      )
+                                    ],
                                   ),
                                 ),
-                                onPressed: () {
-                                  _confirm();
-                                },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      (_correct) ? "확인  " : "다시하기  ",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 24),
-                                    ),
-                                    Icon(
-                                      (_correct)
-                                          ? Icons.check_rounded
-                                          : Icons.refresh_rounded,
-                                      color: Colors.white,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ]))),
+                              ]),
+                        ))),
 
                 // confetti
                 Align(
@@ -387,7 +398,7 @@ class _DrawingViewState extends State<DrawingView> {
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/main/bg-main2.png'),
+                  image: AssetImage('assets/main/bg-main2_2.png'),
                 ),
               ),
               child: Column(
@@ -407,7 +418,7 @@ class _DrawingViewState extends State<DrawingView> {
                         OutlinedText(
                             text: Text(title[id - 1],
                                 style: const TextStyle(
-                                    color: Colors.white, fontSize: 40)),
+                                    color: Colors.white, fontSize: 20)),
                             strokes: [
                               OutlinedTextStroke(
                                   color: const Color(0xff198100), width: 10),
@@ -550,7 +561,7 @@ class _DrawingViewState extends State<DrawingView> {
 
                   // 클리어 버튼 + 그림 그리는 부분
                   Container(
-                      height: MediaQuery.of(context).size.height * 0.3,
+                      height: MediaQuery.of(context).size.height * 0.33,
                       width: MediaQuery.of(context).size.width * 0.9,
                       decoration: const BoxDecoration(
                         image: DecorationImage(
@@ -565,7 +576,7 @@ class _DrawingViewState extends State<DrawingView> {
                           alignment: Alignment.center,
                           margin: EdgeInsets.fromLTRB(
                               MediaQuery.of(context).size.width * 0.05,
-                              MediaQuery.of(context).size.height * 0.05,
+                              MediaQuery.of(context).size.height * 0.08,
                               MediaQuery.of(context).size.width * 0.05,
                               MediaQuery.of(context).size.height * 0.01),
                           child: GestureDetector(
@@ -637,7 +648,7 @@ class _DrawingViewState extends State<DrawingView> {
               alignment: Alignment.bottomCenter,
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.1,
+                height: MediaQuery.of(context).size.height * 0.08,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(32),
@@ -651,9 +662,9 @@ class _DrawingViewState extends State<DrawingView> {
             ),
             Positioned(
               width: MediaQuery.of(context).size.width,
-              bottom: MediaQuery.of(context).size.height * 0.05,
+              bottom: MediaQuery.of(context).size.height * 0.02,
               child: Container(
-                height: MediaQuery.of(context).size.width * 0.2,
+                height: MediaQuery.of(context).size.width * 0.25,
                 decoration: const BoxDecoration(
                     shape: BoxShape.circle, color: Colors.white),
                 // 정답 확인 버튼

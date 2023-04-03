@@ -18,13 +18,13 @@ class DrawingTaleListState extends State<DrawingTaleList> {
         children: [
           Container(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.2,
+                bottom: MediaQuery.of(context).size.height * 0.15,
                 top: MediaQuery.of(context).size.width * 0.4),
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage('assets/main/bg-main2.png'),
+                image: AssetImage('assets/main/bg-main2_2.png'),
               ),
             ),
             child: ListView(
@@ -137,7 +137,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
             alignment: Alignment.bottomCenter,
             child: Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.1,
+              height: MediaQuery.of(context).size.height * 0.08,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(32),
