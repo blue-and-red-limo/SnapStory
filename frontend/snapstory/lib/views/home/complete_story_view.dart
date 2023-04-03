@@ -410,8 +410,9 @@ class _CompleteStoryState extends State<CompleteStory> {
                 GestureDetector(
                   onTap: () => {
                     flutterTts.stop(),
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const MainView(selectedPage: 1)))
+                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                        builder: (context) => const MainView(selectedPage: 1)),(route) => false)
+                  // Navigator.of(context).pop()
                   },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.3,

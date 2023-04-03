@@ -112,9 +112,10 @@ class _QuizTaleViewState extends State<QuizTaleView> {
                             shape: BoxShape.circle, color: Colors.white),
                         child: IconButton(
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    const MainView(selectedPage: 1)));
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         const MainView(selectedPage: 1)));
+                            Navigator.of(context).pop();
                           },
                           icon: Icon(
                             Icons.exit_to_app,
