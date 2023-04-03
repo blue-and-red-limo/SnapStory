@@ -68,7 +68,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
 
   late bool exBtnTap = false;
   late bool exContainerTap = false;
-
+  late bool isInAccurate = false;
 
   void showDialog() {
     setState(() {
@@ -187,37 +187,54 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               onTap: () => {
                 exContainerTap = !exContainerTap,
                 print(exContainerTap),
-                setState(() {})
+                setState(() {}),
+                if (!exContainerTap)
+                  {
+                    makeSound(text: wordMap['wordExampleEng'].toString()),
+                  }
               },
-
               child: Positioned.fill(
                   // top: MediaQuery.of(context).size.height * 0.3,
                   child: Container(
-                    margin: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.height * 0.23, 0, 0),
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(20))),
-                        // decoration: const BoxDecoration(
-                        //   borderRadius: BorderRadius.only(
-                        //     topLeft: Radius.circular(23),
-                        //     topRight: Radius.circular(23),
-                        //   ),
-                        // ),
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        // color: Colors.white,
-                        child: Padding(
-                          padding: EdgeInsets.all(15),
-                          child: Center(
-                            child: exContainerTap ? Text(wordMap['wordExampleKor'], style: TextStyle(fontSize: 20),) :Text(wordMap['wordExampleEng'], style: TextStyle(fontSize: 20),),
-                          ),
-                        ),
+                margin: EdgeInsets.fromLTRB(
+                    0, MediaQuery.of(context).size.height * 0.23, 0, 0),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 5,
+                        color: Colors.amber,
+                      ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(20)),
+                    ),
+                    // decoration: const BoxDecoration(
+                    //   borderRadius: BorderRadius.only(
+                    //     topLeft: Radius.circular(23),
+                    //     topRight: Radius.circular(23),
+                    //   ),
+                    // ),
+                    height: MediaQuery.of(context).size.height * 0.1,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    // color: Colors.white,
+                    child: Padding(
+                      padding: EdgeInsets.all(15),
+                      child: Center(
+                        child: exContainerTap
+                            ? Text(
+                                wordMap['wordExampleKor'],
+                                style: TextStyle(fontSize: 20),
+                              )
+                            : Text(
+                                wordMap['wordExampleEng'],
+                                style: TextStyle(fontSize: 20),
+                              ),
                       ),
                     ),
-                  )),
+                  ),
+                ),
+              )),
             ),
           if (checked && !isLoading)
             Positioned(
@@ -234,7 +251,6 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                       GestureDetector(
                         onTap: () async => {
                           await makeSound(text: wordMap['word']),
-                          print(wordMap['word']),
                         },
                         child: Image.asset(
                           "assets/aiTale/btn-ai-word.png",
@@ -243,12 +259,15 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                       ),
                       GestureDetector(
                           onTap: () => {
-                                makeSound(
-                                    text: wordMap['wordExampleEng']
-                                        .toString()),
+                                print("exContainerTap 상황 $exContainerTap"),
+                                if (!exContainerTap && !exBtnTap)
+                                  {
+                                    makeSound(
+                                        text: wordMap['wordExampleEng']
+                                            .toString()),
+                                  },
                                 exBtnTap = !exBtnTap,
                                 setState(() {}),
-                                print(exBtnTap),
                               },
                           child: Image.asset(
                             "assets/aiTale/btn-ai-example.png",
@@ -288,6 +307,21 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                 ),
               )),
           if (isLoading) const Center(child: LoadingDialog()),
+          if (isInAccurate)
+            Center(
+                child: AlertDialog(
+              title: const Text("찍은 이미지가 정확하지 않습니다."),
+              content: const Text("다시 찍어주세요!"),
+              actions: [
+                TextButton(
+                    onPressed: () => {
+                          setState(() {
+                            isInAccurate = false;
+                          }),
+                        },
+                    child: Text("확인"))
+              ],
+            ))
         ],
       ),
       floatingActionButton: Visibility(
@@ -380,8 +414,11 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     print('wordname: $wordName');
     word = wordName;
 
-    if(wordName == "CANNOT GET WORD"){
-      print("errrrrrrorooorrrrr!!!!!!!!!!!!!!!!!!!!!!");
+    if (wordName == "CANNOT GET WORD") {
+      // 정확도가 낮아요. 다시 찍어주세요.
+      setState(() {
+        isInAccurate = true;
+      });
     } else {
       var map = await _araiService.generateText(
           obj: wordName,
@@ -400,7 +437,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
           "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}.glb";
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         nodeUrl =
-        "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}_ios.glb";
+            "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}_ios.glb";
       }
       var newNode = ARNode(
         name: wordName,
@@ -413,12 +450,10 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
       print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee" +
           didAddWebNode.toString());
       webObjectNode = (didAddWebNode!) ? newNode : null;
-
     }
-      setState(() {
-        isLoading = false;
-      });
-
+    setState(() {
+      isLoading = false;
+    });
   }
 
   void onTapHandler(String name) {
