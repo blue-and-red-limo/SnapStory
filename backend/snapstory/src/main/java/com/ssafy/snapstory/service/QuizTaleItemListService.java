@@ -48,6 +48,8 @@ public class QuizTaleItemListService {
             user.getUserId(),
             // 퀴즈 동화 정보
             quizTale.getQuizTaleId(),
+            // 유튜브 링크
+            quizTale.getVideo(),
             // 성공 여부가 포함된 퀴즈 동화 아이템 리스트
             drawQuizTaleItems
         );
