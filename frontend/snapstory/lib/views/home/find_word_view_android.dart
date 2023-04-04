@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:ar_flutter_plugin/datatypes/config_planedetection.dart';
@@ -8,11 +9,13 @@ import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
 import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
 import 'package:ar_flutter_plugin/models/ar_anchor.dart';
+import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:ar_flutter_plugin/widgets/ar_view.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
@@ -20,10 +23,12 @@ import 'package:native_screenshot/native_screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:snapstory/utilities/loading_dialog.dart';
+import 'package:snapstory/utilities/loading_dialog_DetectThings.dart';
+import 'package:snapstory/utilities/loading_dialog_makingStory.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 import 'package:screenshot/screenshot.dart';
-
+import 'package:snapstory/views/home/make_story_view.dart';
 
 import '../../constants/routes.dart';
 import 'make_story_view.dart';
@@ -63,6 +68,10 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   late String word;
   late Map wordMap;
 
+  late bool exBtnTap = false;
+  late bool exContainerTap = false;
+  late bool isInAccurate = false;
+
   void showDialog() {
     setState(() {
       isLoading = true;
@@ -82,197 +91,266 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     flutterTts.setLanguage("en-US");
     flutterTts.setSpeechRate(0.5); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
-    flutterTts.setPitch(1); //pitc of sound
+    flutterTts.setPitch(1.0); //pitc of sound
+
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      flutterTts.setSharedInstance(true);
+    }
     super.initState();
   }
 
   Future<int> makeSound({required String text}) async {
+    print("make Sound ${text}");
     return await flutterTts.speak(text);
   }
+
   // Vector3(-0.01, -0.01, -0.1)
-  Vector3 addVecter(Vector3 vector3){
-    print('addVecter !!!!!!!');
-    Vector3 addVector = Vector3(-0.01, -0.01, -0.1);
+
+  Vector3 addVector(Vector3 vector3) {
+    print('addVector !!!!!!!');
+    Vector3 addVector = Vector3(0, -0.05, -0.2);
     vector3.add(addVector);
     return vector3;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      body: Stack(
-        children: [
-          Screenshot(
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Screenshot(
               controller: screenshotController,
-              child:
-          ARView(
-            onARViewCreated: onARViewCreated,
-            planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
-          ),
-      ),
-          if (!checked && !isLoading)
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.15,
-              left: MediaQuery.of(context).size.width * 0.1,
-              child: IgnorePointer(
-                ignoring: true,
-                child: DottedBorder(
-                  color: const Color.fromARGB(255, 255, 255, 255),
-                  //color of dotted/dash line
-                  borderType: BorderType.RRect,
-                  radius: const Radius.circular(30),
-                  strokeWidth: 4,
-                  //thickness of dash/dots
-                  dashPattern: const [10, 6],
-                  //dash patterns, 10 is dash width, 6 is space width
-                  child: Container(
-                      //inner container
-                      height: MediaQuery.of(context).size.height *
-                          0.6, //height of inner container
-                      width: MediaQuery.of(context).size.width *
-                          0.8, //width to 100% match to parent container.
-                      color: const Color.fromRGBO(
-                          0, 0, 0, 0) //background color of inner container
-                      ),
-                ),
+              child: ARView(
+                onARViewCreated: onARViewCreated,
+                planeDetectionConfig: PlaneDetectionConfig.none,
               ),
             ),
-          if (checked && !isLoading)
-            Positioned(
-              top: MediaQuery.of(context).size.height * 0.58,
-              left: MediaQuery.of(context).size.width * 0.1,
-              // width: MediaQuery.of(context).size.width * 0.15,
-
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () async => await makeSound(text: wordMap['word']),
+            if (!checked && !isLoading)
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.3,
+                left: MediaQuery.of(context).size.width * 0.1,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("화면에 물체를 맞춰주세요!",
+                        style: TextStyle(
+                            fontSize: MediaQuery.of(context).size.height * 0.03,
+                            color: Colors.white)),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    IgnorePointer(
+                      ignoring: true,
+                      child: DottedBorder(
+                        color: const Color.fromARGB(255, 255, 255, 255),
+                        //color of dotted/dash line
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(30),
+                        strokeWidth: 4,
+                        //thickness of dash/dots
+                        dashPattern: const [10, 6],
+                        //dash patterns, 10 is dash width, 6 is space width
                         child: Container(
-                            height: MediaQuery.of(context).size.height * 0.1,
-                            width: MediaQuery.of(context).size.width * 0.35,
-                            margin: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(23),
-                              border: Border.all(
-                                  width: 5, color: const Color(0xff1FD901)),
-                              color: const Color(0xffC7FCBE),
+                            //inner container
+                            height: MediaQuery.of(context).size.height *
+                                0.4, //height of inner container
+                            width: MediaQuery.of(context).size.width *
+                                0.8, //width to 100% match to parent container.
+                            color: const Color.fromRGBO(
+                                0, 0, 0, 0) //background color of inner container
                             ),
-                            child: const Center(
-                                child: Text('단어듣기',
-                                    style: TextStyle(fontSize: 20)))),
                       ),
-                      GestureDetector(
-                        onTap: () async => await makeSound(text: wordMap['wordExampleEng']),
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.35,
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(23),
-                            border: Border.all(
-                                width: 5, color: const Color(0xff00B2FF)),
-                            color: const Color(0xffB5FAFE),
-                          ),
-                          child: const Center(
-                              child:
-                                  Text('문장듣기', style: TextStyle(fontSize: 20))),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => makeSound(text: wordMap['wordExplanationEng'].toString()),
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.35,
-                          margin: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(23),
-                            border: Border.all(
-                                width: 5, color: const Color(0xffFF93AD)),
-                            color: const Color(0xffFFCBE7),
-                          ),
-                          child: const Center(
-                              child:
-                                  Text('설명듣기', style: TextStyle(fontSize: 20))),
-                        ),
-                      ),
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        width: MediaQuery.of(context).size.width * 0.35,
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(23),
-                          border: Border.all(
-                              width: 5, color: const Color(0xffFFCA10)),
-                          color: const Color(0xffFFF0BB),
-                        ),
-                        child: const Center(
-                            child:
-                                Text('동화만들기', style: TextStyle(fontSize: 20))),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.9,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(23),
-                  topRight: Radius.circular(23),
+                    ),
+                  ],
                 ),
-                color: Color(0xFFFFB628),
               ),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.1,
+            Positioned(
+              // 하단바
+              top: MediaQuery.of(context).size.height * 0.87,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(23),
+                    topRight: Radius.circular(23),
+                  ),
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/main/bg-bar.png'),
+                  ),
+                ),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.1,
+              ),
             ),
-          ),
-          Positioned(
-            top: MediaQuery.of(context).size.height * 0.05,
-            left: MediaQuery.of(context).size.width * 0.8,
-            child: IconButton(
-              alignment: Alignment.bottomRight,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(Icons.exit_to_app_outlined),
-            ),
-          ),
-          if(isLoading) const Center(child: LoadingDialog()),
+            if (exBtnTap && checked)
+              GestureDetector(
+                onTap: () => {
+                  exContainerTap = !exContainerTap,
+                  print(exContainerTap),
+                  setState(() {}),
+                  if (!exContainerTap)
+                    {
+                      makeSound(text: wordMap['wordExampleEng'].toString()),
+                    }
+                },
+                child: Positioned.fill(
+                    // top: MediaQuery.of(context).size.height * 0.3,
+                    child: Container(
+                  margin: EdgeInsets.fromLTRB(
+                      0, MediaQuery.of(context).size.height * 0.23, 0, 0),
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 5,
+                          color: Colors.amber,
+                        ),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      // decoration: const BoxDecoration(
+                      //   borderRadius: BorderRadius.only(
+                      //     topLeft: Radius.circular(23),
+                      //     topRight: Radius.circular(23),
+                      //   ),
+                      // ),
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      // color: Colors.white,
+                      child: Padding(
+                        padding: EdgeInsets.all(15),
+                        child: Center(
+                          child: exContainerTap
+                              ? Text(
+                                  wordMap['wordExampleKor'],
+                                  style: TextStyle(fontSize: 20),
+                                )
+                              : Text(
+                                  wordMap['wordExampleEng'],
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )),
+              ),
+            if (checked && !isLoading)
+              Positioned(
+                top: MediaQuery.of(context).size.height * 0.78,
+                left: MediaQuery.of(context).size.width * 0.05,
+                // width: MediaQuery.of(context).size.width * 0.15,
 
-    ],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () async => {
+                            await makeSound(text: wordMap['word']),
+                          },
+                          child: Image.asset(
+                            "assets/aiTale/btn-ai-word.png",
+                            width: MediaQuery.of(context).size.width * 0.3,
+                          ),
+                        ),
+                        GestureDetector(
+                            onTap: () => {
+                                  print("exContainerTap 상황 $exContainerTap"),
+                                  if (!exContainerTap && !exBtnTap)
+                                    {
+                                      makeSound(
+                                          text: wordMap['wordExampleEng']
+                                              .toString()),
+                                    },
+                                  exBtnTap = !exBtnTap,
+                                  setState(() {}),
+                                },
+                            child: Image.asset(
+                              "assets/aiTale/btn-ai-example.png",
+                              width: MediaQuery.of(context).size.width * 0.3,
+                            )),
+                        GestureDetector(
+                            onTap: () => {
+                                  Navigator.of(context)
+                                      .push(MaterialPageRoute(
+                                    builder: (context) => MakeStory(word: word),
+                                  )),
+                                },
+                            child: Image.asset(
+                              "assets/aiTale/btn-ai-story.png",
+                              width: MediaQuery.of(context).size.width * 0.3,
+                            )),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            Positioned(
+                top: MediaQuery.of(context).size.height * 0.05,
+                left: MediaQuery.of(context).size.width * 0.07,
+                child: Image(
+                  image: AssetImage("assets/main/btn-help.png"),
+                  width: MediaQuery.of(context).size.width * 0.25,
+                )),
+            Positioned(
+                top: MediaQuery.of(context).size.height * 0.05,
+                right: MediaQuery.of(context).size.width * 0.07,
+                child: GestureDetector(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Image(
+                    image: AssetImage("assets/main/btn-quit.png"),
+                    width: MediaQuery.of(context).size.width * 0.25,
+                  ),
+                )),
+            if (isLoading) const Center(child: LoadingDialogDT()),
+            if (isInAccurate)
+              Center(
+                  child: AlertDialog(
+
+                title: const Text("찍은 사진이 정확하지 않습니다."),
+                content: const Text("다시 찍어주세요!"),
+                actions: [
+                  TextButton(
+                      onPressed: () => {
+                            setState(() {
+                              isInAccurate = false;
+                            }),
+                          },
+                      child: Text("확인"))
+                ],
+              ))
+          ],
+        ),
       ),
-      floatingActionButton: Container(
-        height: MediaQuery.of(context).size.height * 0.09,
-        // width:  MediaQuery.of(context).size.height * 0.1,
-        margin: EdgeInsets.fromLTRB(
-            0.0, 0.0, 0.0, MediaQuery.of(context).size.height * 0.03),
-        child: FittedBox(
-          child: FloatingActionButton(
-            elevation: 4,
-            backgroundColor: const Color(0xFFFFFFFF),
-            splashColor: const Color(0xffFFF0BB),
+      floatingActionButton: Visibility(
+        visible: !checked,
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.09,
+          // width:  MediaQuery.of(context).size.height * 0.1,
+          margin: EdgeInsets.fromLTRB(
+              0.0, 0.0, 0.0, MediaQuery.of(context).size.height * 0.03),
+          child: FittedBox(
+            child: FloatingActionButton(
+              elevation: 4,
+              backgroundColor: const Color(0xFFFFFFFF),
+              splashColor: const Color(0xffFFF0BB),
 
-            child: const Icon(Icons.camera, color: Color(0xFFFFB628), size: 37),
-            // Provide an onPressed callback.
-            onPressed: () async {
-              // 초기화
-              setState(() {
-                isLoading = true;
-              });
-              arObjectManager.onInitialize();
-              // arAnchorManager.initGoogleCloudAnchorMode();
-              onWebObjectAtButtonPressed();
-            },
+              child:
+                  const Icon(Icons.camera, color: Color(0xFFFFB628), size: 37),
+              // Provide an onPressed callback.
+              onPressed: () async {
+                arObjectManager.onInitialize();
+                // arAnchorManager.initGoogleCloudAnchorMode();
+                onWebObjectAtButtonPressed();
+              },
+            ),
           ),
         ),
       ),
@@ -293,84 +371,129 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
         showFeaturePoints: false,
         showPlanes: false,
         showWorldOrigin: false,
-        handleTaps: false,
-        showAnimatedGuide: false,
-        handleRotation: true);
+        handleTaps: true,
+        showAnimatedGuide: false);
     this.arObjectManager.onInitialize();
-    this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      this.arSessionManager.onPlaneOrPointTap = onPlaneOrPointTapped;
+      this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
+    } else {
+      this.arObjectManager.onNodeTap = (name) => onTapHandler(name[0]);
+    }
     this.arLocationManager.startLocationUpdates();
   }
-  // @override
-  // void didUpdateWidget(Widget oldWidget) {
-  //   print("===========================================================");
-  //   // this.arObjectManager.onInitialize();
-  //   onARViewCreated(
-  //        arSessionManager,
-  //        arObjectManager,
-  //        arAnchorManager,
-  //        arLocationManager);
-  // }
+
+  // 촬영 버튼 누르면 호출되는 함수
   Future<void> onWebObjectAtButtonPressed() async {
-    final directory = (await getApplicationDocumentsDirectory ()).path; //from path_provide package
-    String fileName = '${DateTime
-        .now()
-        .microsecondsSinceEpoch}.png';
-
-    await screenshotController.captureAndSave(
-        '$directory', //set path where screenshot will be saved
-        fileName: fileName
-    );
-    // ai 서버에서 정보 받아오기
-    String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
-    wordName = wordName.substring(1, wordName.length - 1);
-    print('wordname: $wordName');
-
-    var map = await _araiService.generateText(obj: wordName, token: await FirebaseAuth.instance.currentUser!.getIdToken());
-    setState(() {
-      wordMap = map;
-    });
-    print(wordMap.toString());
-
 
     if (webObjectNode != null) {
       arObjectManager.removeNode(webObjectNode!);
       webObjectNode = null;
     }
 
-    // var newAnchor = ARPlaneAnchor(transformation: );
 
-    // final cameraPosition = arLocationManager.currentLocation;
-    // final forward = arLocationManager.currentLocation;
-    // print("cfcfcfcfcfcffcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfcfc:" + cameraPosition.toString() + forward.toString());
-    // final nodePosition = cameraPosition + (forward * -1.0);
+    Matrix4 pos =
+        await arSessionManager.getCameraPose().then((value) => value!);
 
-    var newNode = ARNode (
-      name: wordName,
-      type: NodeType.webGLB,
-      uri:
-          "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/$wordName.glb",
-      scale: Vector3(0.1, 0.1, 0.5),
-      // position: Vector3(-0.01, -0.01, -0.1),
-      position: await arSessionManager.getCameraPose().then((value) => addVecter(value!.getTranslation())),
-      // position: await arSessionManager.getCameraPose().then((value) => (value?.getTranslation())),
-    );
-    Matrix3 matrix3=await arSessionManager.getCameraPose().then((value) => value!.getRotation());
-    // newNode.rotation(matrix3);
-    bool? didAddWebNode = await arObjectManager.addNode(newNode);
-    print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee"+didAddWebNode.toString());
-    webObjectNode = (didAddWebNode!) ? newNode : null;
+    String wordName;
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+
+      setState(() {
+        isLoading = true;
+      });
+
+      final directory = (await getApplicationDocumentsDirectory())
+          .path; //from path_provide package
+      String fileName = '${DateTime.now().microsecondsSinceEpoch}.png';
+      print(directory + fileName);
+
+      await screenshotController
+          .capture(delay: const Duration(milliseconds: 10))
+          .then((image) async {
+        if (image != null) {
+          final imagePath = await File('$directory/$fileName').create();
+          await imagePath.writeAsBytes(image);
+        }
+      });
+
+
+      wordName = await _araiService.postPictureAndGetWord(
+          path: '$directory/$fileName'!);
+    } else {
+
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        setState(() {
+          isLoading = true;
+        });
+      });
+
+      String? path = await NativeScreenshot.takeScreenshot();
+      setState(() {
+        isLoading = true;
+      });
+      wordName = await _araiService.postPictureAndGetWord(path: path!);
+    }
+    // ai 서버에서 정보 받아오기
+    // String wordName = await _araiService.postPictureAndGetWord(path: '$directory/$fileName'!);
+    // wordName = wordName.substring(1, wordName.length - 1);
+    print('wordname: $wordName');
+    word = wordName;
+
+    if (wordName == "CANNOT GET WORD") {
+      // 정확도가 낮아요. 다시 찍어주세요.
+      setState(() {
+        isInAccurate = true;
+      });
+    } else {
+      var map = await _araiService.generateText(
+          obj: wordName,
+          token: await FirebaseAuth.instance.currentUser!.getIdToken());
+      setState(() {
+        wordMap = map;
+      });
+      print(wordMap.toString());
+
+      if (webObjectNode != null) {
+        arObjectManager.removeNode(webObjectNode!);
+        webObjectNode = null;
+      }
+
+      String nodeUrl =
+          "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}.glb";
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        nodeUrl =
+            "https://snapstory401.s3.ap-northeast-2.amazonaws.com/models/${wordName}_ios.glb";
+      }
+      var newNode = ARNode(
+        name: wordName,
+        type: NodeType.webGLB,
+        uri: nodeUrl,
+        scale: Vector3(0.1, 0.1, 0.5),
+        transformation: pos,
+      );
+      bool? didAddWebNode = await arObjectManager.addNode(newNode);
+      print("nnnnnnnnnnnnnnnnnnnnnnnoooooooooooooooddddddddddeeeeee" +
+          didAddWebNode.toString());
+      webObjectNode = (didAddWebNode!) ? newNode : null;
+    }
     setState(() {
       isLoading = false;
     });
   }
 
   void onTapHandler(String name) {
+    print("먀먀먀먀ㅑ먐갹먁ㅁ갸!!!!" + name);
     checked == true ? checked = false : checked = true;
     setState(() {});
   }
 
-
-
+  Future<void> onPlaneOrPointTapped(
+      List<ARHitTestResult> hitTestResults) async {
+    if (webObjectNode != null) {
+      onTapHandler(word);
+    }
+  }
 }
 
 class DisplayPictureScreen extends StatelessWidget {

@@ -50,23 +50,23 @@ class _MainViewState extends State<MainView> {
       const Color.fromRGBO(255, 182, 40, 1.0),
       labelStyle: const TextStyle(
         color: Colors.orange,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
     ),
     TabItem(
-      Icons.library_books,
+      Icons.menu_book,
       "나만의 도서관",
       const Color.fromRGBO(255, 182, 40, 1.0),
       labelStyle: const TextStyle(
         color: Colors.orange,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
     ),
     TabItem(
-      Icons.menu_book, "나만의 단어장", const Color.fromRGBO(255, 182, 40, 1.0),
+      Icons.spellcheck, "나만의 단어장", const Color.fromRGBO(255, 182, 40, 1.0),
       labelStyle: const TextStyle(
         color: Colors.orange,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
       // circleStrokeColor: Colors.black,
     ),
@@ -142,93 +142,122 @@ class _MainViewState extends State<MainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(
-          color: Colors.white,
-        ),
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-          bottom: Radius.circular(30),
-        )),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const OnBoardingPage()),
-              );
-            },
-            icon: const Icon(Icons.help_outline),
-          ),
-        ],
+    return Container(
+      decoration: BoxDecoration(
+        // borderRadius: BorderRadius.circular(23),
+        // color: const Color(0xffffdb1f),
+        image: DecorationImage(
+            fit: BoxFit.cover,
+            image: selectedPos != 0
+                ? const AssetImage('assets/main/bg-main3.png')
+                : const AssetImage('assets/main/bg-main.png') // 배경 이미지
+            ),
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              currentAccountPicture: const CircleAvatar(
-                backgroundColor: Colors.white,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          iconTheme: const IconThemeData(
+            color: Colors.white,
+          ),
+          centerTitle: true,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(30),bottomRight: Radius.circular(30)),
+              image: DecorationImage(
+                image: AssetImage('assets/main/bg-bar.png'),
+                fit: BoxFit.fitWidth,
               ),
-              accountName: Text('$userName 보호자님 안녕하세요.'),
-              accountEmail: Text(userEmail),
-              decoration: const BoxDecoration(
-                  color: Color.fromARGB(255, 255, 182, 40),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40.0),
-                    bottomRight: Radius.circular(40.0),
-                  )),
             ),
-            ListTile(
-              leading: Icon(
-                Icons.headphones,
-                color: Colors.grey[850],
-              ),
-              title: const Text('소리설정'),
-              onTap: () {
-                print('소리설정 is clicked');
+          ),
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(44),
+          )),
+          actions: [
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                      builder: (context) => const OnBoardingPage()),
+                );
               },
+              icon: const Icon(Icons.help_outline),
             ),
-            ListTile(
-              leading: Icon(
-                Icons.logout_rounded,
-                color: Colors.grey[850],
+          ],
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              UserAccountsDrawerHeader(
+                currentAccountPicture: const CircleAvatar(
+                  backgroundColor: Colors.white,
+                ),
+                accountName: Text('$userName 보호자님 안녕하세요.'),
+                accountEmail: Text(userEmail),
+                decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/main/bg-bar.png'),
+                        fit: BoxFit.fill),
+                    color: Color.fromARGB(255, 255, 182, 40),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(40.0),
+                      bottomRight: Radius.circular(40.0),
+                    )),
               ),
-              title: const Text('로그아웃/탈퇴'),
-              onTap: () async {
-                print('로그아웃/탈퇴 is clicked');
-                final shouldLogout = await showLogoutDialog(context);
-                if (shouldLogout) {
-                  await AuthService.firebase().logout();
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    loginRoute,
-                    (_) => false,
-                  );
-                } else {
-                  final shouldDelete = await showDeleteDialog(context);
-                  if (shouldDelete) {
+              ListTile(
+                leading: Icon(
+                  Icons.headphones,
+                  color: Colors.grey[850],
+                ),
+                title: const Text('소리설정'),
+                onTap: () {
+                  print('소리설정 is clicked');
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.logout_rounded,
+                  color: Colors.grey[850],
+                ),
+                title: const Text('로그아웃/탈퇴'),
+                onTap: () async {
+                  print('로그아웃/탈퇴 is clicked');
+                  final shouldLogout = await showLogoutDialog(context);
+                  if (shouldLogout) {
+                    await AuthService.firebase().logout();
                     Navigator.of(context).pushNamedAndRemoveUntil(
                       loginRoute,
                       (_) => false,
                     );
+                  } else {
+                    final shouldDelete = await showDeleteDialog(context);
+                    if (shouldDelete) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        loginRoute,
+                        (_) => false,
+                      );
+                    }
                   }
-                }
-              },
-            )
-          ],
-        ),
-      ),
-      body: Stack(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(bottom: bottomNavBarHeight),
-            child: bodyContainer(),
+                },
+              )
+            ],
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: bottomNav(),
-          )
-        ],
+        ),
+        body: SafeArea(
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: bottomNavBarHeight),
+                child: bodyContainer(),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: bottomNav(),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
