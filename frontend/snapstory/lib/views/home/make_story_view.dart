@@ -307,6 +307,18 @@ class _MakeStoryState extends State<MakeStory> {
                                             child: Stack(
                                               children: <Widget>[
                                                 Image.network(item,
+                                                    loadingBuilder: (context, child, loadingProgress) {
+                                                      if (loadingProgress == null) return child;
+
+                                                      return Center(child: Container(child: Center(child: CircularProgressIndicator()),height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          0.25, width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          0.25,));
+                                                      // You can use LinearProgressIndicator, CircularProgressIndicator, or a GIF instead
+                                                    },
                                                     fit: BoxFit.cover,
                                                     width: 1000.0),
                                                 Positioned(
