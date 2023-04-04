@@ -15,5 +15,6 @@ public class DrawQuizTaleItemList {
     private int userid;
     private int quizTaleId;
     private String video;
+    private String title;
     private List<DrawQuizTaleItem> drawQuizTaleItems;
 }
