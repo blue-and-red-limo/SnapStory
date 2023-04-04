@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:snapstory/constants/routes.dart';
-import 'package:snapstory/views/home/fairytale_quiz_view.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -9,41 +8,50 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         body: Center(
             child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
               onTap: () {
-                if (defaultTargetPlatform == TargetPlatform.iOS) {
-                  Navigator.of(context).pushNamed(iOSRoute);
-                } else if (defaultTargetPlatform == TargetPlatform.android) {
+                if (defaultTargetPlatform == TargetPlatform.iOS ||
+                    defaultTargetPlatform == TargetPlatform.android) {
                   Navigator.of(context).pushNamed(androidRoute);
                 }
               },
               child: Container(
-                  width: 277,
-                  height: 253,
-                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
+
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, MediaQuery.of(context).size.height * 0.03),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(23),
-                    color: const Color(0xffffdb1f),
+                    borderRadius: BorderRadius.circular(45),
+                    // color: const Color(0xffffdb1f),
+                    image: DecorationImage(
+                      fit: BoxFit.contain,
+                      image: AssetImage('assets/main/btn-main-ai.png'), // 배경 이미지
+                    ),
                   ),
-                  child: const Center(child: Text("주변 영단어 찾기"))),
+                  child: const Center(child: Text(""))
+              ),
             ),
             GestureDetector(
               onTap: () {
                 Navigator.of(context).pushNamed(drawingTaleListRoute);
               },
               child: Container(
-                  width: 277,
-                  height: 253,
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.3,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(23),
-                    color: const Color(0xff86EC62),
+                    borderRadius: BorderRadius.circular(45),
+                    // color: const Color(0xff86EC62),
+                    image: DecorationImage(
+                      fit: BoxFit.contain,
+                      image: AssetImage('assets/main/btn-main-quiz.png'), // 배경 이미지
+                    ),
                   ),
-                  child: const Center(child: Text("동화 퀴즈"))),
+                  child: const Center(child: Text(""))),
             ),
           ],
         )));
