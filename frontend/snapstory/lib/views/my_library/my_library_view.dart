@@ -88,7 +88,6 @@ class _MyLibraryState extends State<MyLibrary> {
             body: SingleChildScrollView(
               child: Column(
                 children: [
-                  // if (quizTaleList.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.0375,
@@ -183,12 +182,17 @@ class _MyLibraryState extends State<MyLibrary> {
                                               builder: (context) =>
                                                   QuizTaleView(e.first),
                                             )),
-                                        child: Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              right: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  0.4),
                                           child: Image.asset(
                                             'assets/library/btn-library-${e.first['quizTaleId']}.png',
                                             width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 0.35,
                                           ),
                                         ),
@@ -205,42 +209,127 @@ class _MyLibraryState extends State<MyLibrary> {
                       ),
                     ),
                   if (quizTaleList.isEmpty)
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height:
-                          MediaQuery.of(context).size.width / 1.521105336544556,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image:
-                              AssetImage('assets/library/box-library-bar.png'),
-                          fit: BoxFit.fill,
+                    Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width /
+                            1.521105336544556,
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                                'assets/library/box-library-bar.png'),
+                            fit: BoxFit.fill,
+                          ),
                         ),
-                      ),
-                      child: Center(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            GestureDetector(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const DrawingTaleList(),
-                                  )),
-                              child: Center(
-                                child: Image.asset(
-                                  'assets/snappy_crying.png',
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.35,
+                            Container(
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  colorFilter: ColorFilter.matrix(<double>[
+                                    0.2126, 0.7152, 0.0722, 0, 0,
+                                    0.2126, 0.7152, 0.0722, 0, 0,
+                                    0.2126, 0.7152, 0.0722, 0, 0,
+                                    0,      0,      0,      1, 0,
+                                  ]),
+                                  image: AssetImage(
+                                      'assets/library/box-library-aitale.png'),
+                                  // fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: GestureDetector(
+                                onTap: () => Navigator.of(context)
+                                    .push(MaterialPageRoute(
+                                  builder: (context) => const
+                                  DrawingTaleList(),
+                                )),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          top: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.05,
+                                          left:
+                                          MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.05,
+                                          right: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.05,
+                                          bottom: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.025),
+                                      // padding: EdgeInsets.all(
+                                      //     MediaQuery.of(context).size.width * 0.05),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                        BorderRadius.circular(23),
+                                        child: Image.asset(
+                                          'assets/snappy_crying.png',
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.25,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              0.25,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context)
+                                              .size
+                                              .height *
+                                              0.03, top: MediaQuery.of(context)
+                                          .size
+                                          .height *
+                                          0.01),
+                                      child: OutlinedText(
+                                        text: Text(
+                                          '아직 동화가 없어요',
+                                          style: TextStyle(
+                                              shadows: [
+                                                Shadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.3),
+                                                    offset:
+                                                    const Offset(2, 2),
+                                                    blurRadius: 11),
+                                              ],
+                                              color: Colors.white,
+                                              fontSize: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  0.04),
+                                        ),
+                                        strokes: [
+                                          OutlinedTextStroke(
+                                              color: Color(0xff1A8200),
+                                              width: 5),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ),
+                    ],
+                  ),
 
-                  // if (AITaleList.isNotEmpty)
                   Padding(
                     padding: EdgeInsets.only(
                         top: MediaQuery.of(context).size.height * 0.025,
@@ -543,131 +632,134 @@ class _MyLibraryState extends State<MyLibrary> {
                                     ),
                                   ),
                                 if (e.length == 1)
-                                  Container(
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/library/box-library-aitale.png'),
-                                        // fit: BoxFit.fill,
+                                  Padding(
+                                    padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.4),
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/library/box-library-aitale.png'),
+                                          // fit: BoxFit.fill,
+                                        ),
                                       ),
-                                    ),
-                                    child: GestureDetector(
-                                      onTap: () => Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (context) => CompleteStory(
-                                            id: e.first['aiTaleId']),
-                                      )),
-                                      onLongPress: () async {
-                                        final shouldDelete =
-                                            await showDeleteDialog(context);
-                                        if (shouldDelete) {
-                                          bool result =
-                                              await _araiService.deleteAITale(
-                                                  id: e.first['aiTaleId']
-                                                      as int,
-                                                  token: await FirebaseAuth
-                                                      .instance.currentUser!
-                                                      .getIdToken());
-                                          if (result) {
-                                            await getQuizTale();
+                                      child: GestureDetector(
+                                        onTap: () => Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) => CompleteStory(
+                                              id: e.first['aiTaleId']),
+                                        )),
+                                        onLongPress: () async {
+                                          final shouldDelete =
+                                              await showDeleteDialog(context);
+                                          if (shouldDelete) {
+                                            bool result =
+                                                await _araiService.deleteAITale(
+                                                    id: e.first['aiTaleId']
+                                                        as int,
+                                                    token: await FirebaseAuth
+                                                        .instance.currentUser!
+                                                        .getIdToken());
+                                            if (result) {
+                                              await getQuizTale();
+                                            }
                                           }
-                                        }
-                                      },
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.075,
-                                                left: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05,
-                                                right: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05,
-                                                bottom: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.025),
-                                            // padding: EdgeInsets.all(
-                                            //     MediaQuery.of(context).size.width * 0.05),
-                                            child: Material(
-                                              elevation: 7.5,
-                                              borderRadius:
-                                                  BorderRadius.circular(23),
-                                              child: ClipRRect(
+                                        },
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.075,
+                                                  left: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.05,
+                                                  right: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.05,
+                                                  bottom: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.025),
+                                              // padding: EdgeInsets.all(
+                                              //     MediaQuery.of(context).size.width * 0.05),
+                                              child: Material(
+                                                elevation: 7.5,
                                                 borderRadius:
                                                     BorderRadius.circular(23),
-                                                child: Image.network(
-                                                  e.first['image'],
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.25,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.25,
-                                                  errorBuilder: (context, error,
-                                                      stackTrace) {
-                                                    return Image.asset(
-                                                      'assets/snappy_crying.png',
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.25,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.25,
-                                                    );
-                                                  },
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(23),
+                                                  child: Image.network(
+                                                    e.first['image'],
+                                                    height: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.25,
+                                                    width: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.25,
+                                                    errorBuilder: (context, error,
+                                                        stackTrace) {
+                                                      return Image.asset(
+                                                        'assets/snappy_crying.png',
+                                                        height:
+                                                            MediaQuery.of(context)
+                                                                    .size
+                                                                    .width *
+                                                                0.25,
+                                                        width:
+                                                            MediaQuery.of(context)
+                                                                    .size
+                                                                    .width *
+                                                                0.25,
+                                                      );
+                                                    },
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.025),
-                                            child: OutlinedText(
-                                                text: Text(
-                                                  e.first['wordEng'],
-                                                  style: TextStyle(
-                                                      shadows: [
-                                                        Shadow(
-                                                            color: Colors.black
-                                                                .withOpacity(
-                                                                    0.3),
-                                                            offset:
-                                                                const Offset(
-                                                                    2, 2),
-                                                            blurRadius: 11),
-                                                      ],
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.05),
-                                                ),
-                                                strokes: [
-                                                  OutlinedTextStroke(
-                                                      color: Color(0xffffb628),
-                                                      width: 5),
-                                                ]),
-                                          ),
-                                        ],
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  bottom: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.025),
+                                              child: OutlinedText(
+                                                  text: Text(
+                                                    e.first['wordEng'],
+                                                    style: TextStyle(
+                                                        shadows: [
+                                                          Shadow(
+                                                              color: Colors.black
+                                                                  .withOpacity(
+                                                                      0.3),
+                                                              offset:
+                                                                  const Offset(
+                                                                      2, 2),
+                                                              blurRadius: 11),
+                                                        ],
+                                                        color: Colors.white,
+                                                        fontSize:
+                                                            MediaQuery.of(context)
+                                                                    .size
+                                                                    .width *
+                                                                0.05),
+                                                  ),
+                                                  strokes: [
+                                                    OutlinedTextStroke(
+                                                        color: Color(0xffffb628),
+                                                        width: 5),
+                                                  ]),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -696,9 +788,14 @@ class _MyLibraryState extends State<MyLibrary> {
                               Container(
                                 decoration: const BoxDecoration(
                                   image: DecorationImage(
+                                    colorFilter: ColorFilter.matrix(<double>[
+                                       0.2126, 0.7152, 0.0722, 0, 0,
+                                       0.2126, 0.7152, 0.0722, 0, 0,
+                                       0.2126, 0.7152, 0.0722, 0, 0,
+                                       0,      0,      0,      1, 0,
+                                     ]),
                                     image: AssetImage(
                                         'assets/library/box-library-aitale.png'),
-                                    // fit: BoxFit.fill,
                                   ),
                                 ),
                                 child: GestureDetector(
@@ -714,7 +811,7 @@ class _MyLibraryState extends State<MyLibrary> {
                                             top: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                0.075,
+                                                0.05,
                                             left:
                                                 MediaQuery.of(context)
                                                         .size
@@ -728,27 +825,16 @@ class _MyLibraryState extends State<MyLibrary> {
                                                     .size
                                                     .width *
                                                 0.025),
-                                        // padding: EdgeInsets.all(
-                                        //     MediaQuery.of(context).size.width * 0.05),
-                                        child: Material(
-                                          elevation: 7.5,
-                                          borderRadius:
-                                              BorderRadius.circular(23),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(23),
-                                            child: Image.asset(
-                                              'assets/snappy_crying.png',
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.25,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.25,
-                                            ),
-                                          ),
+                                        child: Image.asset(
+                                          'assets/snappy_crying.png',
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.25,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.25,
                                         ),
                                       ),
                                       Padding(
@@ -756,7 +842,10 @@ class _MyLibraryState extends State<MyLibrary> {
                                             bottom: MediaQuery.of(context)
                                                     .size
                                                     .height *
-                                                0.025),
+                                                0.03, top: MediaQuery.of(context)
+                                            .size
+                                            .height *
+                                            0.01),
                                         child: OutlinedText(
                                           text: Text(
                                             '아직 동화가 없어요',
@@ -799,496 +888,6 @@ class _MyLibraryState extends State<MyLibrary> {
           return const Center(child: LoadingDialog());
         }
       },
-    );
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            if (quizTaleList.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.0375,
-                    bottom: MediaQuery.of(context).size.height * 0.0125),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedText(
-                        text: const Text(
-                          '퀴즈 동화',
-                          style: TextStyle(fontSize: 30, color: Colors.white),
-                        ),
-                        strokes: [
-                          OutlinedTextStroke(
-                              color: Color(0xff1A8200), width: 5),
-                        ]),
-                  ],
-                ),
-              ),
-            // QUIZ TALE
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width / 1.521105336544556,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/library/box-library-bar.png'),
-                  fit: BoxFit.fill,
-                ),
-              ),
-              child: CarouselSlider(
-                items: quizTale2
-                    .map(
-                      (e) => Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (e.length == 2)
-                              GestureDetector(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          QuizTaleView(e.first),
-                                    )),
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      right: MediaQuery.of(context).size.width *
-                                          0.02),
-                                  child: Image.asset(
-                                    'assets/library/btn-library-${e.first['quizTaleId']}.png',
-                                    width: MediaQuery.of(context).size.width *
-                                        0.35,
-                                  ),
-                                ),
-                              ),
-                            if (e.length != 1)
-                              GestureDetector(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          QuizTaleView(e.last),
-                                    )),
-                                child: Padding(
-                                  padding: EdgeInsets.only(
-                                      left: MediaQuery.of(context).size.width *
-                                          0.02),
-                                  child: Image.asset(
-                                    'assets/library/btn-library-${e.last['quizTaleId']}.png',
-                                    width: MediaQuery.of(context).size.width *
-                                        0.35,
-                                  ),
-                                ),
-                              ),
-                            if (e.length == 1)
-                              GestureDetector(
-                                onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          QuizTaleView(e.first),
-                                    )),
-                                child: Center(
-                                  child: Image.asset(
-                                    'assets/library/btn-library-${e.first['quizTaleId']}.png',
-                                    width: MediaQuery.of(context).size.width *
-                                        0.35,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-                options: CarouselOptions(
-                  autoPlay: false,
-                  enableInfiniteScroll: false,
-                ),
-              ),
-            ),
-            if (AITaleList.isNotEmpty)
-              Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.025,
-                    bottom: MediaQuery.of(context).size.height * 0.0125),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    OutlinedText(
-                        text: const Text(
-                          '내가 만든 동화',
-                          style: TextStyle(fontSize: 30, color: Colors.white),
-                        ),
-                        strokes: [
-                          OutlinedTextStroke(
-                              color: Color(0xffffb628), width: 5),
-                        ])
-                  ],
-                ),
-              ),
-            // AI TALE
-            Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: AITale2.map(
-                  (e) => Container(
-                    width: MediaQuery.of(context).size.width,
-                    height:
-                        MediaQuery.of(context).size.width / 1.521105336544556,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage('assets/library/box-library-bar.png'),
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (e.length == 2)
-                          Container(
-                            margin: EdgeInsets.all(
-                                MediaQuery.of(context).size.width * 0.0125),
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/library/box-library-aitale.png'),
-                                // fit: BoxFit.fill,
-                              ),
-                            ),
-                            child: GestureDetector(
-                              onTap: () =>
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    CompleteStory(id: e.first['aiTaleId']),
-                              )),
-                              onLongPress: () async {
-                                final shouldDelete =
-                                    await showDeleteDialog(context);
-                                if (shouldDelete) {
-                                  bool result = await _araiService.deleteAITale(
-                                      id: e.first['aiTaleId'] as int,
-                                      token: await FirebaseAuth
-                                          .instance.currentUser!
-                                          .getIdToken());
-                                  if (result) {
-                                    await getQuizTale();
-                                  }
-                                }
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: MediaQuery.of(context).size.width *
-                                            0.075,
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.05,
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.05,
-                                        bottom:
-                                            MediaQuery.of(context).size.width *
-                                                0.025),
-                                    child: Material(
-                                      borderRadius: BorderRadius.circular(23),
-                                      elevation: 7.5,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(23),
-                                        child: Image.network(
-                                          e.first['image'],
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Image.asset(
-                                              'assets/snappy_crying.png',
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.25,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.25,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom:
-                                            MediaQuery.of(context).size.height *
-                                                0.025),
-                                    child: OutlinedText(
-                                        text: Text(
-                                          e.first['wordEng'],
-                                          style: TextStyle(
-                                              shadows: [
-                                                Shadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.3),
-                                                    offset: const Offset(2, 2),
-                                                    blurRadius: 11),
-                                              ],
-                                              color: Colors.white,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.05),
-                                        ),
-                                        strokes: [
-                                          OutlinedTextStroke(
-                                              color: Color(0xffffb628),
-                                              width: 5),
-                                        ]),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        if (e.length != 1)
-                          Container(
-                            margin: EdgeInsets.all(
-                                MediaQuery.of(context).size.width * 0.025),
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/library/box-library-aitale.png'),
-                                // fit: BoxFit.fill,
-                              ),
-                            ),
-                            child: GestureDetector(
-                              onTap: () =>
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    CompleteStory(id: e.last['aiTaleId']),
-                              )),
-                              onLongPress: () async {
-                                final shouldDelete =
-                                    await showDeleteDialog(context);
-                                if (shouldDelete) {
-                                  bool result = await _araiService.deleteAITale(
-                                      id: e.last['aiTaleId'] as int,
-                                      token: await FirebaseAuth
-                                          .instance.currentUser!
-                                          .getIdToken());
-                                  if (result) {
-                                    await getQuizTale();
-                                  }
-                                }
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: MediaQuery.of(context).size.width *
-                                            0.075,
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.05,
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.05,
-                                        bottom:
-                                            MediaQuery.of(context).size.width *
-                                                0.025),
-                                    // padding: EdgeInsets.all(
-                                    //     MediaQuery.of(context).size.width * 0.05),
-                                    child: Material(
-                                      elevation: 7.5,
-                                      borderRadius: BorderRadius.circular(23),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(23),
-                                        child: Image.network(
-                                          e.last['image'],
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Image.asset(
-                                              'assets/snappy_crying.png',
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.25,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.25,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom:
-                                            MediaQuery.of(context).size.height *
-                                                0.025),
-                                    child: OutlinedText(
-                                        text: Text(
-                                          e.last['wordEng'],
-                                          style: TextStyle(
-                                              shadows: [
-                                                Shadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.3),
-                                                    offset: const Offset(2, 2),
-                                                    blurRadius: 11),
-                                              ],
-                                              color: Colors.white,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.05),
-                                        ),
-                                        strokes: [
-                                          OutlinedTextStroke(
-                                              color: Color(0xffffb628),
-                                              width: 5),
-                                        ]),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        if (e.length == 1)
-                          Container(
-                            decoration: const BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/library/box-library-aitale.png'),
-                                // fit: BoxFit.fill,
-                              ),
-                            ),
-                            child: GestureDetector(
-                              onTap: () =>
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    CompleteStory(id: e.first['aiTaleId']),
-                              )),
-                              onLongPress: () async {
-                                final shouldDelete =
-                                    await showDeleteDialog(context);
-                                if (shouldDelete) {
-                                  bool result = await _araiService.deleteAITale(
-                                      id: e.first['aiTaleId'] as int,
-                                      token: await FirebaseAuth
-                                          .instance.currentUser!
-                                          .getIdToken());
-                                  if (result) {
-                                    await getQuizTale();
-                                  }
-                                }
-                              },
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: MediaQuery.of(context).size.width *
-                                            0.075,
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.05,
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.05,
-                                        bottom:
-                                            MediaQuery.of(context).size.width *
-                                                0.025),
-                                    // padding: EdgeInsets.all(
-                                    //     MediaQuery.of(context).size.width * 0.05),
-                                    child: Material(
-                                      elevation: 7.5,
-                                      borderRadius: BorderRadius.circular(23),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(23),
-                                        child: Image.network(
-                                          e.first['image'],
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Image.asset(
-                                              'assets/snappy_crying.png',
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.25,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.25,
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        bottom:
-                                            MediaQuery.of(context).size.height *
-                                                0.025),
-                                    child: OutlinedText(
-                                        text: Text(
-                                          e.first['wordEng'],
-                                          style: TextStyle(
-                                              shadows: [
-                                                Shadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.3),
-                                                    offset: const Offset(2, 2),
-                                                    blurRadius: 11),
-                                              ],
-                                              color: Colors.white,
-                                              fontSize: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.05),
-                                        ),
-                                        strokes: [
-                                          OutlinedTextStroke(
-                                              color: Color(0xffffb628),
-                                              width: 5),
-                                        ]),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ).toList()),
-          ],
-        ),
-      ),
     );
   }
 
