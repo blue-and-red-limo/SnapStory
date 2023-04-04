@@ -8,6 +8,7 @@ import 'dart:async';
 import 'package:openai_client/openai_client.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
+import 'package:snapstory/utilities/loading_dialog.dart';
 
 import 'complete_story_view.dart';
 
@@ -238,7 +239,7 @@ class _MakeStoryState extends State<MakeStory> {
               }
               //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
               else if (snapshot.hasData == false) {
-                return Container(child: Column(children: [const CircularProgressIndicator(), Text("동화를 만들고 있어요!")],));
+                return const Center(child: LoadingDialog());
               }
               // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
               else {
