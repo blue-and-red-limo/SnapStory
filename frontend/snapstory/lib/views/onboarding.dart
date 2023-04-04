@@ -12,9 +12,9 @@ class OnBoardingPage extends StatelessWidget {
       pages: [
         PageViewModel(
             title: '',
-            body: 'tutorial 1',
+            body: '안녕! 난 스내피라고 해.',
             image: Image.asset('assets/tuto/(1)intro.gif'),
-            decoration: getPageDecoration()
+            decoration: getPageDecoration(),
         ),
         PageViewModel(
             title: '',
@@ -69,15 +69,21 @@ class OnBoardingPage extends StatelessWidget {
   PageDecoration getPageDecoration() {
     return const PageDecoration(
         titleTextStyle: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold
+            fontSize: 1,
+            // fontWeight: FontWeight.bold
         ),
         bodyTextStyle: TextStyle(
-            fontSize: 18,
+            fontSize: 20,
             color: Colors.blue
         ),
-        imagePadding: EdgeInsets.only(top: 40),
-
+        // imagePadding: EdgeInsets.only(top: 40),
+        bodyAlignment: Alignment.topCenter,
+        titlePadding: EdgeInsets.zero,
+        bodyFlex: 5,
+        imageAlignment: Alignment.center,
+      imagePadding: EdgeInsets.zero,
+      bodyPadding: EdgeInsets.zero,
+      imageFlex: 30, // 이미지 위치 조정
     );
   }
 }
