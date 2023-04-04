@@ -119,53 +119,55 @@ class _MyLibraryState extends State<MyLibrary> {
                           children: [
                             if (e.length == 2)
                               GestureDetector(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => QuizTaleView(e.first),
-                                  )),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    right: MediaQuery.of(context).size.width *
-                                        0.02),
-                                child: Image.asset(
-                                  'assets/library/btn-library-${e.first['quizTaleId']}.png',
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.35,
+                                onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          QuizTaleView(e.first),
+                                    )),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.02),
+                                  child: Image.asset(
+                                    'assets/library/btn-library-${e.first['quizTaleId']}.png',
+                                    width: MediaQuery.of(context).size.width *
+                                        0.35,
+                                  ),
                                 ),
                               ),
-                            ),
                             if (e.length != 1)
                               GestureDetector(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => QuizTaleView(e.last),
-                                  )),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: MediaQuery.of(context).size.width *
-                                        0.02),
-                                child: Image.asset(
-                                  'assets/library/btn-library-1.png',
-                                  // 'assets/library/btn-library-${e.last['quizTaleId']}.png',
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.35,
+                                onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          QuizTaleView(e.last),
+                                    )),
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      left: MediaQuery.of(context).size.width *
+                                          0.02),
+                                  child: Image.asset(
+                                    'assets/library/btn-library-${e.last['quizTaleId']}.png',
+                                    width: MediaQuery.of(context).size.width *
+                                        0.35,
+                                  ),
                                 ),
                               ),
-                            ),
                             if (e.length == 1)
                               GestureDetector(
                                 onTap: () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => QuizTaleView(e.first),
+                                      builder: (context) =>
+                                          QuizTaleView(e.first),
                                     )),
                                 child: Center(
                                   child: Image.asset(
                                     'assets/library/btn-library-${e.first['quizTaleId']}.png',
-                                    width:
-                                    MediaQuery.of(context).size.width * 0.35,
+                                    width: MediaQuery.of(context).size.width *
+                                        0.35,
                                   ),
                                 ),
                               ),

@@ -1,20 +1,19 @@
 import 'package:snapstory/constants/routes.dart';
-import 'package:snapstory/views/my_library/my_library_view.dart';
+import 'package:snapstory/views/main_view.dart';
 import 'package:flutter/material.dart';
-// import 'package:painter/painter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'package:confetti/confetti.dart';
 import 'package:outlined_text/outlined_text.dart';
-import 'dart:developer' as logDev;
+import 'package:snapstory/views/my_library/quiz_tale_view.dart';
 
 class DrawingView extends StatefulWidget {
   final int id;
 
   // const DrawingView({Key? key, this.id}) : super(key: key);
-  const DrawingView(this.id);
+  const DrawingView(this.id, {super.key});
 
   @override
   State<DrawingView> createState() => _DrawingViewState();
@@ -32,14 +31,15 @@ class _DrawingViewState extends State<DrawingView> {
   bool _4 = false;
   String answer = '';
   dynamic _words = {};
+  dynamic quizInfo = {};
   List<String> items = [
     "assets/empty.png",
     "assets/empty.png",
     "assets/empty.png",
     "assets/empty.png",
   ];
-  List title = ['신데렐라', '백설공주', '잠자는 숲속의 공주', '라푼젤', '미녀와 야수'];
-  double fontS = 10;
+  List title = ['신데렐라', '백설공주', '잠자는\n 숲속의 공주', '라푼젤', '미녀와 야수'];
+  dynamic color = const Color(0xffffb628);
 
   // 캔버스에 그림 그리기 위해 담는 리스트
   List<List<Offset>> _points = [];
@@ -63,36 +63,41 @@ class _DrawingViewState extends State<DrawingView> {
     super.dispose();
   }
 
+  // 처음 정보 불러오기
   getInfo() async {
     id = widget.id;
-    fontS = (30 - title[id - 1].length) as double;
-    print(fontS);
     token = await FirebaseAuth.instance.currentUser?.getIdToken();
     try {
       http.Response response = await http.get(
           Uri.parse('$baseUrl/quiz-tale-items/$id'),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
-      var jsonResponse =
-          jsonDecode(response.body)['result']['drawQuizTaleItems'];
       setState(() {
-        _1 = jsonResponse[0]['draw'];
-        _2 = jsonResponse[1]['draw'];
-        _3 = jsonResponse[2]['draw'];
-        _4 = jsonResponse[3]['draw'];
+        quizInfo = jsonDecode(response.body)['result'];
+        _1 = quizInfo['drawQuizTaleItems'][0]['draw'];
+        _2 = quizInfo['drawQuizTaleItems'][1]['draw'];
+        _3 = quizInfo['drawQuizTaleItems'][2]['draw'];
+        _4 = quizInfo['drawQuizTaleItems'][3]['draw'];
+        quizInfo['title'] = title[id - 1];
 
         for (int i in [0, 1, 2, 3]) {
-          _words[jsonResponse[i]['itemEng']] = jsonResponse[i]['itemId'];
-          jsonResponse[i]['draw']
-              ? items[i] = '${jsonResponse[i]['imageColor']}.png'
-              : items[i] = '${jsonResponse[i]['imageBlack']}.png';
+          _words[quizInfo['drawQuizTaleItems'][i]['itemEng']] =
+              quizInfo['drawQuizTaleItems'][i]['itemId'];
+          quizInfo['drawQuizTaleItems'][i]['draw']
+              ? items[i] =
+                  '${quizInfo['drawQuizTaleItems'][i]['imageColor']}.png'
+              : items[i] =
+                  '${quizInfo['drawQuizTaleItems'][i]['imageBlack']}.png';
         }
       });
     } catch (e) {
       print('$e getInfo 에러');
     }
     // print(token);
+    print(quizInfo);
+    print(quizInfo['title']);
   }
 
+  // 정답 맞힌 이후 정보 불러오기
   getItems() async {
     try {
       http.Response response = await http.get(
@@ -118,9 +123,8 @@ class _DrawingViewState extends State<DrawingView> {
 
   // 정답 확인 함수
   void isCorrect() async {
-    // 이미지 보내기
+    // 그림 보내기
     await check();
-    print(answer);
 
     // 정답인지 확인, 답이 해당 동화 단어리스트 안에 있으면 정답
     if (_words[answer].runtimeType == int) {
@@ -136,7 +140,6 @@ class _DrawingViewState extends State<DrawingView> {
                 },
                 body: jsonEncode(<String, int>{"quizTaleItemListId": itemId}));
         var jsonResponse = jsonDecode(response.body);
-        print(jsonResponse);
 
         // 컴플리트
         isComplete = jsonResponse['result']['complete'];
@@ -146,6 +149,7 @@ class _DrawingViewState extends State<DrawingView> {
     } else {
       _correct = false;
     }
+    // 정답 or 오답 모달
     modal();
   }
 
@@ -179,7 +183,7 @@ class _DrawingViewState extends State<DrawingView> {
     return showDialog(
         context: context,
         // 바깥 영역 터치시 닫을지 여부
-        barrierDismissible: true,
+        barrierDismissible: false,
         builder: (BuildContext context) => Stack(
               children: [
                 Center(
@@ -196,7 +200,7 @@ class _DrawingViewState extends State<DrawingView> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: const Color(0xffffb628),
+                            color: color,
                             width: 6,
                           ),
                           boxShadow: const [
@@ -208,45 +212,53 @@ class _DrawingViewState extends State<DrawingView> {
                           ],
                           color: Colors.white,
                         ),
-                        child: Material(
-                          color: Colors.transparent,
+                        child: DefaultTextStyle(
+                          style: const TextStyle(fontFamily: 'ONE Mobile POP'),
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 // 정답일 경우 정답입니다, 아닐 경우 오답입니다
                                 Text(
                                   (_correct) ? "정답입니다!" : "오답입니다",
-                                  style: const TextStyle(
-                                      fontFamily: 'ONE Mobile POP',
-                                      color: Color(0xffffb628),
-                                      fontSize: 35,
+                                  style: TextStyle(
+                                      color: color,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              0.1,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 (_correct)
-                                    ? FittedBox(
-                                        fit: BoxFit.contain,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 30),
-                                          child: Text(
-                                            answer,
-                                            style: const TextStyle(
-                                              fontFamily: 'ONE Mobile POP',
-                                              color: Colors.black,
+                                    ? SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.8,
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.02),
+                                            child: Text(
+                                              answer,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       )
                                     : Image.asset(
                                         'assets/snappy_crying.png',
-                                        // height: 180,
                                       ),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     fixedSize: Size.fromHeight(
                                         MediaQuery.of(context).size.height *
                                             0.06),
-                                    backgroundColor: Color(0xffffb628),
+                                    backgroundColor: color,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(13),
                                     ),
@@ -261,8 +273,12 @@ class _DrawingViewState extends State<DrawingView> {
                                       Text(
                                         (_correct) ? "확인  " : "다시하기  ",
                                         textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 24),
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.05),
                                       ),
                                       Icon(
                                         (_correct)
@@ -318,7 +334,7 @@ class _DrawingViewState extends State<DrawingView> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: const Color(0xffffb628),
+                color: color,
                 width: 6,
               ),
               boxShadow: const [
@@ -330,60 +346,55 @@ class _DrawingViewState extends State<DrawingView> {
               ],
               color: Colors.white,
             ),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.height * 0.05),
-                    child: const Text(
-                      "동화가 완성되었어요!",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xffffb628),
-                        fontFamily: 'ONE Mobile POP',
-                        fontSize: 35,
+            child: DefaultTextStyle(
+              style: TextStyle(
+                fontFamily: 'ONE Mobile POP',
+                fontSize: MediaQuery.of(context).size.width * 0.08,
+              ),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).size.height * 0.05),
+                      child: Text(
+                        "동화가 완성되었어요!",
+                        style: TextStyle(
+                          color: color,
+                        ),
                       ),
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
+                    GestureDetector(
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.7,
+                        child: Column(
+                          children: [
+                            Image.asset('assets/library/snappy_watching.png'),
+                            OutlinedText(
+                              text: Text(
+                                '동화 보러가기',
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.08),
+                              ),
+                              strokes: [
+                                OutlinedTextStroke(color: color, width: 10),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const MyLibrary()));
-                    },
-                    style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.05),
-                        backgroundColor: const Color(0xffffb628)),
-                    child: const Text(
-                      "도서관으로 이동하기",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
+                              builder: (context) => QuizTaleView(quizInfo)),
+                        );
+                      },
                     ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(drawingTaleListRoute);
-                    },
-                    style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * 0.05),
-                        backgroundColor: const Color(0xffffb628)),
-                    child: const Text(
-                      "다른 그림 퀴즈 풀어보기",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                      ),
-                    ),
-                  ),
-                ])));
+                  ]),
+            )));
   }
 
   @override
@@ -415,14 +426,23 @@ class _DrawingViewState extends State<DrawingView> {
                               'assets/main/btn-help.png',
                             )),
                         // 동화 제목
-                        OutlinedText(
-                            text: Text(title[id - 1],
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 20)),
-                            strokes: [
-                              OutlinedTextStroke(
-                                  color: const Color(0xff198100), width: 10),
-                            ]),
+                        Flexible(
+                          child: Center(
+                            child: OutlinedText(
+                                text: Text(title[id - 1],
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.09)),
+                                strokes: [
+                                  OutlinedTextStroke(
+                                      color: const Color(0xff198100),
+                                      width: 10),
+                                ]),
+                          ),
+                        ),
                         // 나가기
                         IconButton(
                             iconSize: MediaQuery.of(context).size.width * 0.25,
@@ -445,8 +465,7 @@ class _DrawingViewState extends State<DrawingView> {
                           Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                border: Border.all(
-                                    color: const Color(0xffffb628), width: 4),
+                                border: Border.all(color: color, width: 4),
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(18)),
                                 boxShadow: const [
@@ -579,6 +598,7 @@ class _DrawingViewState extends State<DrawingView> {
                               MediaQuery.of(context).size.height * 0.08,
                               MediaQuery.of(context).size.width * 0.05,
                               MediaQuery.of(context).size.height * 0.01),
+                          // 그리는 부분 감지 & 화면에 표시
                           child: GestureDetector(
                             child: CustomPaint(
                               painter: DrawingPainter(_points),
@@ -597,7 +617,7 @@ class _DrawingViewState extends State<DrawingView> {
                             },
                             onPanUpdate: (details) {
                               setState(() {
-                                // 범위에서 벗어나면 리스트에 추가X
+                                // 범위에서 벗어나면 리스트에 추가X (사이즈 딱 맞게X, 끝부분 조금 띄어서)
                                 if (details.localPosition.dx > 0 &&
                                     details.localPosition.dx <
                                         MediaQuery.of(context).size.width *
@@ -607,9 +627,9 @@ class _DrawingViewState extends State<DrawingView> {
                                         MediaQuery.of(context).size.height *
                                             0.24) {
                                   _points.last.add(details.localPosition);
-                                  path.last[0]
+                                  path.last[0] // x축
                                       .add(details.localPosition.dx.toInt());
-                                  path.last[1]
+                                  path.last[1] // y축
                                       .add(details.localPosition.dy.toInt());
                                 }
                               });
@@ -624,13 +644,13 @@ class _DrawingViewState extends State<DrawingView> {
                           child: Align(
                             alignment: Alignment.topRight,
                             child: IconButton(
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.refresh,
-                                  color: Color(0xffffb628),
+                                  color: color,
                                 ),
                                 iconSize:
                                     MediaQuery.of(context).size.width * 0.1,
-                                tooltip: 'Clear',
+                                tooltip: '지우기',
                                 onPressed: () {
                                   setState(() {
                                     path = [];
@@ -670,14 +690,15 @@ class _DrawingViewState extends State<DrawingView> {
                 // 정답 확인 버튼
                 child: IconButton(
                   onPressed: () {
-                    isCorrect();
+                    // isCorrect();
+                    complete();
                   },
                   icon: Icon(
                     Icons.check_rounded,
                     size: MediaQuery.of(context).size.width * 0.15,
                   ),
-                  color: const Color(0xffffb628),
-                  // iconSize: ,
+                  color: color,
+                  tooltip: '정답 확인',
                 ),
               ),
             )
