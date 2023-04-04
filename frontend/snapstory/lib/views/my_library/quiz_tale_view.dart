@@ -41,91 +41,94 @@ class _QuizTaleViewState extends State<QuizTaleView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: YoutubePlayerScaffold(
-            controller: _controller,
-            builder: (context, player) {
-              return Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
+        body: SafeArea(
+          child: YoutubePlayerScaffold(
+              controller: _controller,
+              builder: (context, player) {
+                return Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: AssetImage('assets/main/bg-main3.png'))),
+                      child: Column(
+                        children: [
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.9,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(
+                                      top: MediaQuery.of(context).size.height *
+                                          0.15),
+                                  child: OutlinedText(
+                                      text: Text(title,
+                                          style: TextStyle(
+                                              color: Colors.white, fontSize: 40)),
+                                      strokes: [
+                                        OutlinedTextStroke(
+                                            color: Color(0xffffb628), width: 10),
+                                      ]),
+                                ),
+                                Container(
+                                  child: player,
+                                  margin: EdgeInsets.all(20),
+                                ),
+                                Image.asset(
+                                  'assets/library/snappy_watching.png',
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.2,
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(32),
+                              topRight: Radius.circular(32)),
+                          image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: AssetImage('assets/main/bg-main3.png'))),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.9,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    top: MediaQuery.of(context).size.height *
-                                        0.15),
-                                child: OutlinedText(
-                                    text: Text(title,
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 40)),
-                                    strokes: [
-                                      OutlinedTextStroke(
-                                          color: Color(0xffffb628), width: 10),
-                                    ]),
-                              ),
-                              Container(
-                                child: player,
-                                margin: EdgeInsets.all(20),
-                              ),
-                              Image.asset(
-                                'assets/library/snappy_watching.png',
-                                height:
-                                    MediaQuery.of(context).size.height * 0.2,
-                              )
-                            ],
+                            image: AssetImage('assets/main/bg-bar.png'),
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
+                    Positioned(
                       width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(32),
-                            topRight: Radius.circular(32)),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage('assets/main/bg-bar.png'),
+                      bottom: MediaQuery.of(context).size.height * 0.05,
+                      child: Container(
+                        height: MediaQuery.of(context).size.width * 0.2,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Colors.white),
+                        child: IconButton(
+                          onPressed: () {
+                            // Navigator.of(context).push(MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         const MainView(selectedPage: 1)));
+                            Navigator.of(context).pop();
+                          },
+                          icon: Icon(
+                            Icons.exit_to_app,
+                            size: MediaQuery.of(context).size.width * 0.13,
+                          ),
+                          color: Color(0xffffb628),
+                          // iconSize: ,
                         ),
                       ),
-                    ),
-                  ),
-                  Positioned(
-                    width: MediaQuery.of(context).size.width,
-                    bottom: MediaQuery.of(context).size.height * 0.05,
-                    child: Container(
-                      height: MediaQuery.of(context).size.width * 0.2,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.white),
-                      child: IconButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  const MainView(selectedPage: 1)));
-                        },
-                        icon: Icon(
-                          Icons.exit_to_app,
-                          size: MediaQuery.of(context).size.width * 0.13,
-                        ),
-                        color: Color(0xffffb628),
-                        // iconSize: ,
-                      ),
-                    ),
-                  )
-                ],
-              );
-            }));
+                    )
+                  ],
+                );
+              }),
+        ));
   }
 }

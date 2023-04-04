@@ -447,8 +447,9 @@ class _DrawingViewState extends State<DrawingView> {
                         IconButton(
                             iconSize: MediaQuery.of(context).size.width * 0.25,
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed(drawingTaleListRoute);
+                              // Navigator.of(context)
+                              //     .pushNamed(drawingTaleListRoute);
+                              Navigator.of(context).pop();
                             },
                             icon: Image.asset(
                               'assets/main/btn-quit.png',

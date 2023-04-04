@@ -123,7 +123,8 @@ class DrawingTaleListState extends State<DrawingTaleList> {
                     IconButton(
                         iconSize: MediaQuery.of(context).size.width * 0.25,
                         onPressed: () {
-                          Navigator.of(context).pushNamed(mainRoute);
+                          // Navigator.of(context).pushNamed(mainRoute);
+                          Navigator.of(context).pop();
                         },
                         icon: Image.asset(
                           'assets/main/btn-quit.png',

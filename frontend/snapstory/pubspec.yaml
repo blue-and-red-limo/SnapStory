@@ -93,6 +93,7 @@ flutter:
     - assets/aiTale/
     - assets/words/
     - assets/wordList/
+    - assets/tuto/
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

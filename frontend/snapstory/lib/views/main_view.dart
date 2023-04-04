@@ -50,7 +50,7 @@ class _MainViewState extends State<MainView> {
       const Color.fromRGBO(255, 182, 40, 1.0),
       labelStyle: const TextStyle(
         color: Colors.orange,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
     ),
     TabItem(
@@ -59,14 +59,14 @@ class _MainViewState extends State<MainView> {
       const Color.fromRGBO(255, 182, 40, 1.0),
       labelStyle: const TextStyle(
         color: Colors.orange,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
     ),
     TabItem(
       Icons.spellcheck, "나만의 단어장", const Color.fromRGBO(255, 182, 40, 1.0),
       labelStyle: const TextStyle(
         color: Colors.orange,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
       // circleStrokeColor: Colors.black,
     ),
@@ -244,17 +244,19 @@ class _MainViewState extends State<MainView> {
             ],
           ),
         ),
-        body: Stack(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(bottom: bottomNavBarHeight),
-              child: bodyContainer(),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: bottomNav(),
-            )
-          ],
+        body: SafeArea(
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: bottomNavBarHeight),
+                child: bodyContainer(),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: bottomNav(),
+              )
+            ],
+          ),
         ),
       ),
     );
