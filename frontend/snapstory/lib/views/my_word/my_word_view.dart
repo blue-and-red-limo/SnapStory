@@ -212,7 +212,7 @@ class _MyWordState extends State<MyWord> {
                                                     .width *
                                                 0.25,
                                           ),
-                                          onTap: () => Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                          onTap: () => Navigator.of(context).push(MaterialPageRoute(
                                               builder: (context) => MakeStory(word: wordList[_current]['word']['wordEng']))
                                         )),
                                       ],

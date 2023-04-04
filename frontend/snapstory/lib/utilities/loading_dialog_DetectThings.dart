@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:outlined_text/outlined_text.dart';
 
-class LoadingDialog extends StatelessWidget {
-  const LoadingDialog({Key? key}) : super(key: key);
+class LoadingDialogDT extends StatelessWidget {
+  const LoadingDialogDT({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +18,13 @@ class LoadingDialog extends StatelessWidget {
         children: [
           OutlinedText(
               text: const Text(
-                'Loading...',
+                '물체를 인식하고 있어요~',
                 style:
-                TextStyle(fontSize: 30, color: Colors.white),
+                TextStyle(fontSize: 30, color:  Colors.white),
               ),
               strokes: [
                 OutlinedTextStroke(
-                    color: Color(0xffffb628), width: 5),
+                    color: Colors.black, width: 5),
               ])],
       )
     ]);

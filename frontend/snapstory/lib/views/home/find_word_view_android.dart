@@ -23,6 +23,8 @@ import 'package:native_screenshot/native_screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:snapstory/utilities/loading_dialog.dart';
+import 'package:snapstory/utilities/loading_dialog_DetectThings.dart';
+import 'package:snapstory/utilities/loading_dialog_makingStory.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 import 'package:screenshot/screenshot.dart';
@@ -277,7 +279,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                         GestureDetector(
                             onTap: () => {
                                   Navigator.of(context)
-                                      .pushReplacement(MaterialPageRoute(
+                                      .push(MaterialPageRoute(
                                     builder: (context) => MakeStory(word: word),
                                   )),
                                 },
@@ -307,7 +309,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                     width: MediaQuery.of(context).size.width * 0.25,
                   ),
                 )),
-            if (isLoading) const Center(child: LoadingDialog()),
+            if (isLoading) const Center(child: LoadingDialogDT()),
             if (isInAccurate)
               Center(
                   child: AlertDialog(
