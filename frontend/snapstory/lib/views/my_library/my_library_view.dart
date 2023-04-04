@@ -435,6 +435,18 @@ class _MyLibraryState extends State<MyLibrary> {
                                                     BorderRadius.circular(23),
                                                 child: Image.network(
                                                   e.first['image'],
+                                                  loadingBuilder: (context, child, loadingProgress) {
+                                                    if (loadingProgress == null) return child;
+
+                                                    return Center(child: Container(child: Center(child: CircularProgressIndicator()),height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        0.25, width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        0.25,));
+                                                    // You can use LinearProgressIndicator, CircularProgressIndicator, or a GIF instead
+                                                  },
                                                   height: MediaQuery.of(context)
                                                           .size
                                                           .width *
@@ -566,6 +578,18 @@ class _MyLibraryState extends State<MyLibrary> {
                                                     BorderRadius.circular(23),
                                                 child: Image.network(
                                                   e.last['image'],
+                                                  loadingBuilder: (context, child, loadingProgress) {
+                                                    if (loadingProgress == null) return child;
+
+                                                    return Center(child: Container(child: Center(child: CircularProgressIndicator()),height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        0.25, width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                        0.25,));
+                                                    // You can use LinearProgressIndicator, CircularProgressIndicator, or a GIF instead
+                                                  },
                                                   height: MediaQuery.of(context)
                                                           .size
                                                           .width *
@@ -697,6 +721,18 @@ class _MyLibraryState extends State<MyLibrary> {
                                                       BorderRadius.circular(23),
                                                   child: Image.network(
                                                     e.first['image'],
+                                                    loadingBuilder: (context, child, loadingProgress) {
+                                                      if (loadingProgress == null) return child;
+
+                                                      return Center(child: Container(child: Center(child: CircularProgressIndicator()),height: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          0.25, width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          0.25,));
+                                                      // You can use LinearProgressIndicator, CircularProgressIndicator, or a GIF instead
+                                                    },
                                                     height: MediaQuery.of(context)
                                                             .size
                                                             .width *
