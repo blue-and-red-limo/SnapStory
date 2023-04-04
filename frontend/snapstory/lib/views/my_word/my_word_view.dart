@@ -89,7 +89,7 @@ class _MyWordState extends State<MyWord> {
                                                 child: Container(
                                                   width: MediaQuery.of(context).size.width,
                                                   height: MediaQuery.of(context).size.height,
-                                                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width*0.1, right: MediaQuery.of(context).size.width*0.1, top: MediaQuery.of(context).size.width*0.15),
+                                                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width*0.1, right: MediaQuery.of(context).size.width*0.1, top: MediaQuery.of(context).size.height*0.1),
                                                   decoration: BoxDecoration(
                                                     borderRadius:
                                                         BorderRadius.circular(15),
@@ -108,16 +108,16 @@ class _MyWordState extends State<MyWord> {
                                                         height:
                                                             MediaQuery.of(context)
                                                                     .size
-                                                                    .width *
-                                                                0.5,
+                                                                    .height *
+                                                                0.25,
                                                         width:
                                                             MediaQuery.of(context)
                                                                     .size
-                                                                    .width *
-                                                                0.5,
+                                                                    .height *
+                                                                0.25,
                                                       ),
                                                       Container(
-                                                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.025),
+                                                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
                                                         child: Text(
                                                           isEng
                                                               ? e['word']['wordEng']
@@ -127,25 +127,26 @@ class _MyWordState extends State<MyWord> {
                                                               fontSize: MediaQuery.of(
                                                                           context)
                                                                       .size
-                                                                      .width *
-                                                                  0.1),
+                                                                      .height *
+                                                                  0.045),
                                                         ),
                                                       ),
-                                                      Container(
-                                                        height: MediaQuery.of(context).size.height*0.055,
-                                                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.width*0.05),
-                                                        child: Text(
-                                                          isEng
-                                                              ? e['wordExampleEng']
-                                                              : e['wordExampleKor'],
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                              fontSize: MediaQuery.of(
-                                                                  context)
-                                                                  .size
-                                                                  .width *
-                                                                  0.05),
+                                                      SizedBox(
+                                                        height: MediaQuery.of(context).size.height*0.09,
+                                                        child: Center(
+                                                          child: Text(
+                                                            isEng
+                                                                ? e['wordExampleEng']
+                                                                : e['wordExampleKor'],
+                                                            textAlign:
+                                                                TextAlign.center,
+                                                            style: TextStyle(
+                                                                fontSize: MediaQuery.of(
+                                                                    context)
+                                                                    .size
+                                                                    .width *
+                                                                    0.05),
+                                                          ),
                                                         ),
                                                       ),
                                                     ],
