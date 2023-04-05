@@ -1,6 +1,5 @@
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
-import 'package:snapstory/services/crud/user_service.dart';
 import 'package:snapstory/views/home/find_word_view_android.dart';
 import 'package:snapstory/views/home/find_word_view_ios.dart';
 import 'package:snapstory/views/home/home_view.dart';
@@ -11,7 +10,6 @@ import 'package:snapstory/views/verify_email_view.dart';
 import 'package:snapstory/views/drawing_quiz/drawing_tale_list.dart';
 import 'package:flutter/material.dart';
 
-import 'views/onboarding.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

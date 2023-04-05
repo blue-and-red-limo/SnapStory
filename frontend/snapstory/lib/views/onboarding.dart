@@ -12,28 +12,33 @@ class OnBoardingPage extends StatelessWidget {
       pages: [
         PageViewModel(
             title: '',
-            body: 'tutorial 1',
-            image: Image.asset('assets/mainImage.png'),
-            decoration: getPageDecoration()
+            body: '안녕! 난 스내피라고 해.',
+            image: Image.asset('assets/tuto/(1)intro.gif'),
+            decoration: getPageDecoration(),
         ),
         PageViewModel(
             title: '',
             body: 'tutorial 2',
-            image: Image.asset('assets/mainImage.png'),
+            image: Image.asset('assets/tuto/(2)aitale.gif'),
             decoration: getPageDecoration()
         ), PageViewModel(
             title: '',
             body: 'tutorial 3',
-            image: Image.asset('assets/mainImage.png'),
+            image: Image.asset('assets/tuto/(3)aitale.gif'),
             decoration: getPageDecoration()
         ),
         PageViewModel(
             title: '',
             body: 'tutorial 4',
-            image: Image.asset('assets/mainImage.png'),
+            image: Image.asset('assets/tuto/(4)quiztale.gif'),
             decoration: getPageDecoration()
         ),
-
+        PageViewModel(
+            title: '',
+            body: 'tutorial 5',
+            image: Image.asset('assets/tuto/(5)my.gif'),
+            decoration: getPageDecoration()
+        ),
 
       ],
       done: const Text('done'),
@@ -48,7 +53,7 @@ class OnBoardingPage extends StatelessWidget {
       skip: const Text('skip'),
       dotsDecorator: DotsDecorator(
           color: Colors.grey,
-          size: const Size(10, 10),
+          size: const Size(6.5, 10),
           activeSize: const Size(22, 10),
           activeShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24)
@@ -64,15 +69,21 @@ class OnBoardingPage extends StatelessWidget {
   PageDecoration getPageDecoration() {
     return const PageDecoration(
         titleTextStyle: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold
+            fontSize: 1,
+            // fontWeight: FontWeight.bold
         ),
         bodyTextStyle: TextStyle(
-            fontSize: 18,
+            fontSize: 20,
             color: Colors.blue
         ),
-        imagePadding: EdgeInsets.only(top: 40),
-
+        // imagePadding: EdgeInsets.only(top: 40),
+        bodyAlignment: Alignment.topCenter,
+        titlePadding: EdgeInsets.zero,
+        bodyFlex: 5,
+        imageAlignment: Alignment.center,
+      imagePadding: EdgeInsets.zero,
+      bodyPadding: EdgeInsets.zero,
+      imageFlex: 30, // 이미지 위치 조정
     );
   }
 }
