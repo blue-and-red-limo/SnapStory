@@ -7,15 +7,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 
-@RequiredArgsConstructor
 @CrossOrigin("*")
+@Controller
 public class HomeController {
-    @GetMapping("/")
+    @RequestMapping("/")
     @ApiOperation(value = "index 페이지", notes = "index 페이지")
     public String index(){
         return "index";
