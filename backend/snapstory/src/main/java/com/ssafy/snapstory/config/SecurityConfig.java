@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         // 회원가입, 메인페이지, 리소스
         web.ignoring().antMatchers(HttpMethod.POST, "/api/v1/users")
-                .antMatchers("/swagger-ui/**")
+                .antMatchers("/swagger-ui/**").antMatchers("/").antMatchers("/index.html")
                 .antMatchers("/resources/**")
                 .antMatchers("/swagger-resources/**")
                 .antMatchers("/v3/api-docs",  "/configuration/ui",
