@@ -13,7 +13,7 @@
 
 # 🦍서비스 소개
 
-[![AdventureEveryday](https://img.youtube.com/vi/KGKtpDhjFAI/0.jpg)](https://www.youtube.com/watch?v=KGKtpDhjFAI) 
+<!-- [![AdventureEveryday](https://img.youtube.com/vi/KGKtpDhjFAI/0.jpg)](https://www.youtube.com/watch?v=KGKtpDhjFAI)  -->
 
 
 ## 서비스 설명
