@@ -410,7 +410,7 @@ class _MyWordState extends State<MyWord> {
                                             }
                                           },
                                           icon: const Icon(
-                                              Icons.delete_forever_rounded),
+                                              Icons.delete_forever_rounded, color: Color(0xFFFFB628),),
                                         ),
                                       ),
                                     ],
