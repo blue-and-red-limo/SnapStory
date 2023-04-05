@@ -38,7 +38,7 @@ class _DrawingViewState extends State<DrawingView> {
     "assets/empty.png",
     "assets/empty.png",
   ];
-  String title = '';
+  List title = ['신데렐라', '백설공주', '잠자는\n 숲속의 공주', '라푼젤', '미녀와 야수'];
   dynamic color = const Color(0xffffb628);
 
   // 캔버스에 그림 그리기 위해 담는 리스트
@@ -72,16 +72,12 @@ class _DrawingViewState extends State<DrawingView> {
           Uri.parse('$baseUrl/quiz-tale-items/$id'),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
       setState(() {
-        quizInfo = jsonDecode(utf8.decode(response.bodyBytes))['result'];
+        quizInfo = jsonDecode(response.body)['result'];
         _1 = quizInfo['drawQuizTaleItems'][0]['draw'];
         _2 = quizInfo['drawQuizTaleItems'][1]['draw'];
         _3 = quizInfo['drawQuizTaleItems'][2]['draw'];
         _4 = quizInfo['drawQuizTaleItems'][3]['draw'];
-
-        (id == 3)
-            ? title = '잠자는\n숲속의 공주'
-            : title =
-                jsonDecode(utf8.decode(response.bodyBytes))['result']['title'];
+        quizInfo['title'] = title[id - 1];
 
         for (int i in [0, 1, 2, 3]) {
           _words[quizInfo['drawQuizTaleItems'][i]['itemEng']] =
@@ -96,31 +92,31 @@ class _DrawingViewState extends State<DrawingView> {
     } catch (e) {
       print('$e getInfo 에러');
     }
-    print(token);
+    // print(token);
   }
 
   // 정답 맞힌 이후 정보 불러오기
   getItems() async {
-    // try {
-    //   http.Response response = await http.get(
-    //       Uri.parse('$baseUrl/quiz-tale-items/$id'),
-    //       headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
-    //   var jsonResponse =
-    //       jsonDecode(response.body)['result']['drawQuizTaleItems'];
-    //   setState(() {
-    //     _1 = jsonResponse[0]['draw'];
-    //     _2 = jsonResponse[1]['draw'];
-    //     _3 = jsonResponse[2]['draw'];
-    //     _4 = jsonResponse[3]['draw'];
-    //     for (int i in [0, 1, 2, 3]) {
-    //       jsonResponse[i]['draw']
-    //           ? items[i] = '${jsonResponse[i]['imageColor']}.png'
-    //           : items[i] = '${jsonResponse[i]['imageBlack']}.png';
-    //     }
-    //   });
-    // } catch (e) {
-    //   print('$e getItems 에러');
-    // }
+    try {
+      http.Response response = await http.get(
+          Uri.parse('$baseUrl/quiz-tale-items/$id'),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
+      var jsonResponse =
+          jsonDecode(response.body)['result']['drawQuizTaleItems'];
+      setState(() {
+        _1 = jsonResponse[0]['draw'];
+        _2 = jsonResponse[1]['draw'];
+        _3 = jsonResponse[2]['draw'];
+        _4 = jsonResponse[3]['draw'];
+        for (int i in [0, 1, 2, 3]) {
+          jsonResponse[i]['draw']
+              ? items[i] = '${jsonResponse[i]['imageColor']}.png'
+              : items[i] = '${jsonResponse[i]['imageBlack']}.png';
+        }
+      });
+    } catch (e) {
+      print('$e getItems 에러');
+    }
   }
 
   // 정답 확인 함수
@@ -354,11 +350,11 @@ class _DrawingViewState extends State<DrawingView> {
                 fontSize: MediaQuery.of(context).size.width * 0.08,
               ),
               child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).size.height * 0.02),
+                          bottom: MediaQuery.of(context).size.height * 0.05),
                       child: Text(
                         "동화가 완성되었어요!",
                         style: TextStyle(
@@ -375,10 +371,10 @@ class _DrawingViewState extends State<DrawingView> {
                             OutlinedText(
                               text: Text(
                                 '동화 보러가기',
-                                // style: TextStyle(
-                                //     fontSize:
-                                //         MediaQuery.of(context).size.width *
-                                //             0.08),
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.08),
                               ),
                               strokes: [
                                 OutlinedTextStroke(color: color, width: 10),
@@ -388,8 +384,7 @@ class _DrawingViewState extends State<DrawingView> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pushReplacement(
+                        Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => QuizTaleView(quizInfo)),
@@ -403,318 +398,309 @@ class _DrawingViewState extends State<DrawingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Stack(
-            children: [
-              Container(
-                // padding:
-                //     EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                height: MediaQuery.of(context).size.height,
+      body: Center(
+        child: Stack(
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              height: MediaQuery.of(context).size.height,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/main/bg-main2_2.png'),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // 상단바
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // 도움말 - 튜토리얼
+                        IconButton(
+                            iconSize: MediaQuery.of(context).size.width * 0.25,
+                            onPressed: () {},
+                            icon: Image.asset(
+                              'assets/main/btn-help.png',
+                            )),
+                        // 동화 제목
+                        Flexible(
+                          child: Center(
+                            child: OutlinedText(
+                                text: Text(title[id - 1],
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.09)),
+                                strokes: [
+                                  OutlinedTextStroke(
+                                      color: const Color(0xff198100),
+                                      width: 10),
+                                ]),
+                          ),
+                        ),
+                        // 나가기
+                        IconButton(
+                            iconSize: MediaQuery.of(context).size.width * 0.25,
+                            onPressed: () {
+                              // Navigator.of(context)
+                              //     .pushNamed(drawingTaleListRoute);
+                              Navigator.of(context).pop();
+                            },
+                            icon: Image.asset(
+                              'assets/main/btn-quit.png',
+                            )),
+                      ]),
+
+                  // 동화 아이템
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: color, width: 4),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(18)),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Color(0x3f000000),
+                                    blurRadius: 4,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * 0.02),
+                              margin: EdgeInsets.symmetric(
+                                  vertical:
+                                      MediaQuery.of(context).size.width * 0.02,
+                                  horizontal:
+                                      MediaQuery.of(context).size.width * 0.05),
+                              child: Image.asset(
+                                items[0],
+                                width: MediaQuery.of(context).size.width * 0.25,
+                              )),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: const Color(0xff198100), width: 4),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(18)),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x3f000000),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * 0.02),
+                            margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.width * 0.02,
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.05),
+                            child: Image.asset(
+                              items[1],
+                              width: MediaQuery.of(context).size.width * 0.25,
+                            ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: const Color(0xffff0080), width: 4),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(18)),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x3f000000),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * 0.02),
+                            margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.width * 0.02,
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.05),
+                            child: Image.asset(
+                              items[2],
+                              width: MediaQuery.of(context).size.width * 0.25,
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(
+                                  color: const Color(0xff0060c4), width: 4),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(18)),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x3f000000),
+                                  blurRadius: 4,
+                                  offset: Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * 0.02),
+                            margin: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.width * 0.02,
+                                horizontal:
+                                    MediaQuery.of(context).size.width * 0.05),
+                            child: Image.asset(
+                              items[3],
+                              width: MediaQuery.of(context).size.width * 0.25,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // 클리어 버튼 + 그림 그리는 부분
+                  Container(
+                      height: MediaQuery.of(context).size.height * 0.33,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: AssetImage(
+                              'assets/quizTaleList/box-quiz-board.png'),
+                        ),
+                      ),
+                      child: Stack(children: [
+                        // 그림 그리는 부분
+                        Container(
+                          alignment: Alignment.center,
+                          margin: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.width * 0.05,
+                              MediaQuery.of(context).size.height * 0.08,
+                              MediaQuery.of(context).size.width * 0.05,
+                              MediaQuery.of(context).size.height * 0.01),
+                          // 그리는 부분 감지 & 화면에 표시
+                          child: GestureDetector(
+                            child: CustomPaint(
+                              painter: DrawingPainter(_points),
+                              size: Size(
+                                  MediaQuery.of(context).size.width * 0.9,
+                                  MediaQuery.of(context).size.height * 0.3),
+                            ),
+                            onPanStart: (details) {
+                              setState(() {
+                                _points.add([details.localPosition]);
+                                path.add([
+                                  [details.localPosition.dx.toInt()],
+                                  [details.localPosition.dy.toInt()]
+                                ]);
+                              });
+                            },
+                            onPanUpdate: (details) {
+                              setState(() {
+                                // 범위에서 벗어나면 리스트에 추가X (사이즈 딱 맞게X, 끝부분 조금 띄어서)
+                                if (details.localPosition.dx > 0 &&
+                                    details.localPosition.dx <
+                                        MediaQuery.of(context).size.width *
+                                            0.8 &&
+                                    details.localPosition.dy > 0 &&
+                                    details.localPosition.dy <
+                                        MediaQuery.of(context).size.height *
+                                            0.24) {
+                                  _points.last.add(details.localPosition);
+                                  path.last[0] // x축
+                                      .add(details.localPosition.dx.toInt());
+                                  path.last[1] // y축
+                                      .add(details.localPosition.dy.toInt());
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.width * 0.15,
+                              right: MediaQuery.of(context).size.width * 0.05),
+                          // 다시 그리기 버튼
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                                icon: Icon(
+                                  Icons.refresh,
+                                  color: color,
+                                ),
+                                iconSize:
+                                    MediaQuery.of(context).size.width * 0.1,
+                                tooltip: '지우기',
+                                onPressed: () {
+                                  setState(() {
+                                    path = [];
+                                    _points = [];
+                                  });
+                                }),
+                          ),
+                        ),
+                      ])),
+                ],
+              ),
+            ),
+            // 하단 바
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.08,
                 decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(32),
+                      topRight: Radius.circular(32)),
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage('assets/main/bg-main2_2.png'),
-                  ),
-                ),
-                child: Column(
-                  children: [
-                    // 상단바
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // 도움말 - 튜토리얼
-                          IconButton(
-                              iconSize:
-                                  MediaQuery.of(context).size.width * 0.25,
-                              onPressed: () {},
-                              icon: Image.asset(
-                                'assets/main/btn-help.png',
-                              )),
-                          // 동화 제목
-                          Flexible(
-                            child: Center(
-                              child: OutlinedText(
-                                  text: Text(title,
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.07)),
-                                  strokes: [
-                                    OutlinedTextStroke(
-                                        color: const Color(0xff198100),
-                                        width: 10),
-                                  ]),
-                            ),
-                          ),
-                          // 나가기
-                          IconButton(
-                              iconSize:
-                                  MediaQuery.of(context).size.width * 0.25,
-                              onPressed: () {
-                                // Navigator.of(context)
-                                //     .pushNamed(drawingTaleListRoute);
-                                Navigator.of(context).pop();
-                              },
-                              icon: Image.asset(
-                                'assets/main/btn-quit.png',
-                              )),
-                        ]),
-
-                    // 동화 아이템
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(color: color, width: 4),
-                                  borderRadius: const BorderRadius.all(
-                                      Radius.circular(18)),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Color(0x3f000000),
-                                      blurRadius: 4,
-                                      offset: Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.02),
-                                margin: EdgeInsets.symmetric(
-                                    vertical:
-                                        MediaQuery.of(context).size.width *
-                                            0.02,
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.05),
-                                child: Image.asset(
-                                  items[0],
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.25,
-                                )),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: const Color(0xff198100), width: 4),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(18)),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x3f000000),
-                                    blurRadius: 4,
-                                    offset: Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              padding: EdgeInsets.all(
-                                  MediaQuery.of(context).size.width * 0.02),
-                              margin: EdgeInsets.symmetric(
-                                  vertical:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.05),
-                              child: Image.asset(
-                                items[1],
-                                width: MediaQuery.of(context).size.width * 0.25,
-                              ),
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: const Color(0xffff0080), width: 4),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(18)),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x3f000000),
-                                    blurRadius: 4,
-                                    offset: Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              padding: EdgeInsets.all(
-                                  MediaQuery.of(context).size.width * 0.02),
-                              margin: EdgeInsets.symmetric(
-                                  vertical:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.05),
-                              child: Image.asset(
-                                items[2],
-                                width: MediaQuery.of(context).size.width * 0.25,
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(
-                                    color: const Color(0xff0060c4), width: 4),
-                                borderRadius:
-                                    const BorderRadius.all(Radius.circular(18)),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x3f000000),
-                                    blurRadius: 4,
-                                    offset: Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              padding: EdgeInsets.all(
-                                  MediaQuery.of(context).size.width * 0.02),
-                              margin: EdgeInsets.symmetric(
-                                  vertical:
-                                      MediaQuery.of(context).size.width * 0.02,
-                                  horizontal:
-                                      MediaQuery.of(context).size.width * 0.05),
-                              child: Image.asset(
-                                items[3],
-                                width: MediaQuery.of(context).size.width * 0.25,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-
-                    // 클리어 버튼 + 그림 그리는 부분
-                    Container(
-                        height: MediaQuery.of(context).size.height * 0.33,
-                        width: MediaQuery.of(context).size.width * 0.9,
-                        decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage(
-                                'assets/quizTaleList/box-quiz-board.png'),
-                          ),
-                        ),
-                        child: Stack(children: [
-                          // 그림 그리는 부분
-                          Container(
-                            alignment: Alignment.center,
-                            margin: EdgeInsets.fromLTRB(
-                                MediaQuery.of(context).size.width * 0.05,
-                                MediaQuery.of(context).size.height * 0.08,
-                                MediaQuery.of(context).size.width * 0.05,
-                                MediaQuery.of(context).size.height * 0.01),
-                            // 그리는 부분 감지 & 화면에 표시
-                            child: GestureDetector(
-                              child: CustomPaint(
-                                painter: DrawingPainter(_points),
-                                size: Size(
-                                    MediaQuery.of(context).size.width * 0.9,
-                                    MediaQuery.of(context).size.height * 0.3),
-                              ),
-                              onPanStart: (details) {
-                                setState(() {
-                                  _points.add([details.localPosition]);
-                                  path.add([
-                                    [details.localPosition.dx.toInt()],
-                                    [details.localPosition.dy.toInt()]
-                                  ]);
-                                });
-                              },
-                              onPanUpdate: (details) {
-                                setState(() {
-                                  // 범위에서 벗어나면 리스트에 추가X (사이즈 딱 맞게X, 끝부분 조금 띄어서)
-                                  if (details.localPosition.dx > 0 &&
-                                      details.localPosition.dx <
-                                          MediaQuery.of(context).size.width *
-                                              0.8 &&
-                                      details.localPosition.dy > 0 &&
-                                      details.localPosition.dy <
-                                          MediaQuery.of(context).size.height *
-                                              0.24) {
-                                    _points.last.add(details.localPosition);
-                                    path.last[0] // x축
-                                        .add(details.localPosition.dx.toInt());
-                                    path.last[1] // y축
-                                        .add(details.localPosition.dy.toInt());
-                                  }
-                                });
-                              },
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                top: MediaQuery.of(context).size.width * 0.15,
-                                right:
-                                    MediaQuery.of(context).size.width * 0.05),
-                            // 다시 그리기 버튼
-                            child: Align(
-                              alignment: Alignment.topRight,
-                              child: IconButton(
-                                  icon: Icon(
-                                    Icons.refresh,
-                                    color: color,
-                                  ),
-                                  iconSize:
-                                      MediaQuery.of(context).size.width * 0.1,
-                                  tooltip: '지우기',
-                                  onPressed: () {
-                                    setState(() {
-                                      path = [];
-                                      _points = [];
-                                    });
-                                  }),
-                            ),
-                          ),
-                        ])),
-                  ],
-                ),
-              ),
-              // 하단 바
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.08,
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32)),
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: AssetImage('assets/main/bg-bar.png'),
-                    ),
+                    image: AssetImage('assets/main/bg-bar.png'),
                   ),
                 ),
               ),
-              Positioned(
-                width: MediaQuery.of(context).size.width,
-                bottom: MediaQuery.of(context).size.height * 0.02,
-                child: GestureDetector(
-                  child: Container(
-                    height: MediaQuery.of(context).size.width * 0.22,
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: Colors.white),
-                    // 정답 확인 버튼
-                    child: Icon(
-                      Icons.check_rounded,
-                      color: color,
-                      size: MediaQuery.of(context).size.width * 0.15,
-                    ),
-                  ),
-                  onTap: () {
+            ),
+            Positioned(
+              width: MediaQuery.of(context).size.width,
+              bottom: MediaQuery.of(context).size.height * 0.02,
+              child: Container(
+                height: MediaQuery.of(context).size.width * 0.25,
+                decoration: const BoxDecoration(
+                    shape: BoxShape.circle, color: Colors.white),
+                // 정답 확인 버튼
+                child: IconButton(
+                  onPressed: () {
                     isCorrect();
                   },
+                  icon: Icon(
+                    Icons.check_rounded,
+                    size: MediaQuery.of(context).size.width * 0.15,
+                  ),
+                  color: color,
+                  tooltip: '정답 확인',
                 ),
-              )
-            ],
-          ),
+              ),
+            )
+          ],
         ),
       ),
     );
