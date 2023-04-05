@@ -13,6 +13,7 @@ import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
 import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:ar_flutter_plugin/widgets/ar_view.dart';
 import 'package:arcore_flutter_plugin/arcore_flutter_plugin.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -21,6 +22,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:native_screenshot/native_screenshot.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:scanning_effect/scanning_effect.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:snapstory/utilities/loading_dialog.dart';
 import 'package:snapstory/utilities/loading_dialog_DetectThings.dart';
@@ -73,6 +75,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
   late bool exContainerTap = false;
   late bool isInAccurate = false;
 
+  late String voices;
+
   void showDialog() {
     setState(() {
       isLoading = true;
@@ -90,9 +94,9 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     flutterTts = FlutterTts();
     _araiService = ARAIService();
     flutterTts.setLanguage("en-US");
-    flutterTts.setSpeechRate(0.5); //speed of speech
+    flutterTts.setSpeechRate(0.4); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
-    flutterTts.setPitch(1.0); //pitc of sound
+    flutterTts.setPitch(1.33);
 
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       flutterTts.setSharedInstance(true);
@@ -116,6 +120,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
 
   @override
   Widget build(BuildContext context) {
+    print("=============voices===========");
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: SafeArea(
@@ -255,6 +261,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                         GestureDetector(
                           onTap: () async => {
                             await makeSound(text: wordMap['word']),
+
                           },
                           child: Image.asset(
                             "assets/aiTale/btn-ai-word.png",
@@ -318,7 +325,18 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                     width: MediaQuery.of(context).size.width * 0.25,
                   ),
                 )),
-            if (isLoading) const Center(child: LoadingDialogDT()),
+            // if (isLoading) const Center(child: LoadingDialogDT()),
+            if(isLoading) Center(
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: const ScanningEffect(
+                  scanningColor: Colors.amber,
+                  borderLineColor: Colors.amber,
+                  delay: Duration(seconds: 1),
+                  duration: Duration(seconds: 1), child: SizedBox(),
+                ),
+              ),
+            ),
             if (isInAccurate)
               Center(
                   child: AlertDialog(
@@ -356,6 +374,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
               // Provide an onPressed callback.
               onPressed: () async {
                 arObjectManager.onInitialize();
+                AudioPlayer().play(AssetSource('sound/shutter.mp3'));
                 // arAnchorManager.initGoogleCloudAnchorMode();
                 onWebObjectAtButtonPressed();
               },
