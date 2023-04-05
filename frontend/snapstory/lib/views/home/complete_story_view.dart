@@ -126,14 +126,17 @@ class _CompleteStoryState extends State<CompleteStory> {
           counterShow = false;
 
           return AlertDialog(
+            shadowColor: Colors.transparent,
             backgroundColor: Colors.transparent,
             contentPadding: const EdgeInsets.all(0),
             content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
               return Container(
-                padding: const EdgeInsets.all(10),
-                alignment: Alignment.bottomCenter,
-                height: MediaQuery.of(context).size.height * 0.2,
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.1),
+                padding:
+                    EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
+                height: MediaQuery.of(context).size.height * 0.25,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
@@ -144,53 +147,60 @@ class _CompleteStoryState extends State<CompleteStory> {
                 ),
                 child: Column(
                   children: <Widget>[
-                    Expanded(
+                    SafeArea(
                       // 검색창
-                      child: TextField(
-                          // 글자수 30자로 제한
-                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                          maxLength: 30,
-                          controller: searchController,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 24),
-                          cursorColor: Colors.white,
-                          autofocus: true,
-                          // 글자수가 30보다 크면 counterText 뜨게
-                          onChanged: (text) {
-                            if (text.length >= 30) {
-                              setState(() {
-                                counterShow = true;
-                              });
-                            }
-                          },
-                          decoration: InputDecoration(
-                              counterText:
-                                  (counterShow) ? '30자 이내로 입력해주세요' : '',
-                              contentPadding: const EdgeInsets.all(15),
-                              filled: true,
-                              suffixIcon: IconButton(
-                                  padding: const EdgeInsets.all(0),
-                                  onPressed: () async {
-                                    setState(() {
-                                      isSearching = true;
-                                    });
-                                    String result = await onDeviceTranslator.translateText(searchController.text);
-                                    setState(() {
-                                      translate = result;
-                                      isSearching = false;
-                                    });
-                                  },
-                                  icon: const Icon(Icons.search_rounded,
-                                      color: Colors.white, size: 40)),
-                              fillColor: const Color(0xffffb628),
-                              border: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30))))),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.07,
+                        child: TextField(
+                            // 글자수 30자로 제한
+                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                            maxLength: 30,
+                            controller: searchController,
+                            style: TextStyle(color: Colors.white, fontSize: 24),
+                            cursorColor: Colors.white,
+                            autofocus: true,
+                            // 글자수가 30보다 크면 counterText 뜨게
+                            onChanged: (text) {
+                              if (text.length >= 30) {
+                                setState(() {
+                                  counterShow = true;
+                                });
+                              } else {
+                                setState(() {
+                                  counterShow = false;
+                                });
+                              }
+                            },
+                            decoration: InputDecoration(
+                                counterText:
+                                    (counterShow) ? '30자 이내로 입력해주세요' : '',
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 15),
+                                filled: true,
+                                suffixIcon: IconButton(
+                                    padding: const EdgeInsets.all(0),
+                                    onPressed: () async {
+                                      setState(() {
+                                        isSearching = true;
+                                      });
+                                      String result = await onDeviceTranslator.translateText(searchController.text);
+                                      setState(() {
+                                        translate = result;
+                                        isSearching = false;
+                                      });
+                                    },
+                                    icon: const Icon(Icons.search_rounded,
+                                        color: Colors.white, size: 40)),
+                                fillColor: const Color(0xffffb628),
+                                border: const OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(30))))),
+                      ),
+
                     ),
                     // 결과 나오는 부분
                     Container(
-                        margin: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).size.height * 0.03),
+                        alignment: Alignment.center,
                         child: (isSearching)
                             ? const CircularProgressIndicator()
                             : Text(
@@ -231,79 +241,113 @@ class _CompleteStoryState extends State<CompleteStory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: SafeArea(
-      child: Stack(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              // borderRadius: BorderRadius.circular(23),
-              // color: const Color(0xffffdb1f),
-
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: AssetImage('assets/main/bg-main.png'), // 배경 이미지
-              ),
-            ),
-            child: SingleChildScrollView(
-              child: Center(
-                child: FutureBuilder(
-                    future: getStory(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      //error가 발생하게 될 경우 반환하게 되는 부분
-                      if (snapshot.hasError) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            'Error: ${snapshot.error}',
-                            style: const TextStyle(fontSize: 50),
-                          ),
-                        );
-                      }
-                      //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
-                      else if (snapshot.hasData == false) {
-                        return const CircularProgressIndicator();
-                      }
-                      // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
-                      else {
-                        ft = snapshot.data! as FairyTale;
-                        return Center(
-                            child: Column(
-                          // crossAxisAlignment: CrossAxisAlignment.center,
-                          // mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Stack(
-                              alignment: Alignment.center,
+          child: Stack(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/main/bg-main.png'), // 배경 이미지
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: FutureBuilder(
+                        future: getStory(),
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          //error가 발생하게 될 경우 반환하게 되는 부분
+                          if (snapshot.hasError) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Error: ${snapshot.error}',
+                                style: const TextStyle(fontSize: 50),
+                              ),
+                            );
+                          }
+                          //해당 부분은 data를 아직 받아 오지 못했을때 실행되는 부분을 의미한다.
+                          else if (snapshot.hasData == false) {
+                            return const CircularProgressIndicator();
+                          }
+                          // 데이터를 정상적으로 받아오게 되면 다음 부분을 실행하게 되는 것이다.
+                          else {
+                            ft = snapshot.data! as FairyTale;
+                            return Center(
+                                child: Column(
                               children: [
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.15,
-                                ),
-                                Image(
-                                    image: const AssetImage(
-                                        "assets/aiTale/box-aitale-title.png"),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.85),
-                                Align(
-                                    // alignment: AlignmentDirectional(0, ),
-                                    child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                Stack(
+                                  alignment: Alignment.center,
                                   children: [
-                                    Text(
-                                      isEng ? "Story about " : wordKor,
-                                      style: isEng
-                                          ? const TextStyle(fontSize: 22)
-                                          : const TextStyle(
-                                              fontSize: 22, color: Colors.red),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.15,
                                     ),
-                                    Text(
-                                      isEng ? ft.wordEng : " 이야기",
-                                      style: isEng
-                                          ? const TextStyle(
-                                              fontSize: 22, color: Colors.red)
-                                          : const TextStyle(fontSize: 22),
+                                    Image(
+                                        image: const AssetImage(
+                                            "assets/aiTale/box-aitale-title.png"),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.85),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.02),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            isEng ? "Story about " : wordKor,
+                                            style: isEng
+                                                ? const TextStyle(fontSize: 22)
+                                                : const TextStyle(
+                                                    fontSize: 22,
+                                                    color: Colors.red),
+                                          ),
+                                          Text(
+                                            isEng ? ft.wordEng : " 이야기",
+                                            style: isEng
+                                                ? const TextStyle(
+                                                    fontSize: 22,
+                                                    color: Colors.red)
+                                                : const TextStyle(fontSize: 22),
+                                          )
+                                        ],
+                                      ),
                                     )
                                   ],
+<<<<<<< frontend/snapstory/lib/views/home/complete_story_view.dart
+                                ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 4, color: Colors.amber),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(40.0)),
+                                    shape: BoxShape.rectangle,
+                                  ),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(40),
+                                      child:
+                                          Image.network(ft.image, width: 300)),
+                                ),
+                                SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.02),
+                                GestureDetector(
+                                  onTap: () => setState(() {
+                                    isEng = !isEng;
+                                  }),
+                                  child: Container(
+                                      // color: Colors.orange,
+=======
                                 )),
                               ],
                             ),
@@ -341,199 +385,211 @@ class _CompleteStoryState extends State<CompleteStory> {
                               }),
                               child: Container(
                                   // color: Colors.orange,
+>>>>>>> frontend/snapstory/lib/views/home/complete_story_view.dart
 
-                                  // height: MediaQuery.of(context).size.height * 0.35,
-                                  margin: EdgeInsets.fromLTRB(30, 10, 30,
-                                      MediaQuery.of(context).size.width * 0.4),
-                                  child: isEng
-                                      ? Text(
-                                          ft.contentEng
-                                              .split("\"")[1]
-                                              .split("\n")[2],
-                                          style: const TextStyle(fontSize: 19),
-                                          textAlign: TextAlign.justify)
-                                      : Text(
-                                          ft.contentKor
-                                              .split("\n")[2],
+                                      // height: MediaQuery.of(context).size.height * 0.35,
+                                      margin: EdgeInsets.fromLTRB(
+                                          30,
+                                          10,
+                                          30,
+                                          MediaQuery.of(context).size.width *
+                                              0.4),
+                                      child: isEng
+                                          ? Text(
+                                              ft.contentEng
+                                                  .split("\"")[1]
+                                                  .split("\n")[2],
+                                              style:
+                                                  const TextStyle(fontSize: 19),
+                                              textAlign: TextAlign.justify)
+                                          : Text(ft.contentKor.split("\n")[2],
                                               // .split("\n")[2],
-                                          style: const TextStyle(fontSize: 19),
-                                          textAlign: TextAlign.justify)),
-                            ),
-                          ],
-                        ));
-                      }
-                    }),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              // color: Colors.transparent,
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.1,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(32),
-                    topRight: Radius.circular(32)),
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: AssetImage('assets/main/bg-bar.png'),
-                  // 배경 이미지
+                                              style:
+                                                  const TextStyle(fontSize: 19),
+                                              textAlign: TextAlign.justify)),
+                                ),
+                              ],
+                            ));
+                          }
+                        }),
+                  ),
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            bottom: 1,
-            left: MediaQuery.of(context).size.width * 0.05,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    height: MediaQuery.of(context).size.width * 0.3,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(23),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: (isPlaying)
-                            // 듣는 중이면 일시정지, 아니면 듣기
-                            ? AssetImage('assets/aiTale/btn-aitale-stop.png')
-                            : AssetImage('assets/aiTale/btn-aitale-sound.png'),
-                      ),
-                    ),
-                  ),
-                  onTap: () {
-                    String text = isEng
-                        ? ft.contentEng.split("\"")[1].split("\n")[2] // "" 빼기
-                        : ft.contentKor;
-                    playingStop(text);
-                  },
-                ),
-                GestureDetector(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    height: MediaQuery.of(context).size.width * 0.3,
-                    // margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(23),
-                      image: const DecorationImage(
-                        fit: BoxFit.cover,
-                        image:
-                            AssetImage('assets/aiTale/btn-aitale-search.png'),
-                      ),
-                    ),
-                  ),
-                  onTap: () {
-                    // 검색창 띄우기
-                    searchModal();
-                  },
-                ),
-                GestureDetector(
-                  onTap: () => {
-                    flutterTts.stop(),
-                    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                        builder: (context) => const MainView(selectedPage: 1)),(route) => false)
-                  // Navigator.of(context).pop()
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.3,
-                    height: MediaQuery.of(context).size.width * 0.3,
-                    // margin:
-                    // const EdgeInsets.fromLTRB(0, 0, 0, 70),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(23),
-                      image: const DecorationImage(
-                        fit: BoxFit.cover,
-                        image:
-                            AssetImage('assets/aiTale/btn-aitale-library.png'),
-                        // 배경 이미지
-                      ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  // color: Colors.transparent,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(32),
+                        topRight: Radius.circular(32)),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: AssetImage('assets/main/bg-bar.png'),
+                      // 배경 이미지
                     ),
                   ),
                 ),
-              ],
-            ),
-          )
+              ),
+              Positioned(
+                bottom: MediaQuery.of(context).size.height * 0.03,
+                left: MediaQuery.of(context).size.width * 0.05,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        height: MediaQuery.of(context).size.width * 0.3,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(23),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: (isPlaying)
+                                // 듣는 중이면 일시정지, 아니면 듣기
+                                ? AssetImage(
+                                    'assets/aiTale/btn-aitale-stop.png')
+                                : AssetImage(
+                                    'assets/aiTale/btn-aitale-sound.png'),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        String text = isEng
+                            ? ft.contentEng
+                                .split("\"")[1]
+                                .split("\n")[2] // "" 빼기
+                            : ft.contentKor;
+                        playingStop(text);
+                      },
+                    ),
+                    GestureDetector(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        height: MediaQuery.of(context).size.width * 0.3,
+                        // margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(23),
+                          image: const DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage(
+                                'assets/aiTale/btn-aitale-search.png'),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        // 검색창 띄우기
+                        searchModal();
+                      },
+                    ),
+                    GestureDetector(
+                      onTap: () => {
+                        flutterTts.stop(),
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const MainView(selectedPage: 1)),
+                            (route) => false)
+                        // Navigator.of(context).pop()
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.3,
+                        height: MediaQuery.of(context).size.width * 0.3,
+                        // margin:
+                        // const EdgeInsets.fromLTRB(0, 0, 0, 70),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(23),
+                          image: const DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage(
+                                'assets/aiTale/btn-aitale-library.png'),
+                            // 배경 이미지
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
 
-          // 스택 (바 이미지랑 버튼 있음)
-          // Align(
-          //   alignment: Alignment.bottomCenter,
-          //   child: Stack(
-          //     children: [
-          //
-          //       Container(
-          //         // color: Colors.transparent,
-          //         width: MediaQuery.of(context).size.width,
-          //         height: MediaQuery.of(context).size.height * 0.1,
-          //         decoration: BoxDecoration(
-          //           image: DecorationImage(
-          //             fit: BoxFit.cover,
-          //             image: AssetImage('assets/aiTale/bottom_bar.png'),
-          //             // 배경 이미지
-          //           ),
-          //         ),
-          //       ),
-          //
-          //       Positioned(
-          //         bottom: 1,
-          //         child: Row(
-          //
-          //           mainAxisAlignment: MainAxisAlignment.center,
-          //           // crossAxisAlignment: CrossAxisAlignment.center,
-          //           children: [
-          //             Container(
-          //
-          //                 width: MediaQuery.of(context).size.width * 0.3,
-          //                 height: MediaQuery.of(context).size.width * 0.3,
-          //                 // margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
-          //                 decoration: BoxDecoration(
-          //                   borderRadius: BorderRadius.circular(23),
-          //                   image: const DecorationImage(
-          //                     fit: BoxFit.cover,
-          //                     image: AssetImage(
-          //                         'assets/aiTale/btn-aitale-search.png'),
-          //                     // 배경 이미지
-          //                   ),
-          //                 ),
-          //                 child: const Center(child: Text(""))),
-          //             GestureDetector(
-          //               onTap: () => {
-          //                 flutterTts.stop(),
-          //                 Navigator.of(context).pushReplacement(
-          //                     MaterialPageRoute(
-          //                         builder: (context) =>
-          //                         const MainView(selectedPage: 1)))
-          //               },
-          //               child: Container(
-          //                   width:
-          //                   MediaQuery.of(context).size.width * 0.3,
-          //                   height:
-          //                   MediaQuery.of(context).size.width * 0.3,
-          //                   // margin:
-          //                   // const EdgeInsets.fromLTRB(0, 0, 0, 70),
-          //                   decoration: BoxDecoration(
-          //                     borderRadius: BorderRadius.circular(23),
-          //                     image: DecorationImage(
-          //                       fit: BoxFit.cover,
-          //                       image: AssetImage(
-          //                           'assets/aiTale/btn-aitale-library.png'),
-          //                       // 배경 이미지
-          //                     ),
-          //                   ),
-          //                   child: const Center(child: Text(""))),
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-        ],
-      ),
-    ));
+              // 스택 (바 이미지랑 버튼 있음)
+              // Align(
+              //   alignment: Alignment.bottomCenter,
+              //   child: Stack(
+              //     children: [
+              //
+              //       Container(
+              //         // color: Colors.transparent,
+              //         width: MediaQuery.of(context).size.width,
+              //         height: MediaQuery.of(context).size.height * 0.1,
+              //         decoration: BoxDecoration(
+              //           image: DecorationImage(
+              //             fit: BoxFit.cover,
+              //             image: AssetImage('assets/aiTale/bottom_bar.png'),
+              //             // 배경 이미지
+              //           ),
+              //         ),
+              //       ),
+              //
+              //       Positioned(
+              //         bottom: 1,
+              //         child: Row(
+              //
+              //           mainAxisAlignment: MainAxisAlignment.center,
+              //           // crossAxisAlignment: CrossAxisAlignment.center,
+              //           children: [
+              //             Container(
+              //
+              //                 width: MediaQuery.of(context).size.width * 0.3,
+              //                 height: MediaQuery.of(context).size.width * 0.3,
+              //                 // margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
+              //                 decoration: BoxDecoration(
+              //                   borderRadius: BorderRadius.circular(23),
+              //                   image: const DecorationImage(
+              //                     fit: BoxFit.cover,
+              //                     image: AssetImage(
+              //                         'assets/aiTale/btn-aitale-search.png'),
+              //                     // 배경 이미지
+              //                   ),
+              //                 ),
+              //                 child: const Center(child: Text(""))),
+              //             GestureDetector(
+              //               onTap: () => {
+              //                 flutterTts.stop(),
+              //                 Navigator.of(context).pushReplacement(
+              //                     MaterialPageRoute(
+              //                         builder: (context) =>
+              //                         const MainView(selectedPage: 1)))
+              //               },
+              //               child: Container(
+              //                   width:
+              //                   MediaQuery.of(context).size.width * 0.3,
+              //                   height:
+              //                   MediaQuery.of(context).size.width * 0.3,
+              //                   // margin:
+              //                   // const EdgeInsets.fromLTRB(0, 0, 0, 70),
+              //                   decoration: BoxDecoration(
+              //                     borderRadius: BorderRadius.circular(23),
+              //                     image: DecorationImage(
+              //                       fit: BoxFit.cover,
+              //                       image: AssetImage(
+              //                           'assets/aiTale/btn-aitale-library.png'),
+              //                       // 배경 이미지
+              //                     ),
+              //                   ),
+              //                   child: const Center(child: Text(""))),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+            ],
+          ),
+        ));
   }
 }
