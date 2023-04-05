@@ -23,7 +23,7 @@
 - Web Server : NGINX 1.22.1
 - AI
     - Python 3.9
-    - FastAPI 
+    - FastAPI 0.95.0
 - FE
     - Dart 3.0.0
     - Flutter 3.7.5
