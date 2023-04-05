@@ -54,9 +54,9 @@
     
 ## Properties
 
-1. Firebase to Flutter Project
-2. OpenAI Key to Flutter Project
-3. S3 to Spring Boot Project
+1. Firebase to Flutter Project -> Firebase Console
+2. OpenAI Key to Flutter Project -> /lib/constants/api_key.dart ( apiKey )
+3. S3 to Spring Boot Project -> application.yaml
 
 ## 외부 서비스 문서
 
