@@ -1,4 +1,5 @@
 import 'package:snapstory/constants/routes.dart';
+import 'package:snapstory/views/help_view.dart';
 import 'package:snapstory/views/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';

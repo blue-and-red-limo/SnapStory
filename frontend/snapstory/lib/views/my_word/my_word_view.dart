@@ -27,9 +27,9 @@ class _MyWordState extends State<MyWord> {
     _araiService = ARAIService();
     flutterTts = FlutterTts();
     flutterTts.setLanguage("en-US");
-    flutterTts.setSpeechRate(0.5); //speed of speech
+    flutterTts.setSpeechRate(0.4); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
-    flutterTts.setPitch(1); //pitc of sound
+    flutterTts.setPitch(1.33);//pitc of sound
     flutterTts.setSharedInstance(true);
     super.initState();
   }
@@ -74,6 +74,7 @@ class _MyWordState extends State<MyWord> {
                                             setState(() {
                                               _current = index;
                                               isEng = true;
+                                              flutterTts.setLanguage('en-US');
                                             });
                                           }),
                                       items: wordList
@@ -409,7 +410,7 @@ class _MyWordState extends State<MyWord> {
                                             }
                                           },
                                           icon: const Icon(
-                                              Icons.delete_forever_rounded),
+                                              Icons.delete_forever_rounded, color: Color(0xFFFFB628),),
                                         ),
                                       ),
                                     ],
