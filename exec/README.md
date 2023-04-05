@@ -65,7 +65,4 @@
 [클라우드 스토리지 | 웹 스토리지| Amazon Web Services](https://aws.amazon.com/ko/s3/?did=ap_card&trk=ap_card)
 
 ## DB dump
-[DB dump](./antennadb_dump.sql)
-
-## 시연 시나리오
-    1. 
+[DB dump](./20230405.sql)
