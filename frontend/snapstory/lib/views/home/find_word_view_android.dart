@@ -25,6 +25,7 @@ import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:snapstory/utilities/loading_dialog.dart';
 import 'package:snapstory/utilities/loading_dialog_DetectThings.dart';
 import 'package:snapstory/utilities/loading_dialog_makingStory.dart';
+import 'package:snapstory/views/help_view.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
 import 'package:screenshot/screenshot.dart';
@@ -295,9 +296,17 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             Positioned(
                 top: MediaQuery.of(context).size.height * 0.05,
                 left: MediaQuery.of(context).size.width * 0.07,
-                child: Image(
-                  image: AssetImage("assets/main/btn-help.png"),
-                  width: MediaQuery.of(context).size.width * 0.25,
+                child: GestureDetector(
+                  onTap: () => {
+                  Navigator.of(context).push(
+                  MaterialPageRoute(
+                  builder: (context) => HelpView(index: 3)),
+                  )
+                  },
+                  child: Image(
+                    image: AssetImage("assets/main/btn-help.png"),
+                    width: MediaQuery.of(context).size.width * 0.25,
+                  ),
                 )),
             Positioned(
                 top: MediaQuery.of(context).size.height * 0.05,
