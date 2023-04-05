@@ -311,7 +311,20 @@ class _CompleteStoryState extends State<CompleteStory> {
                               ),
                               child: ClipRRect(
                                   borderRadius: BorderRadius.circular(40),
-                                  child: Image.network(ft.image, width: 300)),
+                                  child: Image.network(ft.image, width: 300, errorBuilder: (context, error,
+                                      stackTrace) {
+                                    return Container(
+                                      height:
+                                      300,
+                                      width:
+                                      300,
+                                      padding: EdgeInsets.all(10),
+                                      child: Image.asset(
+                                        'assets/snappy_crying.png',
+                                        fit: BoxFit.contain,
+                                      ),
+                                    );
+                                  },)),
                             ),
                             SizedBox(
                                 height:
