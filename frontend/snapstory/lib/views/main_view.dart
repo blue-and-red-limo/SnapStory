@@ -176,10 +176,10 @@ class _MainViewState extends State<MainView> {
           actions: [
             IconButton(
               onPressed: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                      builder: (context) => const OnBoardingPage()),
-                );
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //       builder: (context) => const OnBoardingPage()),
+                // );
               },
               icon: const Icon(Icons.help_outline),
             ),
@@ -193,7 +193,7 @@ class _MainViewState extends State<MainView> {
                 currentAccountPicture: const CircleAvatar(
                   backgroundColor: Colors.white,
                 ),
-                accountName: Text('$userName 보호자님 안녕하세요.'),
+                accountName: Text('Hello $userName '),
                 accountEmail: Text(userEmail),
                 decoration: const BoxDecoration(
                     image: DecorationImage(
@@ -207,12 +207,15 @@ class _MainViewState extends State<MainView> {
               ),
               ListTile(
                 leading: Icon(
-                  Icons.headphones,
+                  Icons.help_outline,
                   color: Colors.grey[850],
                 ),
-                title: const Text('소리설정'),
+                title: const Text('튜토리얼 다시보기'),
                 onTap: () {
-                  print('소리설정 is clicked');
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => const OnBoardingPage()),
+                  );
                 },
               ),
               ListTile(
