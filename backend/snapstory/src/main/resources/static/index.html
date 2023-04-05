@@ -3,43 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="snappy-fav.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <meta name="theme-color" content="#FFB628" />
     <meta property="og:url" content="https://j8a401.p.ssafy.io/" />
     <meta property="og:title" content="Sna!pstory">
     <meta property="og:description" content="아이가 만드는 AI 영어 동화책" />
     <meta property="og:site_name" content="Sna!pstory" />
     <meta property="og:locale" content="ko-KR" />
-    <meta property="og:image" content="/static/web-meta.png" />
-    <style>
-        @font-face {
-            font-family: 'ONE Mobile POP';
-            src: url("ONE Mobile POP.ttf");
-        }
-    </style>
+    <meta property="og:image" content="https://snapstory401.s3.ap-northeast-2.amazonaws.com/meta/web-meta.png" />
     <title>Sna!pstory</title>
 </head>
-<body style="
-    margin: 5%;
+<body id="body" style="
     background-image: url(web-bg.png);
 ">
-<div style="
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 5%;
-">
-    <img src="web-main.png" alt="Sna!pstory">
-    <div style="
+<div id="main">
+    <img id="block1" src="web-main.png" alt="Sna!pstory" style="margin-top: 5%; margin-bottom: 5%;" >
+    <div id="block2" style="
         display: flex;
-        flex-direction: column;
-        flex-wrap: nowrap;
+        /*width: 80%;*/
+        flex-flow: column nowrap;
         align-items: center;
+        justify-content: center;
     ">
-        <img src="web-qrbox.png" alt="Sna!pstory QRcode">
-        <img src="web-download.png" alt="Sna!pstory Download" style="width: 90%">
+        <img src="web-qrbox.png" alt="Sna!pstory QRcode" style="width: 100%">
+        <a href ="" style="width: 90%"><img src="web-download.png" alt="Sna!pstory Download" style="width: 100%"></a>
     </div>
 </div>
+
+
 </body>
 </html>
+
+<script>
+    function adjustLayout() {
+        if (window.innerWidth >= 1280) {
+            document.getElementById("body").style.margin ="5% 15% 5% 15%";
+            document.getElementById("main").style.display = "flex";
+            document.getElementById("main").style.alignItems = "center";
+            document.getElementById("block1").style.width = "60%";
+            document.getElementById("block2").style.width = "40%";
+        } else {
+            document.getElementById("body").style.margin ="0 5% 5% 5%";
+            document.getElementById("main").style.display = "block";
+            document.getElementById("main").style.textAlign = "-webkit-center";
+            document.getElementById("block1").style.width = "100%";
+            document.getElementById("block2").style.width = "80%";
+        }
+    }
+    adjustLayout(); // Call the function initially to adjust the layout on page load
+    window.addEventListener("resize", adjustLayout); // Add an event listener to adjust the layout on window resize
+</script>
