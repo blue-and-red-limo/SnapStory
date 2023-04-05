@@ -74,6 +74,7 @@ class _MyWordState extends State<MyWord> {
                                             setState(() {
                                               _current = index;
                                               isEng = true;
+                                              flutterTts.setLanguage('en-US');
                                             });
                                           }),
                                       items: wordList
