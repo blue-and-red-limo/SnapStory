@@ -35,8 +35,6 @@ dependencies {
 	implementation ("com.github.downgoon:MarvinPlugins:1.5.5")
 	// https://mvnrepository.com/artifact/org.springframework/spring-test
 	testImplementation("org.springframework:spring-test:5.1.13.RELEASE")
-	// https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf
-	implementation("org.thymeleaf:thymeleaf:3.1.1.RELEASE")
 
 }
 
