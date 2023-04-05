@@ -152,67 +152,6 @@
 |<img src="./image/gifs/%ED%94%84%EB%A1%9C%ED%95%84_7_%ED%94%84%EB%A1%9C%ED%95%84_%EC%A7%80%EB%8F%84_%EB%82%B4%EA%B8%80.gif" width="250" height="530" />|<img src="./image/gifs/%ED%94%84%EB%A1%9C%ED%95%84_8_%EB%A1%9C%EA%B7%B8%EC%95%84%EC%9B%83.gif" width="250" height="530" />
 
 
-<!-- ## 로그인/회원가입
-<img src="./image/video-capture/login.jpg" width="30%" height="30%"/>
-
-## 메인 화면
-<img src="./image/video-capture/main.jpg" width="30%" height="30%"/>
-
-## 메인 화면(탐험모드)
-<img src="./image/video-capture/adventure-mode-main.jpg" width="30%" height="30%"/>
-
-## 내 주변 글
-<img src="./image/video-capture/my-area.jpg" width="30%" height="30%"/>
-
-## 특정위치 주변 글
-<img src="./image/video-capture/around-area.jpg" width="30%" height="30%"/>
-
-## 특정위치 주변 글 상세보기
-<img src="./image/video-capture/around-area-posts.jpg" width="30%" height="30%"/>
-
-## 팔로우 피드
-<img src="./image/video-capture/follow-feed.jpg" width="30%" height="30%"/>
-
-## 탐험 피드
-<img src="./image/video-capture/adventure-feed.jpg" width="30%" height="30%"/>
-
-## 안테나 피드
-<img src="./image/video-capture/antenna-feed.jpg" width="30%" height="30%"/>
-
-## 포스팅
-<img src="./image/video-capture/posting.jpg" width="30%" height="30%"/>
-
-## 포스팅 결과화면
-<img src="./image/video-capture/after-posting.jpg" width="30%" height="30%"/>
-
-## 체크포인트 포스팅
-<img src="./image/video-capture/posting-adventure.jpg" width="30%" height="30%"/>
-
-## 체크포인트 포스팅 결과화면
-<img src="./image/video-capture/checkpoind-succeed.jpg" width="30%" height="30%"/>
-
-## 탐험완료 결과화면
-<img src="./image/video-capture/finish-adventure.jpg" width="30%" height="30%"/>
-
-## 마이페이지
-<img src="./image/video-capture/mypage.jpg" width="30%" height="30%"/>
-
-## 팔로우
-<img src="./image/video-capture/follow.jpg" width="30%" height="30%"/>
-
-## 마이페이지 탐험중
-<img src="./image/video-capture/mypage-aip.jpg" width="30%" height="30%"/>
-
-## 마이페이지 탐험중 소팅
-<img src="./image/video-capture/mypage-aip-sorting.jpg" width="30%" height="30%"/>
-
-## 마이페이지 탐험완료
-<img src="./image/video-capture/mypage-as.jpg" width="30%" height="30%"/>
-
-## 마이페이지 마이탐험
-<img src="./image/video-capture/mypage-myadventure.jpg" width="30%" height="30%"/> -->
-
-
 # 🦍기술 스택
 
 ### [AI]
@@ -230,6 +169,8 @@
 - ARCore, ARKit
 - Figma
 - Visual Studio Code
+- Android Studio
+- Intellij
 
 ### [BE]
 
@@ -347,14 +288,87 @@
 
 ### 3. API 문서
 
-[SWAGGER](https://documenter.getpostman.com/view/17785045/2s8ZDd115D)
+[SWAGGER](https://j8a401.p.ssafy.io/swagger-ui/index.html#/)
 
 [API](./docs/API.pdf)
 
 # 🦍프로젝트 폴더 구조
 
-```bash
+## AI
 
+```bash
++---clip
+|   \---app
+|       +---images
+|       +---model
+|       \---test
+|           +---accuracy
+|           \---data_ndjson
+\---doodle-recognition-cnn
+    +---app
+    |   \---model
+    \---local-test
+        \---__pycache__
+```
+
+## BE
+
+```bash
++---.gradle
+|   +---7.6.1
+|   |   +---checksums
+|   |   +---dependencies-accessors
+|   |   +---executionHistory
+|   |   +---fileChanges
+|   |   +---fileHashes
+|   |   \---vcsMetadata
+|   +---buildOutputCleanup
+|   \---vcs-1
++---.idea
++---gradle
+|   \---wrapper
+\---src
+    +---main
+    |   +---java
+    |   |   \---com
+    |   |       \---ssafy
+    |   |           \---snapstory
+    |   |               +---config
+    |   |               +---controller
+    |   |               +---domain
+    |   |               |   +---aiTale
+    |   |               |   |   \---dto
+    |   |               |   +---quizTale
+    |   |               |   +---quizTaleItem
+    |   |               |   +---quizTaleItemDraw
+    |   |               |   |   \---dto
+    |   |               |   +---quizTaleItemList
+    |   |               |   |   \---dto
+    |   |               |   +---quizTaleList
+    |   |               |   |   \---dto
+    |   |               |   +---user
+    |   |               |   |   \---dto
+    |   |               |   +---word
+    |   |               |   \---wordList
+    |   |               |       \---dto
+    |   |               +---exception
+    |   |               |   +---bad_request
+    |   |               |   +---conflict
+    |   |               |   +---forbidden
+    |   |               |   +---internal_server_error
+    |   |               |   +---not_found
+    |   |               |   +---request_timeout
+    |   |               |   \---unauthorized
+    |   |               +---repository
+    |   |               \---service
+    |   \---resources
+    |       \---static
+    |           \---index_files
+    \---test
+        \---java
+            \---com
+                \---ssafy
+                    \---snapstory
 ```
 
 # 🦍개발 멤버

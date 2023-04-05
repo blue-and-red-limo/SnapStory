@@ -11,7 +11,8 @@
 - OS : Windows 10
 - UI/UX : Figma
 - IDE :
-    - Vidual Studio Code 1.75
+    - Visual Studio Code 1.75
+    - Android Studio 2022.1.1
     - Intellij IDEA 2022.3.1
 - DB : MySQL 8.0.30
 - Server : AWS EC2
@@ -36,21 +37,26 @@
 
 ## EC2
 
-1. Docker 23.0.0 설치
+1. Docker 23.0.1 설치
 2. Docker Compose 2.15.1 설치
 3. git clone
     
     ```bash
-    git clone https://lab.ssafy.com/s08-webmobile2-sub2/S08P12A305.git
+    git clone https://lab.ssafy.com/s08-ai-image-sub2/S08P22A401.git
     ```
     
-4. /S08P12A305/frontend/conf/nginx.conf → 도메인 수정
+4. /S08P22A401/backend/default.conf → 도메인 수정
 5. docker-compose up
     
     ```bash
     sudo docker compose up -d --build
     ```
     
+## Properties
+
+1. Firebase to Flutter Project
+2. OpenAI Key to Flutter Project
+3. S3 to Spring Boot Project
 
 ## 외부 서비스 문서
 
