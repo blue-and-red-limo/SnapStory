@@ -1,4 +1,5 @@
 import 'package:snapstory/constants/routes.dart';
+import 'package:snapstory/views/help_view.dart';
 import 'package:snapstory/views/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -427,7 +428,12 @@ class _DrawingViewState extends State<DrawingView> {
                           IconButton(
                               iconSize:
                                   MediaQuery.of(context).size.width * 0.25,
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (context) => HelpView(index: 4)),
+                                );
+                              },
                               icon: Image.asset(
                                 'assets/main/btn-help.png',
                               )),
