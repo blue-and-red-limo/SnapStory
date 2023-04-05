@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
 import 'package:snapstory/services/crud/user_service.dart';
 import 'package:snapstory/utilities/show_error_dialog.dart';
+import 'package:snapstory/views/help_view.dart';
 
 // 메인 탭 3개 페이지
 import 'package:snapstory/views/home/home_view.dart';
@@ -176,10 +177,10 @@ class _MainViewState extends State<MainView> {
           actions: [
             IconButton(
               onPressed: () {
-                // Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //       builder: (context) => const OnBoardingPage()),
-                // );
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => HelpView(index: selectedPos)),
+                );
               },
               icon: const Icon(Icons.help_outline),
             ),

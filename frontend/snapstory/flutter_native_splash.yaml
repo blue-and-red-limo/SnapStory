@@ -5,7 +5,7 @@ flutter_native_splash:
   color: "#FFD764"
 
   # 앱 로딩 스크린 중앙에 위치할 이미지 파일의 경로를 지정합니다.
-  image: assets/test.png
+  image: assets/snappy-splash.png
   android_gravity: center
   ios_content_mode: center
   # This package generates native code to customize Flutter's default white native splash screen
@@ -52,7 +52,7 @@ flutter_native_splash:
   # https://developer.android.com/guide/topics/ui/splash-screen
   # Following are Android 12 specific parameter.
   android_12:
-    image: assets/test.png
+    image: assets/snappy-splash.png
     android_gravity: center
     ios_content_mode: center
   # The image parameter sets the splash screen icon image.  If this parameter is not specified,
