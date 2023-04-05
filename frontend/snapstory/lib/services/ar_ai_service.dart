@@ -16,7 +16,7 @@ class ARAIService {
     var response = await request.send();
     Map newres = jsonDecode(utf8.decode(await response.stream.toBytes()));
     print(newres.toString());
-    if (response.statusCode == 200 && newres['probability'] as double > 0.5) {
+    if (response.statusCode == 200 && newres['probability'] as double > 0.4) {
       return newres['prediction'].toString();
     } else {
       return 'CANNOT GET WORD';
