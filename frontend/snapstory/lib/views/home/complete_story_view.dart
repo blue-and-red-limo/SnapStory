@@ -13,8 +13,8 @@ import 'package:snapstory/views/main_view.dart';
 import 'package:http/http.dart' as http;
 import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
-import 'package:learning_translate/learning_translate.dart';
 
+import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 class CompleteStory extends StatefulWidget {
   const CompleteStory({Key? key, required this.id}) : super(key: key);
 
@@ -29,8 +29,11 @@ class _CompleteStoryState extends State<CompleteStory> {
   late FairyTale ft;
   late bool isEng = true;
   late String wordKor;
-  Translator translator = Translator(from: ENGLISH, to: KOREAN);
+
   final searchController = TextEditingController();
+  late TranslateLanguage sourceLanguage = TranslateLanguage.english;
+  late TranslateLanguage targetLanguage = TranslateLanguage.korean;
+  late final onDeviceTranslator = OnDeviceTranslator(sourceLanguage: sourceLanguage, targetLanguage: targetLanguage);
   String translate = '';
   bool isSearching = false;
   bool counterShow = false;
@@ -93,14 +96,18 @@ class _CompleteStoryState extends State<CompleteStory> {
     flutterTts.stop();
     super.dispose();
   }
-
+  final modelManager = OnDeviceTranslatorModelManager();
   // 검색 모델 설치 여부 확인
   isModelInstalled() async {
-    bool isDownloaded = await TranslationModelManager.check(KOREAN);
+
+    bool isDownloadedSource = await modelManager.isModelDownloaded(TranslateLanguage.english.bcpCode);
+    bool isDownloadedTarget = await modelManager.isModelDownloaded(TranslateLanguage.korean.bcpCode);
 
     // 모델 미설치 시 설치
-    if (!isDownloaded) {
-      await TranslationModelManager.download(KOREAN);
+    if (!isDownloadedSource) {
+      await modelManager.downloadModel(TranslateLanguage.english.bcpCode);
+    }if (!isDownloadedTarget) {
+      await modelManager.downloadModel(TranslateLanguage.korean.bcpCode);
     }
   }
 
@@ -167,8 +174,7 @@ class _CompleteStoryState extends State<CompleteStory> {
                                     setState(() {
                                       isSearching = true;
                                     });
-                                    String result = await translator
-                                        .translate(searchController.text);
+                                    String result = await onDeviceTranslator.translateText(searchController.text);
                                     setState(() {
                                       translate = result;
                                       isSearching = false;
