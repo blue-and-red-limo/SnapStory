@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import '../constants/api_key.dart';
 
 class ARAIService {
   final String aiBase = 'https://j8a401.p.ssafy.io';
   final String springBase = 'https://j8a401.p.ssafy.io/api/v1';
-  final String apiKey = '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';
   final String apiUrl = 'https://api.openai.com/v1/completions';
 
   Future postPictureAndGetWord({required String path}) async {
