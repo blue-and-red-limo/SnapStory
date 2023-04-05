@@ -1,4 +1,13 @@
 flutter_native_splash:
+  # flutter_native_splash.yaml
+
+  # 앱 로딩 스크린의 배경색을 주황색(#FFA500)으로 설정합니다.
+  color: "#FFD764"
+
+  # 앱 로딩 스크린 중앙에 위치할 이미지 파일의 경로를 지정합니다.
+  image: assets/test.png
+  android_gravity: center
+  ios_content_mode: center
   # This package generates native code to customize Flutter's default white native splash screen
   # with background color and splash image.
   # Customize the parameters below, and run the following command in the terminal:
@@ -10,7 +19,7 @@ flutter_native_splash:
   # of your splash screen to a solid color.  Use background_image to set the background of your
   # splash screen to a png image.  This is useful for gradients. The image will be stretch to the
   # size of the app. Only one parameter can be used, color and background_image cannot both be set.
-  color: "#42a5f5"
+#  color: "#42a5f5"
   #background_image: "assets/background.png"
 
   # Optional parameters are listed below.  To enable a parameter, uncomment the line by removing
@@ -43,6 +52,9 @@ flutter_native_splash:
   # https://developer.android.com/guide/topics/ui/splash-screen
   # Following are Android 12 specific parameter.
   android_12:
+    image: assets/test.png
+    android_gravity: center
+    ios_content_mode: center
   # The image parameter sets the splash screen icon image.  If this parameter is not specified,
   # the app's launcher icon will be used instead.
   # Please note that the splash screen will be clipped to a circle on the center of the screen.
@@ -50,7 +62,7 @@ flutter_native_splash:
   # 640 pixels in diameter.
   # App icon without an icon background: This should be 1152×1152 pixels, and fit within a circle
   # 768 pixels in diameter.
-  #image: assets/android12splash.png
+#    image: assets/snappy.png
 
   # Splash screen background color.
   #color: "#42a5f5"
@@ -136,3 +148,17 @@ flutter_native_splash:
   #info_plist_files:
   #  - 'ios/Runner/Info-Debug.plist'
   #  - 'ios/Runner/Info-Release.plist'
+
+
+
+
+
+#  # 이미지 파일의 색상을 유지할 것인지(true) 혹은 배경색에 맞게 색상을 변경할 것인지(false)를 설정합니다.
+#  maintain_aspect_ratio: true
+#
+#  # 로딩 스크린에 나타날 앱 이름의 폰트 설정입니다.
+#  # 폰트 이름, 파일 경로, 크기, 스타일 등을 지정할 수 있습니다.
+#  text_style:
+#    font_size: 48.0
+#    color: "#FFFFFF"
+#    font_family: "Montserrat-Bold"
