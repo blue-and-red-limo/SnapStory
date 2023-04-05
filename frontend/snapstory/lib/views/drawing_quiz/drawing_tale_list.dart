@@ -17,7 +17,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
         child: Center(
           child: Container(
             padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).size.height * 0.15,
+                // bottom: MediaQuery.of(context).size.height * 0.15,
                 top: MediaQuery.of(context).padding.top),
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(

@@ -15,6 +15,7 @@ import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 
 import 'package:google_mlkit_translation/google_mlkit_translation.dart';
+
 class CompleteStory extends StatefulWidget {
   const CompleteStory({Key? key, required this.id}) : super(key: key);
 
@@ -33,7 +34,8 @@ class _CompleteStoryState extends State<CompleteStory> {
   final searchController = TextEditingController();
   late TranslateLanguage sourceLanguage = TranslateLanguage.english;
   late TranslateLanguage targetLanguage = TranslateLanguage.korean;
-  late final onDeviceTranslator = OnDeviceTranslator(sourceLanguage: sourceLanguage, targetLanguage: targetLanguage);
+  late final onDeviceTranslator = OnDeviceTranslator(
+      sourceLanguage: sourceLanguage, targetLanguage: targetLanguage);
   String translate = '';
   bool isSearching = false;
   bool counterShow = false;
@@ -96,17 +98,20 @@ class _CompleteStoryState extends State<CompleteStory> {
     flutterTts.stop();
     super.dispose();
   }
+
   final modelManager = OnDeviceTranslatorModelManager();
   // 검색 모델 설치 여부 확인
   isModelInstalled() async {
-
-    bool isDownloadedSource = await modelManager.isModelDownloaded(TranslateLanguage.english.bcpCode);
-    bool isDownloadedTarget = await modelManager.isModelDownloaded(TranslateLanguage.korean.bcpCode);
+    bool isDownloadedSource =
+        await modelManager.isModelDownloaded(TranslateLanguage.english.bcpCode);
+    bool isDownloadedTarget =
+        await modelManager.isModelDownloaded(TranslateLanguage.korean.bcpCode);
 
     // 모델 미설치 시 설치
     if (!isDownloadedSource) {
       await modelManager.downloadModel(TranslateLanguage.english.bcpCode);
-    }if (!isDownloadedTarget) {
+    }
+    if (!isDownloadedTarget) {
       await modelManager.downloadModel(TranslateLanguage.korean.bcpCode);
     }
   }
@@ -183,7 +188,8 @@ class _CompleteStoryState extends State<CompleteStory> {
                                       setState(() {
                                         isSearching = true;
                                       });
-                                      String result = await onDeviceTranslator.translateText(searchController.text);
+                                      String result = await onDeviceTranslator
+                                          .translateText(searchController.text);
                                       setState(() {
                                         translate = result;
                                         isSearching = false;
@@ -196,7 +202,6 @@ class _CompleteStoryState extends State<CompleteStory> {
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(30))))),
                       ),
-
                     ),
                     // 결과 나오는 부분
                     Container(
@@ -323,7 +328,6 @@ class _CompleteStoryState extends State<CompleteStory> {
                                       ),
                                     )
                                   ],
-<<<<<<< frontend/snapstory/lib/views/home/complete_story_view.dart
                                 ),
                                 Container(
                                   decoration: BoxDecoration(
@@ -342,50 +346,48 @@ class _CompleteStoryState extends State<CompleteStory> {
                                     height: MediaQuery.of(context).size.height *
                                         0.02),
                                 GestureDetector(
+                                    onTap: () => setState(() {
+                                          isEng = !isEng;
+                                        }),
+                                    child: Container(
+                                        // color: Colors.orange,
+                                        )),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        width: 4, color: Colors.amber),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(40.0)),
+                                    shape: BoxShape.rectangle,
+                                  ),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(40),
+                                      child: Image.network(
+                                        ft.image,
+                                        width: 300,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Container(
+                                            height: 300,
+                                            width: 300,
+                                            padding: EdgeInsets.all(10),
+                                            child: Image.asset(
+                                              'assets/snappy_crying.png',
+                                              fit: BoxFit.contain,
+                                            ),
+                                          );
+                                        },
+                                      )),
+                                ),
+                                SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.02),
+                                GestureDetector(
                                   onTap: () => setState(() {
                                     isEng = !isEng;
                                   }),
                                   child: Container(
                                       // color: Colors.orange,
-=======
-                                )),
-                              ],
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 4, color: Colors.amber),
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(40.0)),
-                                shape: BoxShape.rectangle,
-                              ),
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(40),
-                                  child: Image.network(ft.image, width: 300, errorBuilder: (context, error,
-                                      stackTrace) {
-                                    return Container(
-                                      height:
-                                      300,
-                                      width:
-                                      300,
-                                      padding: EdgeInsets.all(10),
-                                      child: Image.asset(
-                                        'assets/snappy_crying.png',
-                                        fit: BoxFit.contain,
-                                      ),
-                                    );
-                                  },)),
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.02),
-                            GestureDetector(
-                              onTap: () => setState(() {
-                                isEng = !isEng;
-                              }),
-                              child: Container(
-                                  // color: Colors.orange,
->>>>>>> frontend/snapstory/lib/views/home/complete_story_view.dart
 
                                       // height: MediaQuery.of(context).size.height * 0.35,
                                       margin: EdgeInsets.fromLTRB(
