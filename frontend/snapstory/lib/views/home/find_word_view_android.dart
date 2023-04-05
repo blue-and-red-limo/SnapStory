@@ -129,7 +129,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
             ),
             if (!checked && !isLoading)
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.3,
+                top: MediaQuery.of(context).size.height * 0.25,
                 left: MediaQuery.of(context).size.width * 0.1,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
