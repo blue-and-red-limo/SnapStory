@@ -11,6 +11,8 @@ import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:snapstory/utilities/loading_dialog.dart';
 import 'package:snapstory/utilities/loading_dialog_makingStory.dart';
 
+import '../../constants/api_key.dart';
+import '../../constants/api_key.dart';
 import 'complete_story_view.dart';
 
 // dalle가 만든 이미지 리스트
@@ -60,8 +62,8 @@ class _MakeStoryState extends State<MakeStory> {
   Future<String> askToDalle(String imgStr) async {
     // Create a new client.
     final client = OpenAIClient(
-      configuration: OpenAIConfiguration(
-        apiKey: _araiService.apiKey,
+      configuration: const OpenAIConfiguration(
+        apiKey: apiKey,
       ),
     );
 
