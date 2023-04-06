@@ -424,7 +424,12 @@ class _DrawingViewState extends State<DrawingView> {
                         // 도움말 - 튜토리얼
                         IconButton(
                             iconSize: MediaQuery.of(context).size.width * 0.25,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => HelpView(index: 4)),
+                              );
+                            },
                             icon: Image.asset(
                               'assets/main/btn-help.png',
                             )),
