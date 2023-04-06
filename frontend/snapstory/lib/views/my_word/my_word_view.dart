@@ -91,8 +91,11 @@ class _MyWordState extends State<MyWord> {
                                               });
                                             }),
                                         items: wordList
-                                            .map((e) => GestureDetector(
-                                                  onTap: () => setState(() {
+                                            .map((e) => InkWell(
+                                          splashColor: Theme.of(context).primaryColor,
+                                          borderRadius: BorderRadius.circular(23),
+
+                                          onTap: () => setState(() {
                                                     isEng = !isEng;
                                                     if(!isEng) {
                                                       flutterTts.setLanguage('ko-KR');
@@ -181,7 +184,9 @@ class _MyWordState extends State<MyWord> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          GestureDetector(
+                                          InkWell(
+                                            splashColor: Theme.of(context).primaryColor,
+                                          borderRadius: BorderRadius.circular(23),
                                           child: Image.asset(
                                             'assets/aiTale/btn-ai-word.png',
                                             height: MediaQuery.of(context)
@@ -200,7 +205,9 @@ class _MyWordState extends State<MyWord> {
                                                   : wordList[_current]['word']
                                                       ['wordKor']),
                                         ),
-                                        GestureDetector(
+                                        InkWell(
+                                          splashColor: Theme.of(context).primaryColor,
+                                          borderRadius: BorderRadius.circular(23),
                                           child: Image.asset(
                                             'assets/aiTale/btn-ai-example.png',
                                             height: MediaQuery.of(context)
@@ -219,7 +226,9 @@ class _MyWordState extends State<MyWord> {
                                                   : wordList[_current]
                                                       ['wordExampleKor']),
                                         ),
-                                        GestureDetector(
+                                        InkWell(
+                                            splashColor: Theme.of(context).primaryColor,
+                                            borderRadius: BorderRadius.circular(23),
                                             child: Image.asset(
                                               'assets/aiTale/btn-ai-story.png',
                                               height: MediaQuery.of(context)
@@ -329,7 +338,9 @@ class _MyWordState extends State<MyWord> {
                                   bottom:
                                       MediaQuery.of(context).size.height * 0.04),
                               itemBuilder: (context, index) {
-                                return GestureDetector(
+                                return InkWell(
+                                  splashColor: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(23),
                                   onTap: () {
                                     setState(() {
                                       isEng = !isEng;
@@ -413,6 +424,8 @@ class _MyWordState extends State<MyWord> {
                                               MediaQuery.of(context).size.width *
                                                   0.15,
                                           child: IconButton(
+                                            splashColor: Theme.of(context).primaryColor,
+                                            splashRadius: 23,
                                             onPressed: () async {
                                               final shouldDelete =
                                                   await showDeleteDialog(context);
