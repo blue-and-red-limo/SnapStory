@@ -61,6 +61,7 @@ class _DrawingViewState extends State<DrawingView> {
 
   @override
   void dispose() {
+    audioPlayer.stop();
     _controllerTopCenter.dispose();
     super.dispose();
   }
@@ -107,6 +108,7 @@ class _DrawingViewState extends State<DrawingView> {
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
       var jsonResponse =
           jsonDecode(response.body)['result']['drawQuizTaleItems'];
+
       setState(() {
         _1 = jsonResponse[0]['draw'];
         _2 = jsonResponse[1]['draw'];
@@ -152,6 +154,9 @@ class _DrawingViewState extends State<DrawingView> {
       _correct = false;
     }
     // 정답 or 오답 모달
+    (_correct)
+        ? audioPlayer.play(AssetSource('sound/correct.mp3'))
+        : audioPlayer.play(AssetSource('sound/wrong.mp3'));
     modal();
   }
 
@@ -162,7 +167,7 @@ class _DrawingViewState extends State<DrawingView> {
           Uri.parse('https://j8a401.p.ssafy.io/recognize/doodles'),
           headers: {'Content-Type': "application/json"},
           body: jsonEncode(<String, List<List<List<int>>>>{"data": path}));
-      // print(response);
+
       var jsonResponse = jsonDecode(response.body);
       // 정확도 0.7 이상이면 정답으로 인정
       if (jsonResponse['probability'] >= 0.47) {
@@ -182,9 +187,6 @@ class _DrawingViewState extends State<DrawingView> {
 
 // 정답 or 오답 모달
   modal() {
-    (_correct)
-        ? audioPlayer.play(AssetSource('sound/clap.mp3'))
-        : audioPlayer.play(AssetSource('sound/wrong.mp3'));
     return showDialog(
         context: context,
         // 바깥 영역 터치시 닫을지 여부
@@ -323,13 +325,14 @@ class _DrawingViewState extends State<DrawingView> {
 
     // complete가 true, 각 item이 false면 동화 확인 창 띄우고 도서관으로 이동
     if (isComplete && !_1 && !_2 && !_3 && !_4) {
+      audioPlayer.stop();
+      audioPlayer.play(AssetSource('sound/complete.mp3'));
       complete();
     }
   }
 
 // 완성 후 도서관 이동
   complete() {
-    if (id == 3) {}
     return showDialog(
         context: context,
         builder: (BuildContext context) => Container(
@@ -393,6 +396,7 @@ class _DrawingViewState extends State<DrawingView> {
                         ),
                       ),
                       onTap: () {
+                        audioPlayer.stop();
                         Navigator.pop(context);
                         Navigator.pushReplacement(
                           context,

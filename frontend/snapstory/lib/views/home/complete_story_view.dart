@@ -297,8 +297,7 @@ class _CompleteStoryState extends State<CompleteStory> {
                                         image: const AssetImage(
                                             "assets/aiTale/box-aitale-title.png"),
                                         width:
-                                            MediaQuery.of(context).size.width *
-                                                0.9),
+                                            MediaQuery.of(context).size.width),
                                     Padding(
                                       padding: EdgeInsets.only(
                                           bottom: MediaQuery.of(context)
@@ -316,12 +315,12 @@ class _CompleteStoryState extends State<CompleteStory> {
                                                     fontSize: MediaQuery.of(
                                                                 context)
                                                             .textScaleFactor *
-                                                        25)
+                                                        23)
                                                 : TextStyle(
                                                     fontSize: MediaQuery.of(
                                                                 context)
                                                             .textScaleFactor *
-                                                        25,
+                                                        23,
                                                     color: Colors.red),
                                           ),
                                           Text(
@@ -331,13 +330,13 @@ class _CompleteStoryState extends State<CompleteStory> {
                                                     fontSize: MediaQuery.of(
                                                                 context)
                                                             .textScaleFactor *
-                                                        25,
+                                                        23,
                                                     color: Colors.red)
                                                 : TextStyle(
                                                     fontSize: MediaQuery.of(
                                                                 context)
                                                             .textScaleFactor *
-                                                        25),
+                                                        23),
                                           )
                                         ],
                                       ),
