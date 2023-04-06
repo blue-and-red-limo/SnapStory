@@ -16,7 +16,7 @@ import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 
 import 'package:google_mlkit_translation/google_mlkit_translation.dart';
-import 'package:learning_translate/learning_translate.dart';
+
 
 class CompleteStory extends StatefulWidget {
   const CompleteStory({Key? key, required this.id}) : super(key: key);
@@ -38,7 +38,6 @@ class _CompleteStoryState extends State<CompleteStory> {
   late TranslateLanguage targetLanguage = TranslateLanguage.korean;
   late final onDeviceTranslator = OnDeviceTranslator(
       sourceLanguage: sourceLanguage, targetLanguage: targetLanguage);
-  final Translator _translator = Translator(from: ENGLISH, to: KOREAN);
 
   String translate = '';
   bool isSearching = false;
@@ -95,14 +94,6 @@ class _CompleteStoryState extends State<CompleteStory> {
   }
 
   final modelManager = OnDeviceTranslatorModelManager();
-
-  // 검색 모델 설치 여부 확인
-  isModelInstalled() async {
-    bool isDownloaded = await TranslationModelManager.check(KOREAN);
-    if (!isDownloaded) {
-      await TranslationModelManager.download(KOREAN);
-    }
-  }
 
   // 검색 모달창
   searchModal() async {
@@ -256,8 +247,7 @@ class _CompleteStoryState extends State<CompleteStory> {
 
   @override
   Widget build(BuildContext context) {
-    // 검색 모델 미설치 시 설치
-    isModelInstalled();
+
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
