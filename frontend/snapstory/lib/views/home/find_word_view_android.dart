@@ -359,7 +359,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
         ),
       ),
       floatingActionButton: Visibility(
-        visible: !checked,
+        visible: !checked && !isLoading,
         child: Container(
           height: MediaQuery.of(context).size.height * 0.09,
           // width:  MediaQuery.of(context).size.height * 0.1,
