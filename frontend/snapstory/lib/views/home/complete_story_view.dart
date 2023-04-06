@@ -17,7 +17,6 @@ import 'package:network_to_file_image/network_to_file_image.dart';
 
 import 'package:google_mlkit_translation/google_mlkit_translation.dart';
 
-
 class CompleteStory extends StatefulWidget {
   const CompleteStory({Key? key, required this.id}) : super(key: key);
 
@@ -247,7 +246,6 @@ class _CompleteStoryState extends State<CompleteStory> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
@@ -300,7 +298,7 @@ class _CompleteStoryState extends State<CompleteStory> {
                                             "assets/aiTale/box-aitale-title.png"),
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                0.85),
+                                                0.9),
                                     Padding(
                                       padding: EdgeInsets.only(
                                           bottom: MediaQuery.of(context)
@@ -408,6 +406,8 @@ class _CompleteStoryState extends State<CompleteStory> {
                   ),
                 ),
               ),
+
+              //하단바
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
