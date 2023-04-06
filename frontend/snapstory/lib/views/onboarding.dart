@@ -4,7 +4,8 @@ import 'package:snapstory/main.dart';
 
 // 앱 처음 시작할 때 튜토리얼 페이지
 class OnBoardingPage extends StatelessWidget {
-  const OnBoardingPage({Key? key}) : super(key: key);
+  final bool isFirst;
+  const OnBoardingPage({Key? key, required this.isFirst}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +48,13 @@ class OnBoardingPage extends StatelessWidget {
       done: const Text('done'),
       onDone: () {
         // 메인 페이지로 이동
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
+        if(isFirst){
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        } else {
+          Navigator.of(context).pop();
+        }
       },
       next: const Icon(Icons.arrow_forward),
       showSkipButton: true,
