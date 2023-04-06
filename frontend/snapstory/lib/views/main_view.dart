@@ -191,8 +191,13 @@ class _MainViewState extends State<MainView> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               UserAccountsDrawerHeader(
-                currentAccountPicture: const CircleAvatar(
-                  backgroundColor: Colors.white,
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white70,
+                  child: Padding(
+                    padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.015),
+                    child: Image.asset('assets/snappy.png',fit: BoxFit.fill),
+                  ),
+                  // foregroundImage: AssetImage('assets/snappy.png'),
                 ),
                 accountName: Text('Hello $userName '),
                 accountEmail: Text(userEmail),
@@ -204,7 +209,8 @@ class _MainViewState extends State<MainView> {
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(40.0),
                       bottomRight: Radius.circular(40.0),
-                    )),
+                    ),
+                ),
               ),
               ListTile(
                 leading: Icon(
