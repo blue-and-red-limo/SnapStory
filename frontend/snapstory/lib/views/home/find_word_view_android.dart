@@ -375,8 +375,8 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                   const Icon(Icons.camera, color: Color(0xFFFFB628), size: 37),
               // Provide an onPressed callback.
               onPressed: () async {
-                arObjectManager.onInitialize();
                 AudioPlayer().play(AssetSource('sound/shutter.mp3'));
+                arObjectManager.onInitialize();
                 // arAnchorManager.initGoogleCloudAnchorMode();
                 onWebObjectAtButtonPressed();
               },
