@@ -40,6 +40,7 @@ class _CompleteStoryState extends State<CompleteStory> {
   bool isSearching = false;
   bool counterShow = false;
   bool isPlaying = false;
+  final FocusNode _focusNode = FocusNode();
 
   Future<int> makeSound({required String text}) async {
     isEng ? flutterTts.setLanguage("en-US") : flutterTts.setLanguage("ko-KR");
@@ -62,18 +63,8 @@ class _CompleteStoryState extends State<CompleteStory> {
       },
     );
 
-    // String? contentEng = jsonDecode(utf8.decode(response.bodyBytes))["result"]["contentEng"];
-    // String? contentKor = jsonDecode(utf8.decode(response.bodyBytes))["result"]["contentKor"];
-    // String? image = jsonDecode(utf8.decode(response.bodyBytes))["result"]["image"];
-    // String? wordEng = jsonDecode(utf8.decode(response.bodyBytes))["result"]["wordEng"];
-
     Map<String, dynamic> result = jsonDecode(utf8.decode(response.bodyBytes));
-    // makeSound(text: result["result"]["contentEng"]);
-
-    // print("----------스토리 정보------------");
-    // print(jsonDecode(utf8.decode(response.bodyBytes)));
     wordKor = result["result"]["wordKor"];
-    // print("넘어온 정보: $contentEng:$contentKor:$image:$wordEng");
 
     return FairyTale(
         result["result"]["contentEng"],
@@ -100,6 +91,7 @@ class _CompleteStoryState extends State<CompleteStory> {
   }
 
   final modelManager = OnDeviceTranslatorModelManager();
+
   // 검색 모델 설치 여부 확인
   isModelInstalled() async {
     bool isDownloadedSource =
@@ -115,6 +107,18 @@ class _CompleteStoryState extends State<CompleteStory> {
       await modelManager.downloadModel(TranslateLanguage.korean.bcpCode);
     }
   }
+
+  // search() async {
+  //   setState(() {
+  //     isSearching = true;
+  //   });
+  //   String result =
+  //       await onDeviceTranslator.translateText(searchController.text);
+  //   setState(() {
+  //     translate = result;
+  //     isSearching = false;
+  //   });
+  // }
 
   // 검색 모달창
   searchModal() async {
@@ -155,52 +159,76 @@ class _CompleteStoryState extends State<CompleteStory> {
                     SafeArea(
                       // 검색창
                       child: SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.07,
+                        height: MediaQuery.of(context).size.height * 0.08,
                         child: TextField(
-                            // 글자수 30자로 제한
-                            maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                            maxLength: 30,
-                            controller: searchController,
-                            style: TextStyle(color: Colors.white, fontSize: 24),
-                            cursorColor: Colors.white,
-                            autofocus: true,
-                            // 글자수가 30보다 크면 counterText 뜨게
-                            onChanged: (text) {
-                              if (text.length >= 30) {
-                                setState(() {
-                                  counterShow = true;
-                                });
-                              } else {
-                                setState(() {
-                                  counterShow = false;
-                                });
-                              }
-                            },
-                            decoration: InputDecoration(
-                                counterText:
-                                    (counterShow) ? '30자 이내로 입력해주세요' : '',
-                                contentPadding:
-                                    EdgeInsets.symmetric(horizontal: 15),
-                                filled: true,
-                                suffixIcon: IconButton(
-                                    padding: const EdgeInsets.all(0),
-                                    onPressed: () async {
-                                      setState(() {
-                                        isSearching = true;
-                                      });
-                                      String result = await onDeviceTranslator
-                                          .translateText(searchController.text);
-                                      setState(() {
-                                        translate = result;
-                                        isSearching = false;
-                                      });
-                                    },
-                                    icon: const Icon(Icons.search_rounded,
-                                        color: Colors.white, size: 40)),
-                                fillColor: const Color(0xffffb628),
-                                border: const OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(30))))),
+                          // 글자수 30자로 제한
+                          maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                          maxLength: 30,
+                          controller: searchController,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize:
+                                  MediaQuery.of(context).textScaleFactor * 24),
+                          cursorColor: Colors.white,
+                          autofocus: true,
+                          // 글자수가 30보다 크면 counterText 뜨게
+                          onChanged: (text) {
+                            if (text.length >= 30) {
+                              setState(() {
+                                counterShow = true;
+                              });
+                            } else {
+                              setState(() {
+                                counterShow = false;
+                              });
+                            }
+                          },
+                          decoration: InputDecoration(
+                              counterText:
+                                  (counterShow) ? '30자 이내로 입력해주세요' : '',
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 15),
+                              filled: true,
+                              // 검색 버튼
+                              suffixIcon: IconButton(
+                                  padding: const EdgeInsets.all(0),
+                                  onPressed: () async {
+                                    setState(() {
+                                      isSearching = true;
+                                    });
+                                    String result = await onDeviceTranslator
+                                        .translateText(searchController.text);
+                                    setState(() {
+                                      translate = result;
+                                      isSearching = false;
+                                    });
+                                  },
+                                  icon: const Icon(Icons.search_rounded,
+                                      color: Colors.white, size: 40)),
+                              fillColor: const Color(0xffffb628),
+                              border: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30)))),
+                          focusNode: _focusNode,
+                          textInputAction: TextInputAction.search,
+                          // 엔터키 눌렀을 때
+                          onSubmitted: (value) async {
+                            _focusNode.requestFocus();
+                            searchController.text = value;
+                            searchController.selection =
+                                TextSelection.fromPosition(TextPosition(
+                                    offset: searchController.text.length));
+                            setState(() {
+                              isSearching = true;
+                            });
+                            String result = await onDeviceTranslator
+                                .translateText(searchController.text);
+                            setState(() {
+                              translate = result;
+                              isSearching = false;
+                            });
+                          },
+                        ),
                       ),
                     ),
                     // 결과 나오는 부분
@@ -210,7 +238,10 @@ class _CompleteStoryState extends State<CompleteStory> {
                             ? const CircularProgressIndicator()
                             : Text(
                                 translate,
-                                style: const TextStyle(fontSize: 30),
+                                style: TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).textScaleFactor *
+                                            30),
                               ))
                   ],
                 ),
@@ -311,47 +342,38 @@ class _CompleteStoryState extends State<CompleteStory> {
                                           Text(
                                             isEng ? "Story about " : wordKor,
                                             style: isEng
-                                                ? const TextStyle(fontSize: 22)
-                                                : const TextStyle(
-                                                    fontSize: 22,
+                                                ? TextStyle(
+                                                    fontSize: MediaQuery.of(
+                                                                context)
+                                                            .textScaleFactor *
+                                                        25)
+                                                : TextStyle(
+                                                    fontSize: MediaQuery.of(
+                                                                context)
+                                                            .textScaleFactor *
+                                                        25,
                                                     color: Colors.red),
                                           ),
                                           Text(
                                             isEng ? ft.wordEng : " 이야기",
                                             style: isEng
-                                                ? const TextStyle(
-                                                    fontSize: 22,
+                                                ? TextStyle(
+                                                    fontSize: MediaQuery.of(
+                                                                context)
+                                                            .textScaleFactor *
+                                                        25,
                                                     color: Colors.red)
-                                                : const TextStyle(fontSize: 22),
+                                                : TextStyle(
+                                                    fontSize: MediaQuery.of(
+                                                                context)
+                                                            .textScaleFactor *
+                                                        25),
                                           )
                                         ],
                                       ),
                                     )
                                   ],
                                 ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        width: 4, color: Colors.amber),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(40.0)),
-                                    shape: BoxShape.rectangle,
-                                  ),
-                                  child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(40),
-                                      child:
-                                          Image.network(ft.image, width: 300)),
-                                ),
-                                SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.02),
-                                GestureDetector(
-                                    onTap: () => setState(() {
-                                          isEng = !isEng;
-                                        }),
-                                    child: Container(
-                                        // color: Colors.orange,
-                                        )),
                                 Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(
@@ -379,35 +401,32 @@ class _CompleteStoryState extends State<CompleteStory> {
                                         },
                                       )),
                                 ),
-                                SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.02),
                                 GestureDetector(
                                   onTap: () => setState(() {
                                     isEng = !isEng;
                                   }),
                                   child: Container(
-                                      // color: Colors.orange,
-
-                                      // height: MediaQuery.of(context).size.height * 0.35,
                                       margin: EdgeInsets.fromLTRB(
-                                          30,
-                                          10,
-                                          30,
+                                          MediaQuery.of(context).size.width *
+                                              0.08,
+                                          MediaQuery.of(context).size.height *
+                                              0.02,
+                                          MediaQuery.of(context).size.width *
+                                              0.08,
                                           MediaQuery.of(context).size.width *
                                               0.4),
                                       child: isEng
-                                          ? Text(
-                                              ft.contentEng
-                                                  .split("\"")[1]
-                                                  .split("\n")[2],
-                                              style:
-                                                  const TextStyle(fontSize: 19),
+                                          ? Text(ft.contentEng.split("\"")[1].split("\n")[2],
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .textScaleFactor *
+                                                          25),
                                               textAlign: TextAlign.justify)
                                           : Text(ft.contentKor.split("\n")[2],
-                                              // .split("\n")[2],
-                                              style:
-                                                  const TextStyle(fontSize: 19),
+                                              style: TextStyle(
+                                                  fontSize:
+                                                      MediaQuery.of(context).textScaleFactor * 25),
                                               textAlign: TextAlign.justify)),
                                 ),
                               ],
@@ -516,80 +535,6 @@ class _CompleteStoryState extends State<CompleteStory> {
                   ],
                 ),
               )
-
-              // 스택 (바 이미지랑 버튼 있음)
-              // Align(
-              //   alignment: Alignment.bottomCenter,
-              //   child: Stack(
-              //     children: [
-              //
-              //       Container(
-              //         // color: Colors.transparent,
-              //         width: MediaQuery.of(context).size.width,
-              //         height: MediaQuery.of(context).size.height * 0.1,
-              //         decoration: BoxDecoration(
-              //           image: DecorationImage(
-              //             fit: BoxFit.cover,
-              //             image: AssetImage('assets/aiTale/bottom_bar.png'),
-              //             // 배경 이미지
-              //           ),
-              //         ),
-              //       ),
-              //
-              //       Positioned(
-              //         bottom: 1,
-              //         child: Row(
-              //
-              //           mainAxisAlignment: MainAxisAlignment.center,
-              //           // crossAxisAlignment: CrossAxisAlignment.center,
-              //           children: [
-              //             Container(
-              //
-              //                 width: MediaQuery.of(context).size.width * 0.3,
-              //                 height: MediaQuery.of(context).size.width * 0.3,
-              //                 // margin: const EdgeInsets.fromLTRB(0, 0, 0, 70),
-              //                 decoration: BoxDecoration(
-              //                   borderRadius: BorderRadius.circular(23),
-              //                   image: const DecorationImage(
-              //                     fit: BoxFit.cover,
-              //                     image: AssetImage(
-              //                         'assets/aiTale/btn-aitale-search.png'),
-              //                     // 배경 이미지
-              //                   ),
-              //                 ),
-              //                 child: const Center(child: Text(""))),
-              //             GestureDetector(
-              //               onTap: () => {
-              //                 flutterTts.stop(),
-              //                 Navigator.of(context).pushReplacement(
-              //                     MaterialPageRoute(
-              //                         builder: (context) =>
-              //                         const MainView(selectedPage: 1)))
-              //               },
-              //               child: Container(
-              //                   width:
-              //                   MediaQuery.of(context).size.width * 0.3,
-              //                   height:
-              //                   MediaQuery.of(context).size.width * 0.3,
-              //                   // margin:
-              //                   // const EdgeInsets.fromLTRB(0, 0, 0, 70),
-              //                   decoration: BoxDecoration(
-              //                     borderRadius: BorderRadius.circular(23),
-              //                     image: DecorationImage(
-              //                       fit: BoxFit.cover,
-              //                       image: AssetImage(
-              //                           'assets/aiTale/btn-aitale-library.png'),
-              //                       // 배경 이미지
-              //                     ),
-              //                   ),
-              //                   child: const Center(child: Text(""))),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ],
           ),
         ));
