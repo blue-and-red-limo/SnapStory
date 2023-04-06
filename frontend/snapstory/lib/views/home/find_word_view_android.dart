@@ -210,36 +210,38 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
                       0, MediaQuery.of(context).size.height * 0.23, 0, 0),
                   child: Align(
                     alignment: Alignment.topCenter,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 5,
-                          color: Colors.amber,
+                    child: Flexible(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 5,
+                            color: Colors.amber,
+                          ),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
                         ),
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
-                      // decoration: const BoxDecoration(
-                      //   borderRadius: BorderRadius.only(
-                      //     topLeft: Radius.circular(23),
-                      //     topRight: Radius.circular(23),
-                      //   ),
-                      // ),
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      // color: Colors.white,
-                      child: Padding(
-                        padding: EdgeInsets.all(15),
-                        child: Center(
-                          child: exContainerTap
-                              ? Text(
-                                  wordMap['wordExampleKor'],
-                                  style: TextStyle(fontSize: 20),
-                                )
-                              : Text(
-                                  wordMap['wordExampleEng'],
-                                  style: TextStyle(fontSize: 20),
-                                ),
+                        // decoration: const BoxDecoration(
+                        //   borderRadius: BorderRadius.only(
+                        //     topLeft: Radius.circular(23),
+                        //     topRight: Radius.circular(23),
+                        //   ),
+                        // ),
+                        height: MediaQuery.of(context).size.height * 0.15,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        // color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsets.all(15),
+                          child: Center(
+                            child: exContainerTap
+                                ? Text(
+                                    wordMap['wordExampleKor'],
+                                    style: TextStyle(fontSize: 20),
+                                  )
+                                : Text(
+                                    wordMap['wordExampleEng'],
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                          ),
                         ),
                       ),
                     ),
