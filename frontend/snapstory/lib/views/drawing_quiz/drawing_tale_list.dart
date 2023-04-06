@@ -16,9 +16,7 @@ class DrawingTaleListState extends State<DrawingTaleList> {
       body: SafeArea(
         child: Center(
           child: Container(
-            padding: EdgeInsets.only(
-                // bottom: MediaQuery.of(context).size.height * 0.15,
-                top: MediaQuery.of(context).padding.top),
+            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
               image: DecorationImage(
@@ -27,7 +25,8 @@ class DrawingTaleListState extends State<DrawingTaleList> {
               ),
             ),
             child: ListView(
-              padding: EdgeInsets.only(top: 0),
+              padding: EdgeInsets.only(
+                  top: 0, bottom: MediaQuery.of(context).size.height * 0.15),
               children: [
                 // 신데렐라
                 IconButton(
@@ -124,7 +123,6 @@ class DrawingTaleListState extends State<DrawingTaleList> {
                 ),
               ),
             ),
-            // ),
             Positioned(
               width: MediaQuery.of(context).size.width,
               bottom: MediaQuery.of(context).size.height * 0.03,
