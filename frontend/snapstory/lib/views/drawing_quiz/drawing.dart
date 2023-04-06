@@ -1,6 +1,4 @@
-import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/views/help_view.dart';
-import 'package:snapstory/views/main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -9,6 +7,8 @@ import 'dart:io';
 import 'package:confetti/confetti.dart';
 import 'package:outlined_text/outlined_text.dart';
 import 'package:snapstory/views/my_library/quiz_tale_view.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:developer' as logDev;
 
 class DrawingView extends StatefulWidget {
   final int id;
@@ -41,6 +41,7 @@ class _DrawingViewState extends State<DrawingView> {
   ];
   String title = '';
   dynamic color = const Color(0xffffb628);
+  AudioPlayer audioPlayer = AudioPlayer();
 
   // 캔버스에 그림 그리기 위해 담는 리스트
   List<List<Offset>> _points = [];
@@ -170,6 +171,7 @@ class _DrawingViewState extends State<DrawingView> {
         answer = 'wrong';
       }
     } catch (e) {
+      answer = 'wrong';
       print('$e 이미지 확인 에러');
     }
     setState(() {
@@ -180,6 +182,9 @@ class _DrawingViewState extends State<DrawingView> {
 
 // 정답 or 오답 모달
   modal() {
+    (_correct)
+        ? audioPlayer.play(AssetSource('sound/clap.mp3'))
+        : audioPlayer.play(AssetSource('sound/wrong.mp3'));
     return showDialog(
         context: context,
         // 바깥 영역 터치시 닫을지 여부
@@ -264,6 +269,7 @@ class _DrawingViewState extends State<DrawingView> {
                                     ),
                                   ),
                                   onPressed: () {
+                                    audioPlayer.stop();
                                     _confirm();
                                   },
                                   child: Row(
