@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_file_dialog/flutter_file_dialog.dart';
@@ -15,6 +16,7 @@ import 'package:snapstory/views/my_library/my_library_view.dart';
 import 'package:network_to_file_image/network_to_file_image.dart';
 
 import 'package:google_mlkit_translation/google_mlkit_translation.dart';
+import 'package:learning_translate/learning_translate.dart';
 
 class CompleteStory extends StatefulWidget {
   const CompleteStory({Key? key, required this.id}) : super(key: key);
@@ -36,6 +38,8 @@ class _CompleteStoryState extends State<CompleteStory> {
   late TranslateLanguage targetLanguage = TranslateLanguage.korean;
   late final onDeviceTranslator = OnDeviceTranslator(
       sourceLanguage: sourceLanguage, targetLanguage: targetLanguage);
+  final Translator _translator = Translator(from: ENGLISH, to: KOREAN);
+
   String translate = '';
   bool isSearching = false;
   bool counterShow = false;
@@ -94,37 +98,14 @@ class _CompleteStoryState extends State<CompleteStory> {
 
   // 검색 모델 설치 여부 확인
   isModelInstalled() async {
-    bool isDownloadedSource =
-        await modelManager.isModelDownloaded(TranslateLanguage.english.bcpCode);
-    bool isDownloadedTarget =
-        await modelManager.isModelDownloaded(TranslateLanguage.korean.bcpCode);
-
-    // 모델 미설치 시 설치
-    if (!isDownloadedSource) {
-      await modelManager.downloadModel(TranslateLanguage.english.bcpCode);
-    }
-    if (!isDownloadedTarget) {
-      await modelManager.downloadModel(TranslateLanguage.korean.bcpCode);
+    bool isDownloaded = await TranslationModelManager.check(KOREAN);
+    if (!isDownloaded) {
+      await TranslationModelManager.download(KOREAN);
     }
   }
 
-  // search() async {
-  //   setState(() {
-  //     isSearching = true;
-  //   });
-  //   String result =
-  //       await onDeviceTranslator.translateText(searchController.text);
-  //   setState(() {
-  //     translate = result;
-  //     isSearching = false;
-  //   });
-  // }
-
   // 검색 모달창
   searchModal() async {
-    // 검색 모델 미설치 시 설치
-    isModelInstalled();
-
     return showDialog(
         barrierColor: Colors.transparent,
         context: context,
@@ -135,14 +116,13 @@ class _CompleteStoryState extends State<CompleteStory> {
           counterShow = false;
 
           return AlertDialog(
+            alignment: Alignment.bottomCenter,
             shadowColor: Colors.transparent,
             backgroundColor: Colors.transparent,
-            contentPadding: const EdgeInsets.all(0),
+            contentPadding: EdgeInsets.all(0),
             content: StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
               return Container(
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.1),
                 padding:
                     EdgeInsets.all(MediaQuery.of(context).size.width * 0.05),
                 height: MediaQuery.of(context).size.height * 0.25,
@@ -276,6 +256,8 @@ class _CompleteStoryState extends State<CompleteStory> {
 
   @override
   Widget build(BuildContext context) {
+    // 검색 모델 미설치 시 설치
+    isModelInstalled();
     return Scaffold(
         resizeToAvoidBottomInset: false,
         body: SafeArea(
