@@ -39,7 +39,7 @@ class _DrawingViewState extends State<DrawingView> {
     "assets/empty.png",
     "assets/empty.png",
   ];
-  List title = ['신데렐라', '백설공주', '잠자는\n 숲속의 공주', '라푼젤', '미녀와 야수'];
+  String title = '';
   dynamic color = const Color(0xffffb628);
 
   // 캔버스에 그림 그리기 위해 담는 리스트
@@ -73,12 +73,15 @@ class _DrawingViewState extends State<DrawingView> {
           Uri.parse('$baseUrl/quiz-tale-items/$id'),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
       setState(() {
-        quizInfo = jsonDecode(response.body)['result'];
+        quizInfo = jsonDecode(utf8.decode(response.bodyBytes))['result'];
         _1 = quizInfo['drawQuizTaleItems'][0]['draw'];
         _2 = quizInfo['drawQuizTaleItems'][1]['draw'];
         _3 = quizInfo['drawQuizTaleItems'][2]['draw'];
         _4 = quizInfo['drawQuizTaleItems'][3]['draw'];
-        quizInfo['title'] = title[id - 1];
+        (id == 3)
+            ? title = '잠자는\n숲속의 공주'
+            : title =
+                jsonDecode(utf8.decode(response.bodyBytes))['result']['title'];
 
         for (int i in [0, 1, 2, 3]) {
           _words[quizInfo['drawQuizTaleItems'][i]['itemEng']] =
@@ -93,7 +96,6 @@ class _DrawingViewState extends State<DrawingView> {
     } catch (e) {
       print('$e getInfo 에러');
     }
-    // print(token);
   }
 
   // 정답 맞힌 이후 정보 불러오기
@@ -322,6 +324,7 @@ class _DrawingViewState extends State<DrawingView> {
 
 // 완성 후 도서관 이동
   complete() {
+    if (id == 3) {}
     return showDialog(
         context: context,
         builder: (BuildContext context) => Container(
@@ -428,7 +431,7 @@ class _DrawingViewState extends State<DrawingView> {
                         Flexible(
                           child: Center(
                             child: OutlinedText(
-                                text: Text(title[id - 1],
+                                text: Text(title,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: Colors.white,
@@ -486,6 +489,8 @@ class _DrawingViewState extends State<DrawingView> {
                               child: Image.asset(
                                 items[0],
                                 width: MediaQuery.of(context).size.width * 0.25,
+                                height:
+                                    MediaQuery.of(context).size.width * 0.25,
                               )),
                           Container(
                             decoration: BoxDecoration(
@@ -512,6 +517,7 @@ class _DrawingViewState extends State<DrawingView> {
                             child: Image.asset(
                               items[1],
                               width: MediaQuery.of(context).size.width * 0.25,
+                              height: MediaQuery.of(context).size.width * 0.25,
                             ),
                           )
                         ],
@@ -544,6 +550,7 @@ class _DrawingViewState extends State<DrawingView> {
                             child: Image.asset(
                               items[2],
                               width: MediaQuery.of(context).size.width * 0.25,
+                              height: MediaQuery.of(context).size.width * 0.25,
                             ),
                           ),
                           Container(
@@ -571,6 +578,7 @@ class _DrawingViewState extends State<DrawingView> {
                             child: Image.asset(
                               items[3],
                               width: MediaQuery.of(context).size.width * 0.25,
+                              height: MediaQuery.of(context).size.width * 0.25,
                             ),
                           ),
                         ],

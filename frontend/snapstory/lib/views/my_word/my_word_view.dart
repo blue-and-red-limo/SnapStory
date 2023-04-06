@@ -29,7 +29,7 @@ class _MyWordState extends State<MyWord> {
     flutterTts.setLanguage("en-US");
     flutterTts.setSpeechRate(0.4); //speed of speech
     flutterTts.setVolume(1.0); //volume of speech
-    flutterTts.setPitch(1.33);//pitc of sound
+    flutterTts.setPitch(1.33); //pitc of sound
     flutterTts.setSharedInstance(true);
     super.initState();
   }
@@ -54,121 +54,151 @@ class _MyWordState extends State<MyWord> {
                   if (wordList.isNotEmpty) {
                     return Stack(
                       children: [
-                          Stack(children: [
-                            if (_selected[1])
-                              Stack(children: [
-                                Center(
-                                  child: Container(
-                                    margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height*0.1),
-                                    child: CarouselSlider(
-                                      options: CarouselOptions(
-                                          height:
-                                              MediaQuery.of(context).size.height *
-                                                  0.6,
-                                          aspectRatio: 1.61803398875,
-                                          enlargeCenterPage: true,
-                                          enableInfiniteScroll: true,
-                                          initialPage: _current,
-                                          autoPlay: false,
-                                          onPageChanged: (index, reason) {
-                                            setState(() {
-                                              _current = index;
-                                              isEng = true;
-                                              flutterTts.setLanguage('en-US');
-                                            });
-                                          }),
-                                      items: wordList
-                                          .map((e) => GestureDetector(
-                                                onTap: () => setState(() {
-                                                  isEng = !isEng;
-                                                  if(!isEng) {
-                                                    flutterTts.setLanguage('ko-KR');
-                                                  } else {
-                                                    flutterTts.setLanguage('en-US');
-                                                  }
-                                                }),
-                                                child: Container(
-                                                  width: MediaQuery.of(context).size.width,
-                                                  height: MediaQuery.of(context).size.height,
-                                                  padding: EdgeInsets.only(left: MediaQuery.of(context).size.width*0.1, right: MediaQuery.of(context).size.width*0.1, top: MediaQuery.of(context).size.height*0.1),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(15),
-                                                    image: const DecorationImage(
-                                                        image: AssetImage(
-                                                            'assets/wordList/box-wordlist.png'),
-                                                        fit: BoxFit.contain),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.center,
-                                                    children: [
-                                                      Image.asset(
-                                                        e['word']['image']
-                                                            .toString(),
-                                                        height:
-                                                            MediaQuery.of(context)
+                        Stack(children: [
+                          if (_selected[1])
+                            Stack(children: [
+                              Center(
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      bottom:
+                                          MediaQuery.of(context).size.height *
+                                              0.1),
+                                  child: CarouselSlider(
+                                    options: CarouselOptions(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.6,
+                                        aspectRatio: 1.61803398875,
+                                        enlargeCenterPage: true,
+                                        enableInfiniteScroll: true,
+                                        initialPage: _current,
+                                        autoPlay: false,
+                                        onPageChanged: (index, reason) {
+                                          setState(() {
+                                            _current = index;
+                                            isEng = true;
+                                            flutterTts.setLanguage('en-US');
+                                          });
+                                        }),
+                                    items: wordList
+                                        .map((e) => GestureDetector(
+                                              onTap: () => setState(() {
+                                                isEng = !isEng;
+                                                if (!isEng) {
+                                                  flutterTts
+                                                      .setLanguage('ko-KR');
+                                                } else {
+                                                  flutterTts
+                                                      .setLanguage('en-US');
+                                                }
+                                              }),
+                                              child: Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                height: MediaQuery.of(context)
+                                                    .size
+                                                    .height,
+                                                padding: EdgeInsets.only(
+                                                    left: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.1,
+                                                    right:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.1,
+                                                    top: MediaQuery.of(context)
+                                                            .size
+                                                            .height *
+                                                        0.1),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  image: const DecorationImage(
+                                                      image: AssetImage(
+                                                          'assets/wordList/box-wordlist.png'),
+                                                      fit: BoxFit.contain),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Image.asset(
+                                                      e['word']['image']
+                                                          .toString(),
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.25,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.25,
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          top: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              0.01),
+                                                      child: Text(
+                                                        isEng
+                                                            ? e['word']
+                                                                ['wordEng']
+                                                            : e['word']
+                                                                ['wordKor'],
+                                                        style: TextStyle(
+                                                            fontSize: MediaQuery.of(
+                                                                        context)
                                                                     .size
                                                                     .height *
-                                                                0.25,
-                                                        width:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .height *
-                                                                0.25,
+                                                                0.045),
                                                       ),
-                                                      Container(
-                                                        margin: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.01),
+                                                    ),
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.09,
+                                                      child: Center(
                                                         child: Text(
                                                           isEng
-                                                              ? e['word']['wordEng']
-                                                              : e['word']
-                                                                  ['wordKor'],
+                                                              ? e['wordExampleEng']
+                                                              : e['wordExampleKor'],
+                                                          textAlign:
+                                                              TextAlign.center,
                                                           style: TextStyle(
                                                               fontSize: MediaQuery.of(
                                                                           context)
                                                                       .size
-                                                                      .height *
-                                                                  0.045),
+                                                                      .width *
+                                                                  0.05),
                                                         ),
                                                       ),
-                                                      SizedBox(
-                                                        height: MediaQuery.of(context).size.height*0.09,
-                                                        child: Center(
-                                                          child: Text(
-                                                            isEng
-                                                                ? e['wordExampleEng']
-                                                                : e['wordExampleKor'],
-                                                            textAlign:
-                                                                TextAlign.center,
-                                                            style: TextStyle(
-                                                                fontSize: MediaQuery.of(
-                                                                    context)
-                                                                    .size
-                                                                    .width *
-                                                                    0.05),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ))
-                                          .toList(),
-                                    ),
+                                              ),
+                                            ))
+                                        .toList(),
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.all(
-                                      MediaQuery.of(context).size.height *
-                                          0.04),
-                                  child: Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        GestureDetector(
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(
+                                    MediaQuery.of(context).size.height * 0.04),
+                                child: Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
                                         child: Image.asset(
                                           'assets/aiTale/btn-ai-word.png',
                                           height: MediaQuery.of(context)
@@ -320,11 +350,10 @@ class _MyWordState extends State<MyWord> {
                                 onTap: () {
                                   setState(() {
                                     isEng = !isEng;
-                                    if(!isEng) {
+                                    if (!isEng) {
                                       flutterTts.setLanguage('ko-KR');
                                     } else {
                                       flutterTts.setLanguage('en-US');
-
                                     }
                                   });
                                 },
@@ -410,7 +439,9 @@ class _MyWordState extends State<MyWord> {
                                             }
                                           },
                                           icon: const Icon(
-                                              Icons.delete_forever_rounded, color: Color(0xFFFFB628),),
+                                            Icons.delete_forever_rounded,
+                                            color: Color(0xFFFFB628),
+                                          ),
                                         ),
                                       ),
                                     ],
