@@ -388,7 +388,8 @@ class _DrawingViewState extends State<DrawingView> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => QuizTaleView(quizInfo)),
