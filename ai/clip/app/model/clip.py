@@ -156,21 +156,26 @@ def predict(image_file):
     # print(image)
 
     img_emb = model.get_image_features(image)
-    img_emb.shape
 
     img_emb = img_emb.detach().cpu().numpy()
 
     scores = np.dot(img_emb, label_emb.T)
-    print(scores)
+    # print(scores)
     exp_scores = np.exp(scores)
     probabilities = exp_scores / np.sum(exp_scores, axis=1, keepdims=True)
-    print(probabilities)
+    # print(probabilities)
 
     # get index of highest score
     pred=np.argmax(probabilities)
-    print("pred",pred)
+    # print("pred",pred)
 
-    print("prediction:",labels[pred],"probability:",probabilities[0][pred])
+    # print("prediction:",labels[pred],"probability:",probabilities[0][pred])
+    # get indices of probabilities in descending order
+    sorted_indices = np.argsort(probabilities[0])[::-1]
+
+    # print all predictions and probabilities in descending order
+    for i in sorted_indices:
+        print(f"prediction: {labels[i]}, probability: {probabilities[0][i]}")
     prediction = labels[pred]
 
     # predict 함수에서 반환 후, 그대로 response로 전달하면 np.float32은 "TypeError("'numpy.float32' object is not iterable""가 발생하여,
