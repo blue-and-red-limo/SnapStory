@@ -95,6 +95,7 @@ class ARAIService {
 
   Future<List> getAITaleList() async {
     var token = await FirebaseAuth.instance.currentUser?.getIdToken();
+    print(token);
     var res = await http.get(
       Uri.parse('$springBase/ai-tales'),
       headers: <String, String>{
