@@ -221,7 +221,7 @@ class _MainViewState extends State<MainView> {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (context) => const OnBoardingPage()),
+                        builder: (context) => const OnBoardingPage(isFirst: false,)),
                   );
                 },
               ),
