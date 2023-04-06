@@ -34,5 +34,8 @@ async def predict_doodles(strokes: Strokes):
         probability = float(pred[index[0]])
         prediction=_classes[index[0]]
 
+        # 서버 디버깅
+        print({'prediction':prediction,'probability':probability})
+
         return {'prediction':prediction,'probability':probability}
     
