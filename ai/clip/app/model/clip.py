@@ -27,6 +27,15 @@ def predict(image_file):
     # 사진 열기
     image=PILImage.open(image_file)
 
+    # 사진 자르기
+    width, height = image.size
+    top = height * 0.3
+    bottom = height * 0.73
+    left = width * 0.1
+    right = width * 0.9
+
+    image = image.crop((left, top, right, bottom))
+
     # 사진 resizing 하기.
     resizedImage = image.resize(((int)(320/image.height*image.width),320))
     # OSError: cannot write mode RGBA as JPEG, jpg는 투명도를 저장 못하는 문제.
