@@ -27,14 +27,14 @@ def predict(image_file):
     # 사진 열기
     image=PILImage.open(image_file)
 
-    # 사진 자르기
-    width, height = image.size
-    top = height * 0.3
-    bottom = height * 0.73
-    left = width * 0.1
-    right = width * 0.9
+    # # 사진 자르기
+    # width, height = image.size
+    # top = height * 0.3
+    # bottom = height * 0.73
+    # left = width * 0.1
+    # right = width * 0.9
 
-    image = image.crop((left, top, right, bottom))
+    # image = image.crop((left, top, right, bottom))
 
     # 사진 resizing 하기.
     resizedImage = image.resize(((int)(320/image.height*image.width),320))
