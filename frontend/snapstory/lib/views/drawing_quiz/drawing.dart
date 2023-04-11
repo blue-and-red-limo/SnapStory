@@ -714,6 +714,7 @@ class _DrawingViewState extends State<DrawingView> {
                 child: IconButton(
                   onPressed: () {
                     isCorrect();
+                    // logDev.log(path.toString());
                   },
                   icon: Icon(
                     Icons.check_rounded,

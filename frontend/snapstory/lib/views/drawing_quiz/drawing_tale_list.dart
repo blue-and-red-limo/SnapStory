@@ -1,6 +1,7 @@
 import 'package:snapstory/constants/routes.dart';
 import 'package:snapstory/views/drawing_quiz/drawing.dart';
 import 'package:flutter/material.dart';
+import 'package:snapstory/views/main_view.dart';
 
 class DrawingTaleList extends StatefulWidget {
   const DrawingTaleList({Key? key}) : super(key: key);
@@ -139,7 +140,11 @@ class DrawingTaleListState extends State<DrawingTaleList> {
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => const MainView(selectedPage: 0)),
+                    (route) => false,
+                  );
                 },
               ),
             )
