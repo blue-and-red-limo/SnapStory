@@ -95,7 +95,7 @@ class _ARViewAndroidState extends State<ARViewAndroid> {
     _araiService = ARAIService();
     flutterTts.setLanguage("en-US");
     flutterTts.setSpeechRate(0.4); //speed of speech
-    flutterTts.setVolume(1.0); //volume of speech
+    flutterTts.setVolume(0.7); //volume of speech
     flutterTts.setPitch(1.33);
 
     if (defaultTargetPlatform == TargetPlatform.iOS) {

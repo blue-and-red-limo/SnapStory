@@ -80,7 +80,7 @@ class _CompleteStoryState extends State<CompleteStory> {
     flutterTts = FlutterTts();
     flutterTts.setLanguage("en-US");
     flutterTts.setSpeechRate(0.4); //speed of speech
-    flutterTts.setVolume(1.0); //volume of speech
+    flutterTts.setVolume(0.7); //volume of speech
     flutterTts.setPitch(1.33);
 
     super.initState();

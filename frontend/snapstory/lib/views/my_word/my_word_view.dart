@@ -30,7 +30,7 @@ class _MyWordState extends State<MyWord> {
     flutterTts = FlutterTts();
     flutterTts.setLanguage("en-US");
     flutterTts.setSpeechRate(0.4); //speed of speech
-    flutterTts.setVolume(1.0); //volume of speech
+    flutterTts.setVolume(0.7); //volume of speech
     flutterTts.setPitch(1.33); //pitc of sound
     flutterTts.setSharedInstance(true);
     super.initState();
