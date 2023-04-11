@@ -126,10 +126,11 @@ class _QuizTaleViewState extends State<QuizTaleView> {
                           ),
                         ),
                         onTap: () {
-                          Navigator.of(context).pushReplacement(
+                          Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
                                 builder: (context) =>
                                     const MainView(selectedPage: 1)),
+                            (route) => false,
                           );
                         },
                       ),
