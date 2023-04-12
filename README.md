@@ -57,8 +57,7 @@
 
 # 🚙시연 영상
 
-
-![회원가입](https://user-images.githubusercontent.com/36323800/231378183-414f3d28-3868-48ce-80ba-ab5205ea2760.gif)
+<img src="./image/gif/register.gif" width="250" height="530" />
 <!-- ### 🔹 로그인
 
 |이메일 로그인|카카오 로그인|
