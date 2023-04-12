@@ -169,8 +169,8 @@ class _DrawingViewState extends State<DrawingView> {
           body: jsonEncode(<String, List<List<List<int>>>>{"data": path}));
 
       var jsonResponse = jsonDecode(response.body);
-      // 정확도 0.7 이상이면 정답으로 인정
-      if (jsonResponse['probability'] >= 0.47) {
+      // 정확도 0.48 이상이면 정답으로 인정
+      if (jsonResponse['probability'] >= 0.48) {
         answer = jsonResponse['prediction'];
       } else {
         answer = 'wrong';
