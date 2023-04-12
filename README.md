@@ -53,7 +53,7 @@
 - 영어 예문을 스스로 만들어서 듣고, 동화를 만들어서 읽어보고 들어보는 경험을 통해 정확한 영어 발음을 계속 접하게 되므로 원어민 선생님에게 영어를 배우도록 하기 위해 지출하던 많은 비용을 절약할 수 있다.
 
 # 🚙디자인 컨셉
-<img src="./image/design-concept.jpeg" width="600" height="300"/>
+![designConcept](https://user-images.githubusercontent.com/36323800/231401421-fbdd5cc1-5c56-4826-ad5b-3215fe13cd9f.PNG)
 
 
 # 🚙시연 영상
