@@ -55,16 +55,15 @@
 # 🚙디자인 컨셉
 <img src="./image/design-concept.jpeg" width="600" height="300"/>
 
+
 # 🚙시연 영상
 
-<img src="./image/gif/register.gif" width="250" height="530" />
-<!-- ### 🔹 로그인
 
-|이메일 로그인|카카오 로그인|
-|:------:|:------:|
-|<img src="./image/gifs/%EB%A1%9C%EA%B7%B8%EC%9D%B8_1_%EC%9D%B4%EB%A9%94%EC%9D%BC%EB%A1%9C%20%EB%A1%9C%EA%B7%B8%EC%9D%B8.gif" width="250" height="530" />|<img src="./image/gifs/%EB%A1%9C%EA%B7%B8%EC%9D%B8_2_%EC%B9%B4%EC%B9%B4%EC%98%A4%EB%A1%9C%20%EB%A1%9C%EA%B7%B8%EC%9D%B8.gif" width="250" height="530" />|
+|회원가입|
+|:------:|
+|<img src="./image/gif/register.gif" width="250" height="530" />|
 
-
+<!-- ###
 ### 🔹 회원가입과 탈퇴
 
 |이메일로 회원가입|카카오로 회원가입|탈퇴하기|
