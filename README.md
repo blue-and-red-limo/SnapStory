@@ -11,13 +11,17 @@
 
 ---
 
-# 🚙서비스 소개
+# 🚙 서비스 소개
 
-<!-- [![AdventureEveryday](https://img.youtube.com/vi/KGKtpDhjFAI/0.jpg)](https://www.youtube.com/watch?v=KGKtpDhjFAI)  -->
 [![AdventureEveryday](https://img.youtube.com/vi/RDSZdaFqegk/0.jpg)](https://www.youtube.com/watch?v=RDSZdaFqegk)
 
 
-## 서비스 설명
+# 🚙 apk 다운로드 하기
+https://j8a401.p.ssafy.io/
+
+
+
+# 🚙 서비스 설명
 
 ### 🔹 개요
 
@@ -29,7 +33,7 @@
 - 영어를 흥미롭게 접하고 싶은 아이
 - 일상생활에서 영어를 자주 접하게 하고 그 과정에서 저비용, 고효율의 영어 교육을 원하는 부모님
 
-# 🚙기획 배경
+# 🚙 기획 배경
 
 ### 🔹 배경
 
@@ -53,11 +57,11 @@
 - 특정 동화에서 제시하는 그림을 퀴즈 형식으로 맞추는 경험을 통해 재미있게 단어를 익히게 하며, 사물을 완성하면 보상으로 동화를 재생해주어 성취감을 느끼게 한다.
 - 영어 예문을 스스로 만들어서 듣고, 동화를 만들어서 읽어보고 들어보는 경험을 통해 정확한 영어 발음을 계속 접하게 되므로 원어민 선생님에게 영어를 배우도록 하기 위해 지출하던 많은 비용을 절약할 수 있다.
 
-# 🚙디자인 컨셉
+# 🚙 디자인 컨셉
 ![designConcept](https://user-images.githubusercontent.com/36323800/231401421-fbdd5cc1-5c56-4826-ad5b-3215fe13cd9f.PNG)
 
 
-# 🚙시연 화면
+# 🚙 시연 화면
 
 
 ### 🔹 회원가입
@@ -97,7 +101,7 @@
 
 
 
-# 🚙기술 스택
+# 🚙 기술 스택
 
 ### [AI]
 
@@ -141,7 +145,7 @@
 - Mattermost
 - Webex
 
-# 🚙프로젝트 일정 및 산출물
+# 🚙 프로젝트 일정 및 산출물
 
 ## 프로젝트 일정
 
@@ -239,7 +243,7 @@
 
 ![API](./image/api.png)
 
-# 🚙프로젝트 폴더 구조
+# 🚙 프로젝트 폴더 구조
 
 ## AI
 
@@ -318,7 +322,7 @@
                     \---snapstory
 ```
 
-# 🚙개발 멤버
+# 🚙 개발 멤버
 ![TEAM](./image/team.png)
 ## [AI]
 - 김현호 : AI 모델 학습 및 배포, 데이터전처리
