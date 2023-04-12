@@ -14,6 +14,7 @@
 # 🚙서비스 소개
 
 <!-- [![AdventureEveryday](https://img.youtube.com/vi/KGKtpDhjFAI/0.jpg)](https://www.youtube.com/watch?v=KGKtpDhjFAI)  -->
+[![AdventureEveryday](https://img.youtube.com/vi/RDSZdaFqegk/0.jpg)](https://www.youtube.com/watch?v=RDSZdaFqegk)
 
 
 ## 서비스 설명
@@ -56,7 +57,7 @@
 ![designConcept](https://user-images.githubusercontent.com/36323800/231401421-fbdd5cc1-5c56-4826-ad5b-3215fe13cd9f.PNG)
 
 
-# 🚙시연 영상
+# 🚙시연 화면
 
 
 ### 🔹 회원가입
