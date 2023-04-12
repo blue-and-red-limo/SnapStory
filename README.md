@@ -59,9 +59,8 @@
 # 🚙시연 영상
 
 
-|회원가입|
-|:------:|
-|<img src="./image/gif/register.gif" width="250" height="530" />|
+## 회원가입
+<img src="./image/gif/register.gif" width="250" height="530" />
 
 <!-- ###
 ### 🔹 회원가입과 탈퇴
