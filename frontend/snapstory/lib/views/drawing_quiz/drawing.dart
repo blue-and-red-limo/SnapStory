@@ -1,5 +1,4 @@
-import 'package:snapstory/constants/routes.dart';
-import 'package:snapstory/views/main_view.dart';
+import 'package:snapstory/views/help_view.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +7,8 @@ import 'dart:io';
 import 'package:confetti/confetti.dart';
 import 'package:outlined_text/outlined_text.dart';
 import 'package:snapstory/views/my_library/quiz_tale_view.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:developer' as logDev;
 
 class DrawingView extends StatefulWidget {
   final int id;
@@ -38,8 +39,9 @@ class _DrawingViewState extends State<DrawingView> {
     "assets/empty.png",
     "assets/empty.png",
   ];
-  List title = ['신데렐라', '백설공주', '잠자는\n 숲속의 공주', '라푼젤', '미녀와 야수'];
+  String title = '';
   dynamic color = const Color(0xffffb628);
+  AudioPlayer audioPlayer = AudioPlayer();
 
   // 캔버스에 그림 그리기 위해 담는 리스트
   List<List<Offset>> _points = [];
@@ -59,6 +61,7 @@ class _DrawingViewState extends State<DrawingView> {
 
   @override
   void dispose() {
+    audioPlayer.stop();
     _controllerTopCenter.dispose();
     super.dispose();
   }
@@ -72,12 +75,15 @@ class _DrawingViewState extends State<DrawingView> {
           Uri.parse('$baseUrl/quiz-tale-items/$id'),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
       setState(() {
-        quizInfo = jsonDecode(response.body)['result'];
+        quizInfo = jsonDecode(utf8.decode(response.bodyBytes))['result'];
         _1 = quizInfo['drawQuizTaleItems'][0]['draw'];
         _2 = quizInfo['drawQuizTaleItems'][1]['draw'];
         _3 = quizInfo['drawQuizTaleItems'][2]['draw'];
         _4 = quizInfo['drawQuizTaleItems'][3]['draw'];
-        quizInfo['title'] = title[id - 1];
+        (id == 3)
+            ? title = '잠자는\n숲속의 공주'
+            : title =
+                jsonDecode(utf8.decode(response.bodyBytes))['result']['title'];
 
         for (int i in [0, 1, 2, 3]) {
           _words[quizInfo['drawQuizTaleItems'][i]['itemEng']] =
@@ -92,9 +98,6 @@ class _DrawingViewState extends State<DrawingView> {
     } catch (e) {
       print('$e getInfo 에러');
     }
-    // print(token);
-    print(quizInfo);
-    print(quizInfo['title']);
   }
 
   // 정답 맞힌 이후 정보 불러오기
@@ -105,6 +108,7 @@ class _DrawingViewState extends State<DrawingView> {
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
       var jsonResponse =
           jsonDecode(response.body)['result']['drawQuizTaleItems'];
+
       setState(() {
         _1 = jsonResponse[0]['draw'];
         _2 = jsonResponse[1]['draw'];
@@ -150,6 +154,9 @@ class _DrawingViewState extends State<DrawingView> {
       _correct = false;
     }
     // 정답 or 오답 모달
+    (_correct)
+        ? audioPlayer.play(AssetSource('sound/correct.mp3'))
+        : audioPlayer.play(AssetSource('sound/wrong.mp3'));
     modal();
   }
 
@@ -160,16 +167,16 @@ class _DrawingViewState extends State<DrawingView> {
           Uri.parse('https://j8a401.p.ssafy.io/recognize/doodles'),
           headers: {'Content-Type': "application/json"},
           body: jsonEncode(<String, List<List<List<int>>>>{"data": path}));
-      // print(response);
-      var jsonResponse = jsonDecode(response.body);
 
-      // 정확도 0.7 이상이면 정답으로 인정
-      if (jsonResponse['probability'] >= 0.7) {
+      var jsonResponse = jsonDecode(response.body);
+      // 정확도 0.48 이상이면 정답으로 인정
+      if (jsonResponse['probability'] >= 0.48) {
         answer = jsonResponse['prediction'];
       } else {
         answer = 'wrong';
       }
     } catch (e) {
+      answer = 'wrong';
       print('$e 이미지 확인 에러');
     }
     setState(() {
@@ -264,6 +271,7 @@ class _DrawingViewState extends State<DrawingView> {
                                     ),
                                   ),
                                   onPressed: () {
+                                    audioPlayer.stop();
                                     _confirm();
                                   },
                                   child: Row(
@@ -317,6 +325,8 @@ class _DrawingViewState extends State<DrawingView> {
 
     // complete가 true, 각 item이 false면 동화 확인 창 띄우고 도서관으로 이동
     if (isComplete && !_1 && !_2 && !_3 && !_4) {
+      audioPlayer.stop();
+      audioPlayer.play(AssetSource('sound/complete.mp3'));
       complete();
     }
   }
@@ -386,7 +396,9 @@ class _DrawingViewState extends State<DrawingView> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.push(
+                        audioPlayer.stop();
+                        Navigator.pop(context);
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => QuizTaleView(quizInfo)),
@@ -421,7 +433,12 @@ class _DrawingViewState extends State<DrawingView> {
                         // 도움말 - 튜토리얼
                         IconButton(
                             iconSize: MediaQuery.of(context).size.width * 0.25,
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                    builder: (context) => HelpView(index: 4)),
+                              );
+                            },
                             icon: Image.asset(
                               'assets/main/btn-help.png',
                             )),
@@ -429,7 +446,7 @@ class _DrawingViewState extends State<DrawingView> {
                         Flexible(
                           child: Center(
                             child: OutlinedText(
-                                text: Text(title[id - 1],
+                                text: Text(title,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: Colors.white,
@@ -487,6 +504,8 @@ class _DrawingViewState extends State<DrawingView> {
                               child: Image.asset(
                                 items[0],
                                 width: MediaQuery.of(context).size.width * 0.25,
+                                height:
+                                    MediaQuery.of(context).size.width * 0.25,
                               )),
                           Container(
                             decoration: BoxDecoration(
@@ -513,6 +532,7 @@ class _DrawingViewState extends State<DrawingView> {
                             child: Image.asset(
                               items[1],
                               width: MediaQuery.of(context).size.width * 0.25,
+                              height: MediaQuery.of(context).size.width * 0.25,
                             ),
                           )
                         ],
@@ -545,6 +565,7 @@ class _DrawingViewState extends State<DrawingView> {
                             child: Image.asset(
                               items[2],
                               width: MediaQuery.of(context).size.width * 0.25,
+                              height: MediaQuery.of(context).size.width * 0.25,
                             ),
                           ),
                           Container(
@@ -572,6 +593,7 @@ class _DrawingViewState extends State<DrawingView> {
                             child: Image.asset(
                               items[3],
                               width: MediaQuery.of(context).size.width * 0.25,
+                              height: MediaQuery.of(context).size.width * 0.25,
                             ),
                           ),
                         ],
@@ -691,8 +713,8 @@ class _DrawingViewState extends State<DrawingView> {
                 // 정답 확인 버튼
                 child: IconButton(
                   onPressed: () {
-                    // isCorrect();
-                    complete();
+                    isCorrect();
+                    // logDev.log(path.toString());
                   },
                   icon: Icon(
                     Icons.check_rounded,
