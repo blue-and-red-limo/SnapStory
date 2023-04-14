@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
+import '../constants/api_key.dart';
 
 class ARAIService {
   final String aiBase = 'https://j8a401.p.ssafy.io';
   final String springBase = 'https://j8a401.p.ssafy.io/api/v1';
-  final String apiKey = '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';
   final String apiUrl = 'https://api.openai.com/v1/completions';
 
   Future postPictureAndGetWord({required String path}) async {
@@ -15,7 +16,7 @@ class ARAIService {
     var response = await request.send();
     Map newres = jsonDecode(utf8.decode(await response.stream.toBytes()));
     print(newres.toString());
-    if (response.statusCode == 200 && newres['probability'] as double > 0.5) {
+    if (response.statusCode == 200 && newres['probability'] as double > 0.4) {
       return newres['prediction'].toString();
     } else {
       return 'CANNOT GET WORD';
@@ -45,11 +46,12 @@ class ARAIService {
     Map<String, dynamic> newresponse =
         jsonDecode(utf8.decode(response.bodyBytes));
     List<String> str = newresponse['choices'][0]['text'].split('\n');
-    print("zzzzzzzzzzzzzzzzzzzzzzzz: "+ str.toString());
+    print("zzzzzzzzzzzzzzzzzzzzzzzz: " + str.toString());
     Map<String, String> result = {
       'word': obj,
-      'wordExampleEng': str[2].substring(str[2].indexOf("Eng:")+4, str[2].indexOf("Kor")),
-      'wordExampleKor': str[2].substring(str[2].indexOf("Kor")+4)
+      'wordExampleEng':
+          str[2].substring(str[2].indexOf("Eng:") + 4, str[2].indexOf("Kor")),
+      'wordExampleKor': str[2].substring(str[2].indexOf("Kor") + 4)
     };
     print(result.toString());
 
@@ -70,12 +72,15 @@ class ARAIService {
       },
     );
     Map<String, dynamic> result2 = jsonDecode(utf8.decode(res.bodyBytes));
-    result.addAll({'wordExplanationEng' : result2['result']['word']['wordExplanationEng'], 'wordExplanationKor' : result2['result']['word']['wordExplanationKor']});
+    result.addAll({
+      'wordExplanationEng': result2['result']['word']['wordExplanationEng'],
+      'wordExplanationKor': result2['result']['word']['wordExplanationKor']
+    });
     print(result.toString());
     return result;
   }
 
-  Future<List> getWordList ({required String token}) async {
+  Future<List> getWordList({required String token}) async {
     var res = await http.get(
       Uri.parse('$springBase/word-list'),
       headers: <String, String>{
@@ -88,7 +93,9 @@ class ARAIService {
     return result['result'];
   }
 
-  Future<List> getAITaleList ({required String token}) async {
+  Future<List> getAITaleList() async {
+    var token = await FirebaseAuth.instance.currentUser?.getIdToken();
+    print(token);
     var res = await http.get(
       Uri.parse('$springBase/ai-tales'),
       headers: <String, String>{
@@ -97,6 +104,7 @@ class ARAIService {
       },
     );
     Map<String, dynamic> result = jsonDecode(utf8.decode(res.bodyBytes));
+
     print(result['result'].toString());
     return result['result'];
   }
@@ -112,7 +120,7 @@ class ARAIService {
       body: jsonEncode({
         "model": "text-davinci-003",
         'prompt':
-        'make a instructive story about $obj in 7 sentence for kids and consider that no spaceline or no big quotes. And give me one sentence about this storys image by using this templete: "image: your answer',
+            'make a instructive story about $obj in 7 sentence for kids and consider that no spaceline or no big quotes. And give me one sentence about this storys image by using this templete: "image: your answer',
         'max_tokens': 1000,
         'temperature': 0,
         'top_p': 1,
@@ -123,7 +131,7 @@ class ARAIService {
     // print(utf8.decode(response.bodyBytes));
 
     Map<String, dynamic> newresponse =
-    jsonDecode(utf8.decode(response.bodyBytes));
+        jsonDecode(utf8.decode(response.bodyBytes));
 
     return newresponse['choices'][0]['text'];
   }
@@ -139,7 +147,7 @@ class ARAIService {
       body: jsonEncode({
         "model": "text-davinci-003",
         'prompt':
-        'please translate next sentence in Korean with no big quotes and no space. "$story"',
+            'please translate next sentence in Korean with no big quotes and no space. "$story"',
         'max_tokens': 1000,
         'temperature': 0,
         'top_p': 1,
@@ -150,16 +158,15 @@ class ARAIService {
     // print(utf8.decode(response.bodyBytes));
 
     Map<String, dynamic> newresponse =
-    jsonDecode(utf8.decode(response.bodyBytes));
+        jsonDecode(utf8.decode(response.bodyBytes));
 
     String str = newresponse['choices'][0]['text'];
-    print("해석결과!!! "+ str.toString());
+    print("해석결과!!! " + str.toString());
 
     return newresponse['choices'][0]['text'];
   }
 
-
-  Future<bool> deleteWord ({required String word, required String token}) async {
+  Future<bool> deleteWord({required String word, required String token}) async {
     var res = await http.delete(
       Uri.parse('$springBase/word-list/$word'),
       headers: <String, String>{
@@ -168,13 +175,13 @@ class ARAIService {
       },
     );
     print(res.body);
-    if (res.statusCode==200) {
+    if (res.statusCode == 200) {
       return true;
     }
     return false;
   }
 
-  Future<bool> deleteAITale ({required int id, required String token}) async {
+  Future<bool> deleteAITale({required int id, required String token}) async {
     var res = await http.delete(
       Uri.parse('$springBase/ai-tales/$id'),
       headers: <String, String>{
@@ -183,7 +190,7 @@ class ARAIService {
       },
     );
     print(res.body);
-    if (res.statusCode==200) {
+    if (res.statusCode == 200) {
       return true;
     }
     return false;

@@ -9,7 +9,9 @@ import 'package:http/http.dart' as http;
 import 'package:outlined_text/outlined_text.dart';
 import 'package:snapstory/services/ar_ai_service.dart';
 import 'package:snapstory/views/home/complete_story_view.dart';
+import 'package:snapstory/views/main_view.dart';
 import 'package:snapstory/views/my_library/quiz_tale_view.dart';
+import 'package:snapstory/constants/routes.dart';
 
 import '../../utilities/loading_dialog.dart';
 import '../drawing_quiz/drawing_tale_list.dart';
@@ -29,11 +31,12 @@ class _MyLibraryState extends State<MyLibrary> {
   List quizTaleList = [];
   List<List> quizTale2 = [];
   dynamic token = '';
+  dynamic goToList = {'quizTaleId': 0}; // 동화 퀴즈 그리기 버튼 추가용
 
   @override
   void initState() {
-    _araiService = ARAIService();
     getQuizTale();
+    _araiService = ARAIService();
     super.initState();
   }
 
@@ -45,7 +48,7 @@ class _MyLibraryState extends State<MyLibrary> {
           headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
       Map<String, dynamic> jsonResponse =
           jsonDecode(utf8.decode(response.bodyBytes));
-      AITaleList = await _araiService.getAITaleList(token: token);
+      AITaleList = await _araiService.getAITaleList();
       AITale2.clear();
       for (int i = 0; i < AITaleList.length; i++) {
         if (i % 2 == 1) {
@@ -69,7 +72,9 @@ class _MyLibraryState extends State<MyLibrary> {
         }
       }
       if (quizTaleList.length % 2 == 1) {
-        quizTale2.add([quizTaleList.last]);
+        quizTale2.add([quizTaleList.last, goToList]);
+      } else {
+        quizTale2.add([goToList]);
       }
       setState(() {});
     } catch (e) {
@@ -79,139 +84,44 @@ class _MyLibraryState extends State<MyLibrary> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _araiService.getAITaleList(token: token),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Scaffold(
-            backgroundColor: Colors.transparent,
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.0375,
-                        bottom: MediaQuery.of(context).size.height * 0.0125),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        OutlinedText(
-                            text: const Text(
-                              '퀴즈 동화',
-                              style:
-                                  TextStyle(fontSize: 30, color: Colors.white),
-                            ),
-                            strokes: [
-                              OutlinedTextStroke(
-                                  color: Color(0xff1A8200), width: 5),
-                            ]),
-                      ],
-                    ),
-                  ),
-                  // QUIZ TALE
-                  if (quizTaleList.isNotEmpty)
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height:
-                          MediaQuery.of(context).size.width / 1.521105336544556,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image:
-                              AssetImage('assets/library/box-library-bar.png'),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                      child: CarouselSlider(
-                        items: quizTale2
-                            .map(
-                              (e) => Center(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    if (e.length == 2)
-                                      GestureDetector(
-                                        onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  QuizTaleView(e.first),
-                                            )),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              right: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.02),
-                                          child: Image.asset(
-                                            'assets/library/btn-library-${e.first['quizTaleId']}.png',
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.35,
-                                          ),
-                                        ),
-                                      ),
-                                    if (e.length != 1)
-                                      GestureDetector(
-                                        onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  QuizTaleView(e.last),
-                                            )),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              left: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.02),
-                                          child: Image.asset(
-                                            'assets/library/btn-library-${e.last['quizTaleId']}.png',
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.35,
-                                          ),
-                                        ),
-                                      ),
-                                    if (e.length == 1)
-                                      GestureDetector(
-                                        onTap: () => Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  QuizTaleView(e.first),
-                                            )),
-                                        child: Padding(
-                                          padding: EdgeInsets.only(
-                                              right: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                                  0.4),
-                                          child: Image.asset(
-                                            'assets/library/btn-library-${e.first['quizTaleId']}.png',
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                                0.35,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => const MainView(selectedPage: 0),
+        ));
+        return true;
+      },
+      child: FutureBuilder(
+        future: _araiService.getAITaleList(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Scaffold(
+              backgroundColor: Colors.transparent,
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.0375,
+                          bottom: MediaQuery.of(context).size.height * 0.0125),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          OutlinedText(
+                              text: const Text(
+                                '퀴즈 동화',
+                                style: TextStyle(
+                                    fontSize: 30, color: Colors.white),
                               ),
-                            )
-                            .toList(),
-                        options: CarouselOptions(
-                          autoPlay: false,
-                          enableInfiniteScroll: false,
-                        ),
+                              strokes: [
+                                OutlinedTextStroke(
+                                    color: Color(0xff1A8200), width: 5),
+                              ]),
+                        ],
                       ),
                     ),
-                  if (quizTaleList.isEmpty)
-                    Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
+                    // QUIZ TALE
+                    if (quizTaleList.isNotEmpty)
                       Container(
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.width /
@@ -223,140 +133,113 @@ class _MyLibraryState extends State<MyLibrary> {
                             fit: BoxFit.fill,
                           ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  colorFilter: ColorFilter.matrix(<double>[
-                                    0.2126, 0.7152, 0.0722, 0, 0,
-                                    0.2126, 0.7152, 0.0722, 0, 0,
-                                    0.2126, 0.7152, 0.0722, 0, 0,
-                                    0,      0,      0,      1, 0,
-                                  ]),
-                                  image: AssetImage(
-                                      'assets/library/box-library-aitale.png'),
-                                  // fit: BoxFit.fill,
-                                ),
-                              ),
-                              child: GestureDetector(
-                                onTap: () => Navigator.of(context)
-                                    .push(MaterialPageRoute(
-                                  builder: (context) => const
-                                  DrawingTaleList(),
-                                )),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          top: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.05,
-                                          left:
-                                          MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.05,
-                                          right: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.05,
-                                          bottom: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.025),
-                                      // padding: EdgeInsets.all(
-                                      //     MediaQuery.of(context).size.width * 0.05),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                        BorderRadius.circular(23),
-                                        child: Image.asset(
-                                          'assets/snappy_crying.png',
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.25,
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              0.25,
+                        child: CarouselSlider(
+                          items: quizTale2
+                              .map(
+                                (e) => Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      if (e.length == 2)
+                                        GestureDetector(
+                                          onTap: () => (e.first['quizTaleId'] ==
+                                                  0) // 동화 퀴즈 그리기 버튼
+                                              ? Navigator.of(context)
+                                                  .pushReplacementNamed(
+                                                      drawingTaleListRoute)
+                                              : Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        QuizTaleView(e.first),
+                                                  )),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                right: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.02),
+                                            child: Image.asset(
+                                              'assets/library/btn-library-${e.first['quizTaleId']}.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.35,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          bottom: MediaQuery.of(context)
-                                              .size
-                                              .height *
-                                              0.03, top: MediaQuery.of(context)
-                                          .size
-                                          .height *
-                                          0.01),
-                                      child: OutlinedText(
-                                        text: Text(
-                                          '아직 동화가 없어요',
-                                          style: TextStyle(
-                                              shadows: [
-                                                Shadow(
-                                                    color: Colors.black
-                                                        .withOpacity(0.3),
-                                                    offset:
-                                                    const Offset(2, 2),
-                                                    blurRadius: 11),
-                                              ],
-                                              color: Colors.white,
-                                              fontSize: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                                  0.04),
+                                      if (e.length != 1)
+                                        GestureDetector(
+                                          onTap: () => (e.last['quizTaleId'] ==
+                                                  0) // 동화 퀴즈 그리기 버튼
+                                              ? Navigator.of(context)
+                                                  .pushReplacementNamed(
+                                                      drawingTaleListRoute)
+                                              : Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        QuizTaleView(e.last),
+                                                  )),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                left: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.02),
+                                            child: Image.asset(
+                                              'assets/library/btn-library-${e.last['quizTaleId']}.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.35,
+                                            ),
+                                          ),
                                         ),
-                                        strokes: [
-                                          OutlinedTextStroke(
-                                              color: Color(0xff1A8200),
-                                              width: 5),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                      if (e.length == 1)
+                                        GestureDetector(
+                                          onTap: () => (e.first['quizTaleId'] ==
+                                                  0) // 동화 퀴즈 그리기 버튼
+                                              ? Navigator.of(context)
+                                                  .pushReplacementNamed(
+                                                      drawingTaleListRoute)
+                                              : Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        QuizTaleView(e.first),
+                                                  )),
+                                          child: Padding(
+                                            padding: EdgeInsets.only(
+                                                right: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.4),
+                                            child: Image.asset(
+                                              'assets/library/btn-library-${e.first['quizTaleId']}.png',
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.35,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
+                              )
+                              .toList(),
+                          options: CarouselOptions(
+                            autoPlay: false,
+                            enableInfiniteScroll: false,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.025,
-                        bottom: MediaQuery.of(context).size.height * 0.0125),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        OutlinedText(
-                            text: const Text(
-                              '내가 만든 동화',
-                              style:
-                                  TextStyle(fontSize: 30, color: Colors.white),
-                            ),
-                            strokes: [
-                              OutlinedTextStroke(
-                                  color: Color(0xffffb628), width: 5),
-                            ])
-                      ],
-                    ),
-                  ),
-
-                  // AI TALE IS NOT EMPTY
-                  if (AITaleList.isNotEmpty)
-                    Column(
+                    if (quizTaleList.isEmpty)
+                      Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: AITale2.map(
-                          (e) => Container(
+                        children: [
+                          Container(
                             width: MediaQuery.of(context).size.width,
                             height: MediaQuery.of(context).size.width /
                                 1.521105336544556,
@@ -370,295 +253,173 @@ class _MyLibraryState extends State<MyLibrary> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                if (e.length == 2)
-                                  Container(
-                                    margin: EdgeInsets.all(
-                                        MediaQuery.of(context).size.width *
-                                            0.0125),
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/library/box-library-aitale.png'),
-                                        // fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                    child: GestureDetector(
-                                      onTap: () => Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (context) => CompleteStory(
-                                            id: e.first['aiTaleId']),
-                                      )),
-                                      onLongPress: () async {
-                                        final shouldDelete =
-                                            await showDeleteDialog(context);
-                                        if (shouldDelete) {
-                                          bool result =
-                                              await _araiService.deleteAITale(
-                                                  id: e.first['aiTaleId']
-                                                      as int,
-                                                  token: await FirebaseAuth
-                                                      .instance.currentUser!
-                                                      .getIdToken());
-                                          if (result) {
-                                            await getQuizTale();
-                                          }
-                                        }
-                                      },
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.075,
-                                                left: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05,
-                                                right: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05,
-                                                bottom: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.025),
-                                            child: Material(
-                                              borderRadius:
-                                                  BorderRadius.circular(23),
-                                              elevation: 7.5,
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(23),
-                                                child: Image.network(
-                                                  e.first['image'],
-                                                  loadingBuilder: (context, child, loadingProgress) {
-                                                    if (loadingProgress == null) return child;
-
-                                                    return Center(child: Container(child: Center(child: CircularProgressIndicator()),height: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        0.25, width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        0.25,));
-                                                    // You can use LinearProgressIndicator, CircularProgressIndicator, or a GIF instead
-                                                  },
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.25,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.25,
-                                                  errorBuilder: (context, error,
-                                                      stackTrace) {
-                                                    return Image.asset(
-                                                      'assets/snappy_crying.png',
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.25,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.25,
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.025),
-                                            child: OutlinedText(
-                                                text: Text(
-                                                  e.first['wordEng'],
-                                                  style: TextStyle(
-                                                      shadows: [
-                                                        Shadow(
-                                                            color: Colors.black
-                                                                .withOpacity(
-                                                                    0.3),
-                                                            offset:
-                                                                const Offset(
-                                                                    2, 2),
-                                                            blurRadius: 11),
-                                                      ],
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.05),
-                                                ),
-                                                strokes: [
-                                                  OutlinedTextStroke(
-                                                      color: Color(0xffffb628),
-                                                      width: 5),
-                                                ]),
-                                          ),
-                                        ],
-                                      ),
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                      colorFilter: ColorFilter.matrix(<double>[
+                                        0.2126,
+                                        0.7152,
+                                        0.0722,
+                                        0,
+                                        0,
+                                        0.2126,
+                                        0.7152,
+                                        0.0722,
+                                        0,
+                                        0,
+                                        0.2126,
+                                        0.7152,
+                                        0.0722,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        1,
+                                        0,
+                                      ]),
+                                      image: AssetImage(
+                                          'assets/library/box-library-aitale.png'),
+                                      // fit: BoxFit.fill,
                                     ),
                                   ),
-                                if (e.length != 1)
-                                  Container(
-                                    margin: EdgeInsets.all(
-                                        MediaQuery.of(context).size.width *
-                                            0.025),
-                                    decoration: const BoxDecoration(
-                                      image: DecorationImage(
-                                        image: AssetImage(
-                                            'assets/library/box-library-aitale.png'),
-                                        // fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                    child: GestureDetector(
-                                      onTap: () => Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (context) => CompleteStory(
-                                            id: e.last['aiTaleId']),
-                                      )),
-                                      onLongPress: () async {
-                                        final shouldDelete =
-                                            await showDeleteDialog(context);
-                                        if (shouldDelete) {
-                                          bool result =
-                                              await _araiService.deleteAITale(
-                                                  id: e.last['aiTaleId'] as int,
-                                                  token: await FirebaseAuth
-                                                      .instance.currentUser!
-                                                      .getIdToken());
-                                          if (result) {
-                                            await getQuizTale();
-                                          }
-                                        }
-                                      },
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                top: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.075,
-                                                left: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05,
-                                                right: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05,
-                                                bottom: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.025),
-                                            // padding: EdgeInsets.all(
-                                            //     MediaQuery.of(context).size.width * 0.05),
-                                            child: Material(
-                                              elevation: 7.5,
-                                              borderRadius:
-                                                  BorderRadius.circular(23),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(23),
-                                                child: Image.network(
-                                                  e.last['image'],
-                                                  loadingBuilder: (context, child, loadingProgress) {
-                                                    if (loadingProgress == null) return child;
-
-                                                    return Center(child: Container(child: Center(child: CircularProgressIndicator()),height: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        0.25, width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                        0.25,));
-                                                    // You can use LinearProgressIndicator, CircularProgressIndicator, or a GIF instead
-                                                  },
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.25,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.25,
-                                                  errorBuilder: (context, error,
-                                                      stackTrace) {
-                                                    return Image.asset(
-                                                      'assets/snappy_crying.png',
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.25,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.25,
-                                                    );
-                                                  },
-                                                ),
-                                              ),
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const DrawingTaleList(),
+                                    )),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05,
+                                              left: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05,
+                                              right: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05,
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.025),
+                                          // padding: EdgeInsets.all(
+                                          //     MediaQuery.of(context).size.width * 0.05),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(23),
+                                            child: Image.asset(
+                                              'assets/snappy_crying.png',
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.25,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.25,
                                             ),
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.025),
-                                            child: OutlinedText(
-                                                text: Text(
-                                                  e.last['wordEng'],
-                                                  style: TextStyle(
-                                                      shadows: [
-                                                        Shadow(
-                                                            color: Colors.black
-                                                                .withOpacity(
-                                                                    0.3),
-                                                            offset:
-                                                                const Offset(
-                                                                    2, 2),
-                                                            blurRadius: 11),
-                                                      ],
-                                                      color: Colors.white,
-                                                      fontSize:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.05),
-                                                ),
-                                                strokes: [
-                                                  OutlinedTextStroke(
-                                                      color: Color(0xffffb628),
-                                                      width: 5),
-                                                ]),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.03,
+                                              top: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.01),
+                                          child: OutlinedText(
+                                            text: Text(
+                                              '아직 동화가 없어요',
+                                              style: TextStyle(
+                                                  shadows: [
+                                                    Shadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.3),
+                                                        offset:
+                                                            const Offset(2, 2),
+                                                        blurRadius: 11),
+                                                  ],
+                                                  color: Colors.white,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.04),
+                                            ),
+                                            strokes: [
+                                              OutlinedTextStroke(
+                                                  color: Color(0xff1A8200),
+                                                  width: 5),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                if (e.length == 1)
-                                  Padding(
-                                    padding: EdgeInsets.only(right: MediaQuery.of(context).size.width*0.4),
-                                    child: Container(
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.height * 0.025,
+                          bottom: MediaQuery.of(context).size.height * 0.0125),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          OutlinedText(
+                              text: const Text(
+                                '내가 만든 동화',
+                                style: TextStyle(
+                                    fontSize: 30, color: Colors.white),
+                              ),
+                              strokes: [
+                                OutlinedTextStroke(
+                                    color: Color(0xffffb628), width: 5),
+                              ])
+                        ],
+                      ),
+                    ),
+
+                    // AI TALE IS NOT EMPTY
+                    if (AITaleList.isNotEmpty)
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: AITale2.map(
+                            (e) => Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.width /
+                                  1.521105336544556,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                      'assets/library/box-library-bar.png'),
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (e.length == 2)
+                                    Container(
+                                      margin: EdgeInsets.all(
+                                          MediaQuery.of(context).size.width *
+                                              0.0125),
                                       decoration: const BoxDecoration(
                                         image: DecorationImage(
                                           image: AssetImage(
@@ -710,51 +471,63 @@ class _MyLibraryState extends State<MyLibrary> {
                                                           .size
                                                           .width *
                                                       0.025),
-                                              // padding: EdgeInsets.all(
-                                              //     MediaQuery.of(context).size.width * 0.05),
                                               child: Material(
-                                                elevation: 7.5,
                                                 borderRadius:
                                                     BorderRadius.circular(23),
+                                                elevation: 7.5,
                                                 child: ClipRRect(
                                                   borderRadius:
                                                       BorderRadius.circular(23),
                                                   child: Image.network(
                                                     e.first['image'],
-                                                    loadingBuilder: (context, child, loadingProgress) {
-                                                      if (loadingProgress == null) return child;
+                                                    loadingBuilder: (context,
+                                                        child,
+                                                        loadingProgress) {
+                                                      if (loadingProgress ==
+                                                          null) return child;
 
-                                                      return Center(child: Container(child: Center(child: CircularProgressIndicator()),height: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          0.25, width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                          0.25,));
+                                                      return Center(
+                                                          child: Container(
+                                                        child: Center(
+                                                            child:
+                                                                CircularProgressIndicator()),
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                      ));
                                                       // You can use LinearProgressIndicator, CircularProgressIndicator, or a GIF instead
                                                     },
-                                                    height: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.25,
-                                                    width: MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.25,
-                                                    errorBuilder: (context, error,
-                                                        stackTrace) {
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
                                                       return Image.asset(
                                                         'assets/snappy_crying.png',
-                                                        height:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .width *
-                                                                0.25,
-                                                        width:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .width *
-                                                                0.25,
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
                                                       );
                                                     },
                                                   ),
@@ -773,7 +546,8 @@ class _MyLibraryState extends State<MyLibrary> {
                                                     style: TextStyle(
                                                         shadows: [
                                                           Shadow(
-                                                              color: Colors.black
+                                                              color: Colors
+                                                                  .black
                                                                   .withOpacity(
                                                                       0.3),
                                                               offset:
@@ -782,15 +556,16 @@ class _MyLibraryState extends State<MyLibrary> {
                                                               blurRadius: 11),
                                                         ],
                                                         color: Colors.white,
-                                                        fontSize:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .width *
-                                                                0.05),
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.05),
                                                   ),
                                                   strokes: [
                                                     OutlinedTextStroke(
-                                                        color: Color(0xffffb628),
+                                                        color:
+                                                            Color(0xffffb628),
                                                         width: 5),
                                                   ]),
                                             ),
@@ -798,132 +573,480 @@ class _MyLibraryState extends State<MyLibrary> {
                                         ),
                                       ),
                                     ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ).toList()),
-                  if (AITaleList.isEmpty)
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.width /
-                              1.521105336544556,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                  'assets/library/box-library-bar.png'),
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                decoration: const BoxDecoration(
-                                  image: DecorationImage(
-                                    colorFilter: ColorFilter.matrix(<double>[
-                                       0.2126, 0.7152, 0.0722, 0, 0,
-                                       0.2126, 0.7152, 0.0722, 0, 0,
-                                       0.2126, 0.7152, 0.0722, 0, 0,
-                                       0,      0,      0,      1, 0,
-                                     ]),
-                                    image: AssetImage(
-                                        'assets/library/box-library-aitale.png'),
-                                  ),
-                                ),
-                                child: GestureDetector(
-                                  onTap: () => Navigator.of(context)
-                                      .push(MaterialPageRoute(
-                                    builder: (context) => const ARViewAndroid(),
-                                  )),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            top: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.05,
-                                            left:
-                                                MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05,
-                                            right: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.05,
-                                            bottom: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.025),
-                                        child: Image.asset(
-                                          'assets/snappy_crying.png',
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.25,
+                                  if (e.length != 1)
+                                    Container(
+                                      margin: EdgeInsets.all(
+                                          MediaQuery.of(context).size.width *
+                                              0.025),
+                                      decoration: const BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/library/box-library-aitale.png'),
+                                          // fit: BoxFit.fill,
                                         ),
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            bottom: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.03, top: MediaQuery.of(context)
-                                            .size
-                                            .height *
-                                            0.01),
-                                        child: OutlinedText(
-                                          text: Text(
-                                            '아직 동화가 없어요',
-                                            style: TextStyle(
-                                                shadows: [
-                                                  Shadow(
-                                                      color: Colors.black
-                                                          .withOpacity(0.3),
-                                                      offset:
-                                                          const Offset(2, 2),
-                                                      blurRadius: 11),
-                                                ],
-                                                color: Colors.white,
-                                                fontSize: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.04),
-                                          ),
-                                          strokes: [
-                                            OutlinedTextStroke(
-                                                color: Color(0xffffb628),
-                                                width: 5),
+                                      child: GestureDetector(
+                                        onTap: () => Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) => CompleteStory(
+                                              id: e.last['aiTaleId']),
+                                        )),
+                                        onLongPress: () async {
+                                          final shouldDelete =
+                                              await showDeleteDialog(context);
+                                          if (shouldDelete) {
+                                            bool result =
+                                                await _araiService.deleteAITale(
+                                                    id: e.last['aiTaleId']
+                                                        as int,
+                                                    token: await FirebaseAuth
+                                                        .instance.currentUser!
+                                                        .getIdToken());
+                                            if (result) {
+                                              await getQuizTale();
+                                            }
+                                          }
+                                        },
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.075,
+                                                  left: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.05,
+                                                  right: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.05,
+                                                  bottom: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.025),
+                                              // padding: EdgeInsets.all(
+                                              //     MediaQuery.of(context).size.width * 0.05),
+                                              child: Material(
+                                                elevation: 7.5,
+                                                borderRadius:
+                                                    BorderRadius.circular(23),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(23),
+                                                  child: Image.network(
+                                                    e.last['image'],
+                                                    loadingBuilder: (context,
+                                                        child,
+                                                        loadingProgress) {
+                                                      if (loadingProgress ==
+                                                          null) return child;
+
+                                                      return Center(
+                                                          child: Container(
+                                                        child: Center(
+                                                            child:
+                                                                CircularProgressIndicator()),
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                      ));
+                                                      // You can use LinearProgressIndicator, CircularProgressIndicator, or a GIF instead
+                                                    },
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return Image.asset(
+                                                        'assets/snappy_crying.png',
+                                                        height: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.25,
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  bottom: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      0.025),
+                                              child: OutlinedText(
+                                                  text: Text(
+                                                    e.last['wordEng'],
+                                                    style: TextStyle(
+                                                        shadows: [
+                                                          Shadow(
+                                                              color: Colors
+                                                                  .black
+                                                                  .withOpacity(
+                                                                      0.3),
+                                                              offset:
+                                                                  const Offset(
+                                                                      2, 2),
+                                                              blurRadius: 11),
+                                                        ],
+                                                        color: Colors.white,
+                                                        fontSize: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.05),
+                                                  ),
+                                                  strokes: [
+                                                    OutlinedTextStroke(
+                                                        color:
+                                                            Color(0xffffb628),
+                                                        width: 5),
+                                                  ]),
+                                            ),
                                           ],
                                         ),
                                       ),
-                                    ],
+                                    ),
+                                  if (e.length == 1)
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          right: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.4),
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                                'assets/library/box-library-aitale.png'),
+                                            // fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                        child: GestureDetector(
+                                          onTap: () => Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                            builder: (context) => CompleteStory(
+                                                id: e.first['aiTaleId']),
+                                          )),
+                                          onLongPress: () async {
+                                            final shouldDelete =
+                                                await showDeleteDialog(context);
+                                            if (shouldDelete) {
+                                              bool result = await _araiService
+                                                  .deleteAITale(
+                                                      id: e.first['aiTaleId']
+                                                          as int,
+                                                      token: await FirebaseAuth
+                                                          .instance.currentUser!
+                                                          .getIdToken());
+                                              if (result) {
+                                                await getQuizTale();
+                                              }
+                                            }
+                                          },
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    top: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.075,
+                                                    left: MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.05,
+                                                    right:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.05,
+                                                    bottom:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.025),
+                                                // padding: EdgeInsets.all(
+                                                //     MediaQuery.of(context).size.width * 0.05),
+                                                child: Material(
+                                                  elevation: 7.5,
+                                                  borderRadius:
+                                                      BorderRadius.circular(23),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            23),
+                                                    child: Image.network(
+                                                      e.first['image'],
+                                                      loadingBuilder: (context,
+                                                          child,
+                                                          loadingProgress) {
+                                                        if (loadingProgress ==
+                                                            null) return child;
+
+                                                        return Center(
+                                                            child: Container(
+                                                          child: Center(
+                                                              child:
+                                                                  CircularProgressIndicator()),
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.25,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.25,
+                                                        ));
+                                                        // You can use LinearProgressIndicator, CircularProgressIndicator, or a GIF instead
+                                                      },
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.25,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.25,
+                                                      errorBuilder: (context,
+                                                          error, stackTrace) {
+                                                        return Image.asset(
+                                                          'assets/snappy_crying.png',
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.25,
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.25,
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.025),
+                                                child: OutlinedText(
+                                                    text: Text(
+                                                      e.first['wordEng'],
+                                                      style: TextStyle(
+                                                          shadows: [
+                                                            Shadow(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.3),
+                                                                offset:
+                                                                    const Offset(
+                                                                        2, 2),
+                                                                blurRadius: 11),
+                                                          ],
+                                                          color: Colors.white,
+                                                          fontSize: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              0.05),
+                                                    ),
+                                                    strokes: [
+                                                      OutlinedTextStroke(
+                                                          color:
+                                                              Color(0xffffb628),
+                                                          width: 5),
+                                                    ]),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ).toList()),
+                    if (AITaleList.isEmpty)
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.width /
+                                1.521105336544556,
+                            decoration: const BoxDecoration(
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    'assets/library/box-library-bar.png'),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  decoration: const BoxDecoration(
+                                    image: DecorationImage(
+                                      colorFilter: ColorFilter.matrix(<double>[
+                                        0.2126,
+                                        0.7152,
+                                        0.0722,
+                                        0,
+                                        0,
+                                        0.2126,
+                                        0.7152,
+                                        0.0722,
+                                        0,
+                                        0,
+                                        0.2126,
+                                        0.7152,
+                                        0.0722,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        0,
+                                        1,
+                                        0,
+                                      ]),
+                                      image: AssetImage(
+                                          'assets/library/box-library-aitale.png'),
+                                    ),
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ARViewAndroid(),
+                                    )),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05,
+                                              left: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05,
+                                              right: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05,
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.025),
+                                          child: Image.asset(
+                                            'assets/snappy_crying.png',
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.25,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.03,
+                                              top: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.01),
+                                          child: OutlinedText(
+                                            text: Text(
+                                              '아직 동화가 없어요',
+                                              style: TextStyle(
+                                                  shadows: [
+                                                    Shadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.3),
+                                                        offset:
+                                                            const Offset(2, 2),
+                                                        blurRadius: 11),
+                                                  ],
+                                                  color: Colors.white,
+                                                  fontSize:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          0.04),
+                                            ),
+                                            strokes: [
+                                              OutlinedTextStroke(
+                                                  color: Color(0xffffb628),
+                                                  width: 5),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    )
-                ],
+                        ],
+                      )
+                  ],
+                ),
               ),
-            ),
-          );
-        } else {
-          return const Center(child: LoadingDialog());
-        }
-      },
+            );
+          } else {
+            print('$token  11111111');
+            return const Center(child: LoadingDialog());
+          }
+        },
+      ),
     );
   }
 
