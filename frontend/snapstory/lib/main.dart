@@ -10,7 +10,6 @@ import 'package:snapstory/views/verify_email_view.dart';
 import 'package:snapstory/views/drawing_quiz/drawing_tale_list.dart';
 import 'package:flutter/material.dart';
 
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(

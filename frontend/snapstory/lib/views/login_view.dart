@@ -184,7 +184,7 @@ class _LoginViewState extends State<LoginView> {
                             true) {
                           Navigator.of(context).pushAndRemoveUntil(
                               MaterialPageRoute(
-                                builder: (context) => const OnBoardingPage(),
+                                builder: (context) => const OnBoardingPage(isFirst: true),
                               ),
                               (route) => false);
                         } else {

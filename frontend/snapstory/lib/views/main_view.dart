@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:snapstory/services/auth/auth_service.dart';
 import 'package:snapstory/services/crud/user_service.dart';
 import 'package:snapstory/utilities/show_error_dialog.dart';
+import 'package:snapstory/views/help_view.dart';
 
 // 메인 탭 3개 페이지
 import 'package:snapstory/views/home/home_view.dart';
@@ -176,9 +177,9 @@ class _MainViewState extends State<MainView> {
           actions: [
             IconButton(
               onPressed: () {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) => const OnBoardingPage()),
+                      builder: (context) => HelpView(index: selectedPos)),
                 );
               },
               icon: const Icon(Icons.help_outline),
@@ -190,10 +191,15 @@ class _MainViewState extends State<MainView> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               UserAccountsDrawerHeader(
-                currentAccountPicture: const CircleAvatar(
-                  backgroundColor: Colors.white,
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white70,
+                  child: Padding(
+                    padding: EdgeInsets.all(MediaQuery.of(context).size.width*0.015),
+                    child: Image.asset('assets/snappy.png',fit: BoxFit.fill),
+                  ),
+                  // foregroundImage: AssetImage('assets/snappy.png'),
                 ),
-                accountName: Text('$userName 보호자님 안녕하세요.'),
+                accountName: Text('Hello $userName '),
                 accountEmail: Text(userEmail),
                 decoration: const BoxDecoration(
                     image: DecorationImage(
@@ -203,16 +209,20 @@ class _MainViewState extends State<MainView> {
                     borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(40.0),
                       bottomRight: Radius.circular(40.0),
-                    )),
+                    ),
+                ),
               ),
               ListTile(
                 leading: Icon(
-                  Icons.headphones,
+                  Icons.help_outline,
                   color: Colors.grey[850],
                 ),
-                title: const Text('소리설정'),
+                title: const Text('튜토리얼 다시보기'),
                 onTap: () {
-                  print('소리설정 is clicked');
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => const OnBoardingPage(isFirst: false,)),
+                  );
                 },
               ),
               ListTile(
